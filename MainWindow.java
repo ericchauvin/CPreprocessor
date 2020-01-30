@@ -1,7 +1,7 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-// Code Analysis with Java.
+// Code Analysis for C++ code, written in Java.
 
 
 
@@ -256,7 +256,15 @@ public class MainWindow extends JFrame implements
     scrollPane1.setVerticalScrollBarPolicy(
              JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
 
-    mainPanel.add( statusTextArea );
+    // Setting it to FixedHeightMax means this component is
+    // stretchable.
+    // new Dimension( Width, Height );
+
+    scrollPane1.setPreferredSize( new Dimension(
+                   1, LayoutSimpleVertical.FixedHeightMax ));
+
+    // mainPanel.add( statusTextArea );
+    mainPanel.add( scrollPane1 );
     }
 
 
@@ -389,13 +397,12 @@ public class MainWindow extends JFrame implements
     // String paramS = event.paramString();
 
     String command = event.getActionCommand();
-/*
+
     if( command == null )
       {
-      keyboardTimerEvent();
+      // keyboardTimerEvent();
       return;
       }
-*/
 
     // showStatus( "ActionEvent Command is: " + command );
 
@@ -471,11 +478,13 @@ public class MainWindow extends JFrame implements
     }
 
 
+
   private void listFiles()
     {
     showStatus( "Listing the files." );
 
-    File mainDirFile = new File( "\\JavaSource" );
+    File mainDirFile = new 
+         File( "\\jdk7hotspotmaster\\src\\cpu\\x86\\vm" );
     String[] filesArray = mainDirFile.list();
     int max = filesArray.length;
     for( int count = 0; count < max; count++ )
@@ -487,7 +496,9 @@ public class MainWindow extends JFrame implements
     }
 
 
+
 /*
+Execute C++ programs with this?
   private void runBuildFile()
     {
     try
