@@ -1,7 +1,7 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-// Code Analysis with Java.
+// Code Analysis for C++ code, written in Java.
 
 
 import javax.swing.SwingUtilities;
@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "1/29/2020";
+  public static final String versionDate = "1/30/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
@@ -71,7 +71,7 @@ public class MainApp implements Runnable
       showStatus( argsArray[count] );
     */
 
-    showStatus( " " );
+    // showStatus( " " );
     }
 
 
