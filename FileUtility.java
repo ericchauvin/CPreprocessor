@@ -1,67 +1,6 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-/*
-java.nio.file.Files
-
-    public static Path createDirectory(
-             Path dir, FileAttribute<?>... attrs)
-This creates all the parent directories if they
-are not there.
-    public static Path createDirectories(Path dir, FileAttribute<?>... attrs)
-        throws IOException
-
-
-    public static Path copy(Path source, Path target, CopyOption... options)
-
-
-*/
-
-
-/*
-java.io.File
-    public File(String pathname) {
-
-    public String getName()
-    // Get the parent directory name.
-    public String getParent()
-
-    // Gets the parent directory as a File.
-    public File getParentFile()
-    public String getPath()
-    public boolean exists()
-
-    public boolean isDirectory()
-    public boolean isFile()
-    public boolean isHidden()
-
-    // in milliseconds since the epoch
-    //(00:00:00 GMT, January 1, 1970),
-    public long lastModified()
-    public long length()
-    public boolean delete()
-
-    If it's not a directory then it returns null.
-    public String[] list()
-
-    public String[] list(FilenameFilter filter)
-
-    public boolean mkdir()
-
-    public boolean renameTo(File dest)
-
-   // For a script or batch file?
-    public boolean setExecutable(boolean executable, boolean ownerOnly)
-
-
-    public boolean canExecute()
-
-    public long getTotalSpace()
-    public long getFreeSpace()
-    public long getUsableSpace()
-    public Path toPath()
-
-*/
 
 
 import java.io.IOException;
@@ -76,9 +15,9 @@ import java.nio.file.Paths;
   public class FileUtility
   {
 
-  public static String readAsciiFileToString( MainApp mApp,
-                                              String fileName,
-                                              boolean keepTabs )
+  public static String readFileToString( MainApp mApp,
+                                         String fileName,
+                                         boolean keepTabs )
     {
     try
     {
@@ -98,6 +37,7 @@ import java.nio.file.Paths;
     // using a particular character set, but this tests it
     // to make sure it doesn't have bad data in it.
 
+    int nonAsciiCount = 0;
     short newline = (short)'\n';
     short space = (short)' ';
     short tab = (short)'\t';
@@ -113,11 +53,53 @@ import java.nio.file.Paths;
 
         }
 
-      if( sChar > 127 )
-        continue; // Don't want this character.
+      // Handle UTF8 in the future.
+      // Valid/verified UTF8.
+      // Don't exclude any characters in the Basic
+      // Multilingual Plane except markers that
+      // shouldn't be in this.  See the Markers.cs
+      // file.
+      if( Markers.isMarker( (char)sChar ))
+        sChar = ' ';
+
+
+      // Basic Multilingual Plane
+      // C0 Controls and Basic Latin (Basic Latin)
+      //                                 (0000 007F)
+      // C1 Controls and Latin-1 Supplement (0080 00FF)
+      // Latin Extended-A (0100 017F)
+      // Latin Extended-B (0180 024F)
+      // IPA Extensions (0250 02AF)
+      // Spacing Modifier Letters (02B0 02FF)
+      // Combining Diacritical Marks (0300 036F)
+      // General Punctuation (2000 206F)
+      // Superscripts and Subscripts (2070 209F)
+      // Currency Symbols (20A0 20CF)
+      // Combining Diacritical Marks for Symbols
+      //                                (20D0 20FF)
+      // Letterlike Symbols (2100 214F)
+      // Number Forms (2150 218F)
+      // Arrows (2190 21FF)
+      // Mathematical Operators (2200 22FF)
+      // Box Drawing (2500 257F)
+      // Geometric Shapes (25A0 25FF)
+      // Miscellaneous Symbols (2600 26FF)
+      // Dingbats (2700 27BF)
+      // Miscellaneous Symbols and Arrows (2B00 2BFF)
+
+
+      //  Don't go higher than D800 (Surrogates).
+      // if( ToCheck >= 0xD800 )
+      if( sChar > 126 ) // >= 0xD800
+        {
+        nonAsciiCount++;
+        // Mark this as non-ASCII.
+        sChar = Markers.ErrorPoint;
+        }
 
       if( sChar < space )
         {
+        // It ignores the \r character.
         if( !((sChar == newline) ||
               (sChar == tab )))
           continue;
@@ -127,7 +109,12 @@ import java.nio.file.Paths;
       sBuilder.append( (char)sChar );
       }
 
-    return sBuilder.toString();
+    String resultS = sBuilder.toString();
+    if( nonAsciiCount == 0 )
+      return resultS;
+    else
+      return "**** Non-ASCII *****\n" + resultS;
+
     }
     catch( Exception e )
       {
@@ -141,9 +128,9 @@ import java.nio.file.Paths;
 
 
   public static void writeAsciiStringToFile( MainApp mApp,
-                                             String fileName,
-                                             String textS,
-                                             boolean keepTabs )
+                                        String fileName,
+                                        String textS,
+                                        boolean keepTabs )
     {
     try
     {
@@ -163,8 +150,16 @@ import java.nio.file.Paths;
     for( int count = 0; count < max; count++ )
       {
       char sChar = textS.charAt( count );
-      if( sChar > 127 )
+
+      if( sChar > 126 )
         continue;
+
+        /*
+        {
+        nonAsciiCount++;
+        sChar = 0x2700; // Mark this as non-ASCII.
+        }
+        */
 
       if( !keepTabs )
         {
