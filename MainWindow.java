@@ -237,8 +237,8 @@ public class MainWindow extends JFrame implements
     statusTextArea = new JTextArea();
     statusTextArea.setDragEnabled( false );
     statusTextArea.setFont( mainFont );
-    statusTextArea.setLineWrap( false );
-    // .setWrapStyleWord( true );
+    statusTextArea.setLineWrap( true );
+    statusTextArea.setWrapStyleWord( true );
     statusTextArea.setBackground( Color.black );
     statusTextArea.setForeground( Color.white );
     statusTextArea.setSelectedTextColor( Color.white );
@@ -410,7 +410,11 @@ public class MainWindow extends JFrame implements
     // File Menu:
     if( command == "FileList" )
       {
-      listFiles();
+      String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
+      TranslateCppFile.GetTokensFromFile( mApp,
+                                         fileName );
+
+      // listFiles();
       return;
       }
 
