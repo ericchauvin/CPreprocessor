@@ -1,4 +1,4 @@
-// Copyright Eric Chauvin 2018 2020.
+// Copyright Eric Chauvin 2018 - 2020.
 
 
 
@@ -27,6 +27,9 @@
                                     String fileName )
 
     {
+    mApp.showStatus( "File name is: " + fileName );
+    mApp.showStatus( " " );
+
     // The first level of lexical analysis and
     // processing is inside FileUtility.java when
     // it reads the file to a string.
@@ -41,12 +44,10 @@
       return; // null;
       }
 
-    mApp.showStatus( result );
-/*
+    // mApp.showStatus( result );
+
     result = RemoveStarComments.removeAllComments(
                                   mApp, result );
-
-
 
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
@@ -56,6 +57,9 @@
       return; //  null;
       }
 
+    mApp.showStatus( result );
+
+/*
     // if( !MForm.CheckEvents())
       // return null;
 
@@ -199,6 +203,9 @@
 
     return Tk;
     */
+
+    mApp.showStatus( " " );
+    mApp.showStatus( "Finished processing." );
     }
 
 
