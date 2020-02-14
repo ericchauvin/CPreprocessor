@@ -27,10 +27,11 @@ public class RemoveStarComments
                                      String inString )
     {
     String result = inString;
-
+    
+    // This fixes line splices too.
     result = markLineNumbers( mApp, result );
+
     result = removeComments( mApp, result );
-    // Result = FixLineSplices();
 
     return result;
     }
@@ -53,6 +54,25 @@ public class RemoveStarComments
       String tLine = line.trim();
       if( tLine.length() == 0 )
         continue;
+
+      if( tLine.equals( "*" + "/" ))
+        {
+        // Don't mark this empty line with a number.
+        sBuilder.append( "*" + "/\n" );
+        continue;
+        }
+
+      // Fix line splices.
+      if( line.endsWith( "\\" ))
+        {
+        // This would be a bad idea, but somebody
+        // could split a word right at the end
+        // of a line and it should join the word
+        // together with no space.
+        // Not this: sBuilder.append( line + " " );
+        sBuilder.append( line );
+        continue;
+        }
 
       int lineNumber = count + 1;
       line = line +
@@ -145,53 +165,8 @@ public class RemoveStarComments
 
 
 
+
 /*
-Do something like this?
-
-  private void FixLineSplices()
-    {
-    int Last = MainSArray.GetLast();
-    StringBuilder SBuilder = new StringBuilder();
-    for( int Count = 0; Count < Last; Count++ )
-      {
-      string Line = MainSArray.GetStringAt( Count );
-      // Something could be in a string literal.
-      // So this would have to be tested after
-      // strings are in tokens.
-      if( ContainsTriGraph( Line ))
-        throw( new Exception( "Is this an actual Trigraph in here?\r\n" + Line ));
-
-      string DoubleSlash = "/" + "/";
-      if( Line.Contains( DoubleSlash ))
-        Line = RemoveDoubleSlashComments( Line );
-
-      // Using \n to be compatible with Linux.
-      SBuilder.Append( Line.TrimEnd() + "\n" );
-      }
-
-    string FileS = SBuilder.ToString();
-
-    // This would be a bad idea, but somebody
-    // could split a word right at the end
-    // of a line and it should join the word
-    // together with no space.
-    // FileS = FileS.Replace( "\\\n", " " );
-    FileS = FileS.Replace( "\\\n", "" );
-
-    // Remove the beginning and ending white space.
-    FileS = FileS.Trim();
-
-    MainSArray.Clear();
-    string[] FileLines = FileS.Split( new Char[] { '\n' } );
-
-    Last = FileLines.Length;
-    for( int Count = 0; Count < Last; Count++ )
-      MainSArray.AppendStringToArray( FileLines[Count] );
-
-    }
-
-
-
   private bool ContainsTriGraph( string Line )
     {
     // There are also DiGraphs.
