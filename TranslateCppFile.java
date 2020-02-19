@@ -1,28 +1,20 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
 
+// https://en.wikipedia.org/wiki/Typedef
+
+// https://en.wikipedia.org/wiki/C_preprocessor
+
+// The C standard defines "phases" of processing.
+// Not necessarily the same as a "pass", like a 
+// two-pass compiler.
+
+ 
+
 
   public class TranslateCppFile
   {
 
-/*
-  private MainApp mApp;
-
-
-  private TranslateCSharpFile()
-    {
-    }
-
-
-
-  internal TranslateCSharpFile( MainForm UseForm )
-    {
-    MForm = UseForm;
-    }
-
-*/
-
-  // public static Token GetTokensFromFile( String fileName )
   public static void GetTokensFromFile( MainApp mApp,
                                     String fileName )
 
@@ -57,21 +49,32 @@
       return; //  null;
       }
 
-    mApp.showStatus( result );
-
-/*
     // if( !MForm.CheckEvents())
       // return null;
 
-
-    if( !TestMarkers.TestBeginEnd( MForm, Result ))
+    if( !TestMarkers.testBeginEnd( mApp, result ))
       {
-      ShowStatus( " " );
-      ShowStatus( "TestBeginEnd returned false after RStComments." );
-      return null;
+      mApp.showStatus( " " );
+      mApp.showStatus( "TestBeginEnd returned false after RStComments." );
+      return; // null;
       }
 
 
+    result = markPreprocessorLines( mApp, result );
+
+    if( !TestMarkers.testBeginEnd( mApp, result ))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "TestBeginEnd returned false after RStComments." );
+      return; // null;
+      }
+
+
+    mApp.showStatus( result );
+
+
+
+/*
     Result = RemoveSlashComments.RemoveAllDoubleSlashComments( MForm, Result );
     if( !MForm.CheckEvents())
       return; //  null;
@@ -208,6 +211,44 @@
     mApp.showStatus( "Finished processing." );
     }
 
+
+
+
+  private static String markPreprocessorLines(
+                                      MainApp mApp,
+                                      String in )
+    {
+    if( in.trim().length() == 0 )
+      return "";
+
+    StringBuilder sBuilder = new StringBuilder();
+     
+    String[] splitS = in.split( "\n" );
+    int last = splitS.length;
+    for( int count = 0; count < last; count++ )
+      {
+      String line = splitS[count];
+      if( '#' == StringsUtility.firstNonSpaceChar(
+                                             line ))
+        {
+        sBuilder.append( Character.toString(
+                         Markers.Begin ) +
+                         Character.toString(
+                         Markers.TypePreprocessor ) +
+                         line +
+                         Character.toString(
+                         Markers.End ) +
+                         "\n" );
+
+        }
+      else
+        {
+        sBuilder.append( line + "\n" );
+        }
+      }
+
+    return sBuilder.toString();
+    }
 
 
   }
