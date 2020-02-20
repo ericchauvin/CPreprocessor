@@ -1,14 +1,10 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
-
 // https://en.wikipedia.org/wiki/Typedef
 
 // https://en.wikipedia.org/wiki/C_preprocessor
 
 // The C standard defines "phases" of processing.
-// Not necessarily the same as a "pass", like a 
-// two-pass compiler.
-
  
 
 
@@ -58,7 +54,6 @@
       mApp.showStatus( "TestBeginEnd returned false after RStComments." );
       return; // null;
       }
-
 
     result = markPreprocessorLines( mApp, result );
 
@@ -231,15 +226,11 @@
       if( '#' == StringsUtility.firstNonSpaceChar(
                                              line ))
         {
-        sBuilder.append( Character.toString(
-                         Markers.Begin ) +
-                         Character.toString(
-                         Markers.TypePreprocessor ) +
-                         line +
-                         Character.toString(
-                         Markers.End ) +
-                         "\n" );
+        String preProcLine = makeBasicPreprocessorMarks(
+                                           mApp,
+                                           in );
 
+        sBuilder.append( preProcLine );
         }
       else
         {
@@ -249,6 +240,42 @@
 
     return sBuilder.toString();
     }
+
+
+
+  private static String makeBasicPreprocessorMarks(
+                                      MainApp mApp,
+                                      String in )
+    {
+    in = StringsUtility.replaceFirstChar( in,
+                                         '#',
+                                         ' ' );
+   
+    String[] splitS = in.split( Character.toString(
+                                  Markers.Begin ));
+
+    int last = splitS.length;
+    if( last != 2 )
+      {
+      return "This preprocessor line should have" +
+           " exactly one Begin marker for the line" +
+           " number." +
+           Markers.ErrorPoint;
+
+      }
+   
+    String result = Character.toString(
+                    Markers.Begin ) +
+                    Markers.TypePreprocessor +
+                    splitS[0] +
+                    Markers.End +
+                    Markers.Begin +
+                    splitS[1] +
+                    "\n";
+
+    return result;
+    }
+
 
 
   }
