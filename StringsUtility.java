@@ -14,6 +14,9 @@
 
   public static String trimEnd( String in )
     {
+    if( in == null )
+      return "";
+
     if( in.trim() == "" )
       return "";
 
@@ -59,6 +62,40 @@
       }
 
     return ' ';
+    }
+
+
+
+  public static String replaceFirstChar( String in,
+                                       char toFind,
+                                       char replace )
+    {
+    if( in == null )
+      return "";
+
+    int max = in.length();
+    if( max == 0 )
+      return "";
+
+    StringBuilder sBuilder = new StringBuilder();
+    boolean foundFirst = false;
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = in.charAt( count );
+      if( !foundFirst )
+        {
+        if( testChar == toFind )
+          {
+          foundFirst = true;
+          sBuilder.append( replace );
+          continue;
+          }
+        }
+
+      sBuilder.append( testChar );
+      }
+
+    return sBuilder.toString();
     }
 
 
