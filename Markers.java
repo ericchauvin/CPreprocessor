@@ -47,7 +47,12 @@
   public static final char EscapedSlash = (char)0x270E;
   public static final char QuoteAsSingleCharacter =
                                          (char)0x270F;
-  public static final char TypePreprocessor = (char)0x2704;
+  public static final char TypePreprocessor =
+                                         (char)0x2710;
+  public static final char TypeBeginPreproc =
+                                         (char)0x2711;
+  public static final char TypeEndPreproc =
+                                         (char)0x2712;
 
 
 
