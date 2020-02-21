@@ -11,7 +11,8 @@
     {
     StringBuilder sBuilder = new StringBuilder();
 
-    String[] splitS = inString.split( Character.toString( Markers.Begin ));
+    String[] splitS = inString.split(
+                  Character.toString( Markers.Begin ));
 
 
     // This contains the string before the first
@@ -26,7 +27,8 @@
       String line = splitS[count];
       sBuilder.append( line + "\n" );
 
-      if( !line.contains( Character.toString( Markers.End )))
+      if( !line.contains( Character.toString(
+                                       Markers.End )))
         {
         mApp.showStatus( sBuilder.toString() );
         mApp.showStatus( " " );
@@ -34,21 +36,11 @@
         mApp.showStatus( "Line: " + line );
         return false;
         }
-
-      String[] splitLine = line.split( Character.
-                             toString( Markers.End ));
-      if( splitLine.length < 2 )
-        {
-        mApp.showStatus( sBuilder.toString() );
-        mApp.showStatus( " " );
-        mApp.showStatus( "splitLine.length() < 2." );
-        mApp.showStatus( line );
-        return false;
-        }
       }
 
     return true;
     }
+
 
 
 /*
@@ -165,5 +157,3 @@
 
 
   }
-
-
