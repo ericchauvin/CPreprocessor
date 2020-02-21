@@ -4,7 +4,6 @@
 
 // https://en.wikipedia.org/wiki/C_preprocessor
 
-// The C standard defines "phases" of processing.
  
 
 
@@ -15,6 +14,7 @@
                                     String fileName )
 
     {
+    String showError = "";
     mApp.showStatus( "File name is: " + fileName );
     mApp.showStatus( " " );
 
@@ -41,7 +41,10 @@
                       Markers.ErrorPoint )))
       {
       mApp.showStatus( " " );
-      mApp.showStatus( "There was an error marker after RemoveStarComments." );
+      showError = "There was an error marker after" +
+                               " RemoveStarComments.";
+
+      mApp.showStatus( showError );
       return; //  null;
       }
 
@@ -51,57 +54,75 @@
     if( !TestMarkers.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after RStComments." );
+      showError = "TestBeginEnd returned false" +
+                        " after RemoveStarComments.";
+      mApp.showStatus( showError );
       return; // null;
       }
 
     result = markPreprocessorLines( mApp, result );
 
+    if( result.contains( Character.toString(
+                      Markers.ErrorPoint )))
+      {
+      mApp.showStatus( " " );
+      showError = "There was an error marker after" +
+                               " markPreprocessorLines.";
+
+      mApp.showStatus( showError );
+      return; //  null;
+      }
+
     if( !TestMarkers.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after RStComments." );
+      showError = "TestBeginEnd returned false" +
+                       " after markPreprocessorLine.";
+
+      mApp.showStatus( showError );
       return; // null;
       }
 
+
+    result = removeAllDoubleSlashComments( mApp,
+                                           result );
+
+    if( !TestMarkers.testBeginEnd( mApp, result ))
+      {
+      mApp.showStatus( " " );
+      showError = "TestBeginEnd returned false" +
+               " after removeAllDoubleSlashComments.";
+ 
+      mApp.showStatus( showError );
+      return; // null;
+      }
+
+    // mApp.showStatus( result );
+
+    result = markStrings( mApp, result );
+
+    if( result.contains( Character.toString(
+                      Markers.ErrorPoint )))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "There was an error after markStrings." );
+      mApp.showStatus( " " );
+      mApp.showStatus( result );
+      return; // null;
+      }
+
+    if( !TestMarkers.testBeginEnd( mApp, result ))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "TestBeginEnd returned false after mareStrings." );
+      return; // null;
+      }
 
     mApp.showStatus( result );
 
 
 
 /*
-    Result = RemoveSlashComments.RemoveAllDoubleSlashComments( MForm, Result );
-    if( !MForm.CheckEvents())
-      return; //  null;
-
-    if( !TestMarkers.TestBeginEnd( MForm, Result ))
-      {
-      ShowStatus( " " );
-      ShowStatus( "TestBeginEnd returned false after RemoveSlashComments." );
-      return null;
-      }
-
-    Result = CSharpToStrings.MakeStringObjects( MForm, Result );
-    if( !MForm.CheckEvents())
-      return null;
-
-    if( Result.Contains( Char.ToString(
-                      Markers.ErrorPoint )))
-      {
-      ShowStatus( " " );
-      ShowStatus( "There was an error after CSharpToStrings." );
-      ShowStatus( " " );
-      ShowStatus( Result );
-      return null;
-      }
-
-    if( !TestMarkers.TestBeginEnd( MForm, Result ))
-      {
-      ShowStatus( " " );
-      ShowStatus( "TestBeginEnd returned false after CSToStrings." );
-      return null;
-      }
-
     Result = CSharpToCharacters.MakeCharacterObjects( Result );
     if( !MForm.CheckEvents())
       return null;
@@ -213,6 +234,9 @@
                                       MainApp mApp,
                                       String in )
     {
+    if( in == null )
+      return "";
+
     if( in.trim().length() == 0 )
       return "";
 
@@ -228,7 +252,7 @@
         {
         String preProcLine = makeBasicPreprocessorMarks(
                                            mApp,
-                                           in );
+                                           line );
 
         sBuilder.append( preProcLine );
         }
@@ -247,9 +271,14 @@
                                       MainApp mApp,
                                       String in )
     {
+    // return in + "\n";
+
+    // mApp.showStatus( "Preproc: " + in ); 
     in = StringsUtility.replaceFirstChar( in,
                                          '#',
                                          ' ' );
+
+    mApp.showStatus( "Preproc: " + in ); 
    
     String[] splitS = in.split( Character.toString(
                                   Markers.Begin ));
@@ -257,11 +286,13 @@
     int last = splitS.length;
     if( last != 2 )
       {
-      return "This preprocessor line should have" +
+      String showError = in + "\n" +
+           "This preprocessor line should have" +
            " exactly one Begin marker for the line" +
-           " number." +
-           Markers.ErrorPoint;
+           " number."; 
 
+      mApp.showStatus( showError ); 
+      return "ErrorPoint: " + Markers.ErrorPoint;
       }
    
     String result = Character.toString(
@@ -270,11 +301,259 @@
                     splitS[0] +
                     Markers.End +
                     Markers.Begin +
-                    splitS[1] +
-                    "\n";
+                    splitS[1] + "\n";
 
     return result;
     }
+
+
+
+  private static String removeAllDoubleSlashComments(
+                                       MainApp mApp,
+                                       String in )
+    {
+    StringBuilder sBuilder = new StringBuilder();
+    String[] splitS = in.split( "\n" );
+    int last = splitS.length;
+    for( int count = 0; count < last; count++ )
+      {
+      String line = splitS[count];
+      line = removeDoubleSlashComments( mApp, line );
+
+      String startString =
+              Character.toString( Markers.Begin ) +
+              Character.toString( 
+                             Markers.TypeLineNumber );
+
+      // Don't keep empty lines.
+      String tLine = line.trim();
+      if( !tLine.startsWith( startString ))
+        sBuilder.append( line + "\n" );
+
+      }
+
+    return sBuilder.toString();
+    }
+
+
+
+  private static String removeDoubleSlashComments(
+                                        MainApp mApp,
+                                        String line )
+    {
+    // This line with the two back slashes in the
+    // URL should not be considered to be a comment.
+    //     GetPage( "https://gcc.gnu.org/" );
+
+    StringBuilder sBuilder = new StringBuilder();
+
+    line = line.replace( "\\\\",
+         Character.toString( Markers.EscapedSlash ));
+
+    // Notice the escaped forward slash in front of
+    // the quote character here at the end of the
+    // string:
+    // "c:\\BrowserECFiles\\PageFiles\\";
+
+    line = line.replace( "\\\"",
+                        Character.toString( 
+                        Markers.EscapedDoubleQuote ));
+
+    // This double quote inside single quotes can't
+    // be inside of a normal string literal.
+    String singleQuoteCharStr = "\'\"\'";
+    if( singleQuoteCharStr.length() != 3 )
+      {
+      mApp.showStatus( "SingleQuoteCharStr.Length != 3" );
+      return Character.toString( Markers.ErrorPoint );
+      }
+
+    line = line.replace( singleQuoteCharStr,
+                    Character.toString(
+                    Markers.QuoteAsSingleCharacter ));
+
+    String doubleSlash = "/" + "/";
+    line = line.replace( doubleSlash,
+           Character.toString( Markers.DoubleSlash ));
+
+    int lineLength = line.length();
+    boolean isInside = true;
+    boolean isInsideString = false;
+    for( int count = 0; count < lineLength; count++ )
+      {
+      char testChar = line.charAt( count );
+      if( isInsideString )
+        {
+        if( testChar == '"' )
+          isInsideString = false;
+
+        }
+      else
+        {
+        // It's not inside the string.
+        if( testChar == '"' )
+          isInsideString = true;
+
+        }
+
+      if( !isInsideString )
+        {
+        if( testChar == Markers.DoubleSlash )
+          {
+          // This will stay false until it gets to
+          // the Begin marker for the line number.
+          isInside = false;
+          }
+        }
+
+      // This is for the line number markers or
+      // the preprocessor markers.
+      if( testChar == Markers.Begin )
+        isInside = true;
+
+      if( isInside )
+        sBuilder.append( testChar );
+
+      }
+
+    String result = sBuilder.toString();
+
+    result = result.replace( 
+            Character.toString( Markers.DoubleSlash ),
+                                doubleSlash );
+
+    result = result.replace(
+                          Character.toString(
+                     Markers.QuoteAsSingleCharacter ),
+                     singleQuoteCharStr );
+
+    result = result.replace( Character.toString(
+                         Markers.EscapedDoubleQuote ),
+                         "\\\"" );
+
+    result = result.replace( Character.toString(
+                             Markers.EscapedSlash ),
+                             "\\\\" );
+
+    return result;
+    }
+
+
+
+  private static String markStrings( MainApp mApp,
+                                     String in )
+    {
+    // In C, a wide character string literal looks
+    // like:  L"This string." with the L in front of
+    // it.
+
+    StringBuilder sBuilder = new StringBuilder();
+
+    // Notice the double slash in front of the quote
+    // character here at the end of the string:
+    // "c:\\BrowserECFiles\\PageFiles\\";
+
+    in = in.replace( "\\\\",
+                             Character.toString(
+                             Markers.EscapedSlash ));
+
+    in = in.replace( "\\\"",
+                                  Character.toString(
+                        Markers.EscapedDoubleQuote ));
+
+    String singleQuoteCharStr = "\'\"\'";
+    if( singleQuoteCharStr.length() != 3 )
+      {
+      mApp.showStatus( "SingleQuoteCharStr.length() != 3" );
+      return Character.toString( Markers.ErrorPoint );
+      }
+
+    // Is this the spec?
+    // This means that the double quote inside single
+    // quotes will just be put inside the string
+    // literal.
+    in = in.replace( singleQuoteCharStr,
+                   Character.toString(
+                   Markers.QuoteAsSingleCharacter ));
+
+    boolean isInsideObject = false;
+    boolean isInsideString = false;
+    int last = in.length();
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = in.charAt( count );
+
+      if( testChar == Markers.Begin )
+        {
+        isInsideObject = true;
+        sBuilder.append( Character.toString( testChar ));
+        continue;
+        }
+
+      if( isInsideObject )
+        {
+        // You can't go inside another object without
+        // finding the end of the string.
+        if( isInsideString )
+          {
+          sBuilder.append( Character.toString(
+                        Markers.ErrorPoint ));
+          sBuilder.append( "String doesn't end before the next object." );
+          return sBuilder.toString();
+          }
+
+        if( testChar == Markers.End )
+          isInsideObject = false;
+
+        sBuilder.append( Character.toString( testChar ));
+        continue;
+        }
+
+      if( !isInsideString )
+        {
+        if( testChar == '"' )
+          {
+          isInsideString = true;
+          sBuilder.append( Character.toString(
+                                    Markers.Begin ));
+          sBuilder.append( Character.toString(
+                                Markers.TypeString ));
+          continue;
+          }
+        }
+      else
+        {
+        // It is inside.
+        if( testChar == '"' )
+          {
+          isInsideString = false;
+          sBuilder.append( Character.toString(
+                                      Markers.End ));
+          continue;
+          }
+        }
+
+      sBuilder.append( Character.toString( testChar ));
+      }
+
+    String result = sBuilder.toString();
+
+    result = result.replace(
+                     Character.toString(
+                     Markers.QuoteAsSingleCharacter ),
+                     singleQuoteCharStr );
+
+    result = result.replace( Character.toString(
+                        Markers.EscapedDoubleQuote ),
+                        "\\\"" );
+
+    result = result.replace( Character.toString(
+                               Markers.EscapedSlash ),
+                               "\\\\" );
+
+    return result;
+    }
+
 
 
 
