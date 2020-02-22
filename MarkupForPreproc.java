@@ -123,36 +123,37 @@
       return "";
       }
 
+
+    result = markCharacters( mApp, result );
+
+    if( result.contains( Character.toString(
+                      Markers.ErrorPoint )))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "There was an error marker after markCharacters." );
+      return "";
+      }
+
+    if( !TestMarkers.testBeginEnd( mApp, result ))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "TestBeginEnd returned false after markCharacters." );
+      return "";
+      }
+
+
     mApp.showStatus( result );
     mApp.showStatus( " " );
     mApp.showStatus( "Finished processing." );
     mApp.showStatus( fileName );
     mApp.showStatus( " " );
     mApp.showStatus( " " );
-
     return result;
 
 
+
+
 /*
-    Result = CSharpToCharacters.MakeCharacterObjects( Result );
-    if( !MForm.CheckEvents())
-      return null;
-
-    if( Result.Contains( Char.ToString(
-                      Markers.ErrorPoint )))
-      {
-      ShowStatus( " " );
-      ShowStatus( "There was an error marker after CSToCharacters." );
-      return null;
-      }
-
-    if( !TestMarkers.TestBeginEnd( MForm, Result ))
-      {
-      ShowStatus( " " );
-      ShowStatus( "TestBeginEnd returned false after CSToCharacters." );
-      return null;
-      }
-
     Result = CSharpToIdentifiers.MakeIdentifierObjects( MForm, Result );
     if( !MForm.CheckEvents())
       return null;
@@ -562,6 +563,92 @@
     return result;
     }
 
+
+
+  private static String markCharacters( MainApp mApp,
+                                        String in )
+    {
+    StringBuilder sBuilder = new StringBuilder();
+
+    in = in.replace( "\\\\",
+       Character.toString( Markers.EscapedSlash ));
+
+    // It could be '\''.
+    in = in.replace( "\\\'",
+       Character.toString( Markers.EscapedSingleQuote ));
+
+    boolean isInsideChar = false;
+    boolean isInsideObject = false;
+    int last = in.length();
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = in.charAt( count );
+
+      if( isInsideObject )
+        {
+        // You can't go inside another object without
+        // finding the end of the character.
+        if( isInsideChar )
+          {
+          sBuilder.append( Character.toString(
+                        Markers.ErrorPoint ));
+          sBuilder.append( "Character doesn't end before next object." );
+          return sBuilder.toString();
+          }
+
+        if( testChar == Markers.End )
+          isInsideObject = false;
+
+        sBuilder.append( Character.toString( testChar ));
+        continue;
+        }
+
+      if( testChar == Markers.Begin )
+        {
+        isInsideObject = true;
+        sBuilder.append( Character.toString( testChar ));
+        continue;
+        }
+
+      if( !isInsideChar )
+        {
+        if( testChar == '\'' )
+          {
+          isInsideChar = true;
+          sBuilder.append( Character.toString(
+                             Markers.Begin ));
+          sBuilder.append( Character.toString(
+                          Markers.TypeChar ));
+          continue;
+          }
+        }
+      else
+        {
+        // It is inside.
+        if( testChar == '\'' )
+          {
+          isInsideChar = false;
+          sBuilder.append( Character.toString(
+                               Markers.End ));
+          continue;
+          }
+        }
+
+      sBuilder.append( Character.toString( testChar ));
+      }
+
+    String result = sBuilder.toString();
+
+    // Put the single quote character back in.
+    result = result.replace( Character.toString(
+             Markers.EscapedSingleQuote ), "\\\'" );
+
+    result = result.replace(
+                Character.toString( Markers.EscapedSlash ),
+                "\\\\" );
+
+    return result;
+    }
 
 
 
