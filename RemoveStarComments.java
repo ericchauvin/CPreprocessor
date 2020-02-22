@@ -33,6 +33,14 @@ public class RemoveStarComments
 
     result = removeComments( mApp, result );
 
+    if( containsTriGraph( result ))
+      {
+      mApp.showStatus( "This file contains Trigraphs." );
+      return "Error. This file contains Trigraphs.\n" +
+                                 Character.toString(
+                                 Markers.ErrorPoint );
+      }
+
     return result;
     }
 
@@ -166,47 +174,42 @@ public class RemoveStarComments
 
 
 
-/*
-  private bool ContainsTriGraph( string Line )
+  private static boolean containsTriGraph( String line )
     {
     // There are also DiGraphs.
     // Digraph:        <%  %>   <:  :>  %:  %:%:
     // Punctuator:      {   }   [   ]   #    ##
 
-    // Test:
-    // if( Line.Contains( "??" ))
-      // return true;
-
-    if( Line.Contains( "??=" ))
+    if( line.contains( "??=" ))
       return true;
 
-    if( Line.Contains( "??/" ))
+    if( line.contains( "??/" ))
       return true;
 
-    if( Line.Contains( "??'" ))
+    if( line.contains( "??'" ))
       return true;
 
-    if( Line.Contains( "??(" ))
+    if( line.contains( "??(" ))
       return true;
 
-    if( Line.Contains( "??)" ))
+    if( line.contains( "??)" ))
       return true;
 
-    if( Line.Contains( "??!" ))
+    if( line.contains( "??!" ))
       return true;
 
-    if( Line.Contains( "??<" ))
+    if( line.contains( "??<" ))
       return true;
 
-    if( Line.Contains( "??>" ))
+    if( line.contains( "??>" ))
       return true;
 
-    if( Line.Contains( "??-" ))
+    if( line.contains( "??-" ))
       return true;
 
     return false;
     }
-*/
+
 
 
 
