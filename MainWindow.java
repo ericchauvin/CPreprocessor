@@ -118,6 +118,7 @@ public class MainWindow extends JFrame implements
     {
     showStatus( "Programming by Eric Chauvin." );
     showStatus( "Version date: " + MainApp.versionDate );
+    showStatus( " " );
  
     // setupTimer();
     }
@@ -411,8 +412,11 @@ public class MainWindow extends JFrame implements
     if( command == "FileList" )
       {
       String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
-      TranslateCppFile.GetTokensFromFile( mApp,
-                                         fileName );
+      // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
+      // MarkupForPreproc.MarkItUp( mApp,
+         //                                fileName );
+
+      testFiles();
 
       // listFiles();
       return;
@@ -967,6 +971,72 @@ private void editPaste()
       }
     }
 */
+
+
+
+  private void testFiles()
+    {
+    String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
+
+    String[] fileArray = { "codeBlob.cpp",
+                           "codeBlob.hpp",
+                           "codeCache.cpp",
+                           "codeCache.hpp",
+                           "compiledIC.cpp",
+                           "compiledIC.hpp",
+                           "compressedStream.cpp",
+                           "compressedStream.hpp",
+                           "debugInfo.cpp",
+                           "debugInfo.hpp",
+                           "debugInfoRec.cpp",
+                           "debugInfoRec.hpp",
+                           "dependencies.cpp",
+                           "dependencies.hpp",
+                           "exceptionHandlerTable.cpp",
+                           "exceptionHandlerTable.hpp",
+                           "icBuffer.cpp",
+                           "icBuffer.hpp",
+                           "jvmticmlr.h",
+                           "location.cpp",
+                           "location.hpp",
+                           "nmethod.cpp",
+                           "nmethod.hpp",
+                           "oopRecorder.cpp",
+                           "oopRecorder.hpp",
+                           "pcDesc.cpp",
+                           "pcDesc.hpp",
+                           "relocInfo.cpp",
+                           "relocInfo.hpp",
+                           "scopeDesc.cpp",
+                           "scopeDesc.hpp",
+                           "stubs.cpp",
+                           "stubs.hpp",
+                           "vmreg.cpp",
+                           "vmreg.hpp",
+                           "vtableStubs.cpp",
+                           "vtableStubs.hpp" };
+
+    int max = fileArray.length;
+    for( int count = 0; count < max; count++ )
+      {
+      String fileName = mainDir + fileArray[count];
+      String test = MarkupForPreproc.MarkItUp(
+                                         mApp,
+                                         fileName );
+
+      if( test.length() == 0 )
+        {
+        showStatus( " " );
+        showStatus( "The file had an error." );
+        showStatus( fileName );
+        return;
+        }
+      }
+
+    showStatus( " " );
+    showStatus( "Finished processing files." );
+    showStatus( " " );
+    }
 
 
 
