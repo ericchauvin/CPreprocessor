@@ -1,27 +1,30 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
-// When you use star-slash comments you usually use
-// it to block out a larger section of code.  Maybe
-// even hundreds of lines.  So you can't worry about
-// if there is a string literal somewhere in there
-// that would cause a problem.
-
 // This removes anything inside the star-slash
 // comments no matter what it is.  Whether it's in
 // a string literal or not.
 
-// In C# code I have to define the string
-// with separated characters like this:
+// In recent decades, when you use star-slash
+// comments you usually use it to block out a
+// larger section of code.  (As opposed to using 
+// single-line double-slash comments.)  You might
+// comment-out a section for hundreds of lines.
+// So you can't worry about if there is a string
+// literal somewhere in there that would cause a
+// problem.
+
+// In C# code (for example) I have to define the
+// string with separated characters like this:
 // string StarSlash = "*" + "/";
 // Otherwise it will interpret it as the end
-// of a comment, not as part of a string literal.
-
+// of a comment, not as part of a string-literal.
+// That's how it should be writtin inside a string-
+// literal.
 
 
 
 public class RemoveComments
   {
-
 
   public static String removeAllComments( MainApp mApp,
                                      String inString )
@@ -35,6 +38,7 @@ public class RemoveComments
     // the original line numbers so that the
     // programmer can see which line has an error
     // in it.
+
     result = markLineNumbers( mApp, result );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
@@ -106,6 +110,7 @@ public class RemoveComments
 
     if( containsTriGraph( result ))
       {
+      // A Trigraph is an error in a modern program.
       mApp.showStatus( "This file contains Trigraphs." );
       return "";
       }
@@ -154,9 +159,9 @@ public class RemoveComments
       int lineNumber = count + 1;
       line = line +
          Character.toString( Markers.Begin ) +
-         Character.toString( Markers.TypeLineNumber ) +
+         Markers.TypeLineNumber +
          lineNumber +
-         Character.toString( Markers.End ) +
+         Markers.End +
          "\n";
 
       sBuilder.append( line );
@@ -178,14 +183,14 @@ public class RemoveComments
 
     StringBuilder sBuilder = new StringBuilder();
 
-    String SlashStar = "/" + "*";
-    String StarSlash = "*" + "/";
+    String slashStar = "/" + "*";
+    String starSlash = "*" + "/";
 
     // This replaces the comment marker strings
     // anywhere and everywhere in the file.  Whether
     // they are inside quotes or not.
-    inString = inString.replace( SlashStar, Character.toString( Markers.SlashStar ));
-    inString = inString.replace( StarSlash, Character.toString( Markers.StarSlash ));
+    inString = inString.replace( slashStar, Character.toString( Markers.SlashStar ));
+    inString = inString.replace( starSlash, Character.toString( Markers.StarSlash ));
 
     boolean isInsideComment = false;
     int last = inString.length();
