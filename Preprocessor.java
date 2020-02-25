@@ -23,14 +23,10 @@ public class Preprocessor
     if( result.trim().length() == 0 )
       {
       mApp.showStatus( "Nothing in Source File." );
+      // Return an empty string to stop further 
+      // processing.
       return "";
       }
-
-    // mApp.showStatus( result );
-    // Make sure the last line ends with a newline
-    // so that the very last line is not unusual.
-    // All lines end with newlines.
-    result = result + "\n";
 
     // This adds line number markers and also fixes
     // line splices.
@@ -97,6 +93,3 @@ public class Preprocessor
 
 
   }
-
-
-
