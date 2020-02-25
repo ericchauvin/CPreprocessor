@@ -1020,9 +1020,9 @@ private void editPaste()
     for( int count = 0; count < max; count++ )
       {
       String fileName = mainDir + fileArray[count];
-      String test = MarkupForPreproc.MarkItUp(
-                                         mApp,
-                                         fileName );
+      String test = Preprocessor.PreprocessFile(
+                                          mApp,
+                                          fileName );
 
       if( test.length() == 0 )
         {
