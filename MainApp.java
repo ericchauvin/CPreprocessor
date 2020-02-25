@@ -1,6 +1,10 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
+// Threads
+// https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html
+
+
 // Code Analysis for C++ code, written in Java.
 
 
@@ -10,7 +14,7 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "2/20/2020";
+  public static final String versionDate = "2/25/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
