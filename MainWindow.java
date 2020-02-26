@@ -194,7 +194,7 @@ public class MainWindow extends JFrame implements
 
   private void addComponents( Container pane )
     {
-    // pane.setBackground( Color.red );
+    pane.setBackground( Color.black );
     // pane.setForeground( Color.red );
     pane.setLayout( new LayoutSimpleVertical());
 
@@ -411,6 +411,8 @@ public class MainWindow extends JFrame implements
     // File Menu:
     if( command == "FileList" )
       {
+      // The Java launcher starts what?
+
       String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
       // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
       // MarkupForPreproc.MarkItUp( mApp,
