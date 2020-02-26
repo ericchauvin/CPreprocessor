@@ -49,10 +49,10 @@
                                          (char)0x270F;
   public static final char TypePreprocessor =
                                          (char)0x2710;
-  public static final char TypeBeginPreproc =
-                                         (char)0x2711;
-  public static final char TypeEndPreproc =
-                                         (char)0x2712;
+  // public static final char TypeBeginPreproc =
+  //                                       (char)0x2711;
+  // public static final char TypeEndPreproc =
+  //                                       (char)0x2712;
 
 
 
