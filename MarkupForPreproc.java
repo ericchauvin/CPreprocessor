@@ -3,6 +3,7 @@
 
 
 
+
 public class MarkupForPreproc
   {
 
@@ -92,7 +93,7 @@ public class MarkupForPreproc
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
-      mApp.showStatus( " " );
+      mApp.showStatus( result );
       mApp.showStatus( "There was an error marker after markOperators." );
       return "";
       }
@@ -101,6 +102,17 @@ public class MarkupForPreproc
       {
       mApp.showStatus( " " );
       mApp.showStatus( "TestBeginEnd returned false after markOperators." );
+      return "";
+      }
+
+
+    result = TestMarkers.removeOutsideWhiteSpace( result );
+    if( result.contains( Character.toString(
+                      Markers.ErrorPoint )))
+      {
+      mApp.showStatus( result );
+      mApp.showStatus( " " );
+      mApp.showStatus( "There was an error marker after removeOutsideWhiteSpace." );
       return "";
       }
 
@@ -118,11 +130,6 @@ public class MarkupForPreproc
 
 
 /*
-// After macros replace identifiers and all that.
-// So this below doesn't get done here.
-// This is just markup.
-    Result = TestMarkers.RemoveOutsideWhiteSpace( Result );
-
     if( !TestMarkers.TestBrackets( MForm, Result ))
       {
       // ShowStatus( Result );
@@ -243,7 +250,9 @@ public class MarkupForPreproc
     String result = Character.toString(
                     Markers.Begin ) +
                     Markers.TypePreprocessor +
-                    splitS[0] +
+                    // Does trimming it mess up a macro?
+                    // splitS[0] +
+                    splitS[0].trim() +
                     Markers.End +
                     Markers.Begin +
                     splitS[1] + "\n";
@@ -771,18 +780,16 @@ public class MarkupForPreproc
     // sense here in this part, like for example a
     // parentheses or a comma.  But it will be
     // narrowed down later to different types of
-    // operators, like the mathematical operators.
+    // operators.
 
     // Ternary x?y:z
     // +=, -=, *=, /=,
-    // *** Pointer to a pointer to a...
+    // *** Pointer to a pointer to a... indefintely.
 
   private static String markOperators( String in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
-    char previousChar = ' ';
-    boolean isInsideOp = false;
     boolean isInsideObject = false;
     int last = in.length();
     for( int count = 0; count < last; count++ )
@@ -792,12 +799,6 @@ public class MarkupForPreproc
       // It can't have nested Begin/End markers.
       if( testChar == Markers.Begin )
         {
-        if( isInsideOp )
-          {
-          isInsideOp = false;
-          sBuilder.append( Markers.End );
-          }
-
         sBuilder.append( testChar );
         isInsideObject = true;
         continue;
@@ -816,277 +817,113 @@ public class MarkupForPreproc
         continue;
         }
 
-      if( count > 0 )
-        previousChar = in.charAt( count - 1 );
-      else
-        previousChar = ' ';
-
-=======
-      if( TestChar == Markers.Begin )
+      if( isBasicOpCharacter( testChar ))
         {
-        if( IsInsideOp )
-          {
-          IsInsideOp = false;
-          SBuilder.Append( Char.ToString(
-                               Markers.End ));
-
-          }
-
-        IsInsideObject = true;
-        SBuilder.Append( Char.ToString( TestChar ));
+        sBuilder.append( Markers.Begin );
+        sBuilder.append( Markers.TypeOperator );
+        sBuilder.append( testChar );
+        sBuilder.append( Markers.End );
         continue;
         }
 
-      if( TestChar == Markers.End )
-        {
-        IsInsideObject = false;
-        SBuilder.Append( Char.ToString( TestChar ));
-        continue;
-        }
-
-      if( IsInsideObject )
-        {
-        SBuilder.Append( Char.ToString( TestChar ));
-        continue;
-        }
-
-      IsInsideOp = MarkOperator( SBuilder,
-                                 PreviousChar,
-                                 TestChar,
-                                 IsInsideOp );
+      sBuilder.append( testChar );
       }
 
-    string Result = SBuilder.ToString();
-    return Result;
-    }
-
-
-MarkOneOperator or what?
-  private static bool MarkOperator( StringBuilder SBuilder,
-                             char PreviousChar,
-                             char TestChar,
-                             bool IsInsideOp )
-    {
-    if( !IsInsideOp )
-      {
-      if( IsStartCharacter( TestChar ))
-        {
-        SBuilder.Append( Char.ToString(
-                                   Markers.Begin ));
-        SBuilder.Append( Char.ToString(
-                         Markers.TypeOperator ));
-        SBuilder.Append( Char.ToString( TestChar ));
-        return true;
-        }
-
-      // It is not the start of an operator.
-      SBuilder.Append( Char.ToString( TestChar ));
-      return false;
-      }
-
-    // if( !IsInsideOp )
-      // {
-      // ShowStatus( "This can't happen with IsInsideOp." );
-      // return false;
-      // }
-
-    // At this point IsInsideOp is true and it is
-    // checking if this character continues a
-    // two-character operation symbol.
-    if( IsSecondOperatorCharacter( TestChar,
-                                   PreviousChar ))
-      {
-      SBuilder.Append( Char.ToString( TestChar ));
-      SBuilder.Append( Char.ToString( Markers.End ));
-      return false;
-      }
-
-    // At this point it's not the continuation of
-    // the last operator.
-    SBuilder.Append( Char.ToString( Markers.End ));
-
-    // IsInsideOp = false;
-
-    // Is this the start of a new operator?
-    if( IsStartCharacter( TestChar ))
-      {
-      // IsInsideOp = true;
-      SBuilder.Append( Char.ToString(
-                       Markers.Begin ));
-      SBuilder.Append( Char.ToString(
-                       Markers.TypeOperator ));
-      SBuilder.Append( Char.ToString( TestChar ));
-      return true;
-      }
-
-    // This is not the start of a new operator.
-    SBuilder.Append( Char.ToString( TestChar ));
-    return false;
+    return sBuilder.toString();
     }
 
 
 
-  private static bool IsStartCharacter( char TestChar )
+  private static boolean isBasicOpCharacter(
+                                      char testChar )
     {
-    // Preprocessing is not allowed here.
-    if( TestChar == '#' )
+    // This does not look inside of marked strings,
+    // characters, identifiers, or numbers.
+
+    // How to mess up a language:
+    // C++ user defined literals 
+    // long double operator"" _kg( long double x ) 
+
+    // Preprocessing?
+    if( testChar == '#' )
       return false;
 
-    if( TestChar == ',' )
+    if( testChar == ',' )
       return true;
 
-    if( TestChar == '+' )
+    if( testChar == '+' )
       return true;
 
-    if( TestChar == '-' )
+    if( testChar == '-' )
       return true;
 
-    if( TestChar == '*' )
+    if( testChar == '*' )
       return true;
 
-    if( TestChar == '/' )
+    if( testChar == '/' )
       return true;
 
-    if( TestChar == '%' )
+    if( testChar == '%' )
       return true;
 
-    if( TestChar == '=' )
+    if( testChar == '=' )
       return true;
 
-    if( TestChar == '>' )
+    if( testChar == '>' )
       return true;
 
-    if( TestChar == '<' )
+    if( testChar == '<' )
       return true;
 
-    if( TestChar == '.' )
+    if( testChar == '.' )
       return true;
 
-    if( TestChar == '!' )
+    if( testChar == '!' )
       return true;
 
-    if( TestChar == '~' )
+    if( testChar == '~' )
       return true;
 
-    if( TestChar == '&' )
+    if( testChar == '&' )
       return true;
 
-    if( TestChar == '|' )
+    if( testChar == '|' )
       return true;
 
-    if( TestChar == '^' )
+    if( testChar == '^' )
       return true;
 
-    if( TestChar == ':' )
+    if( testChar == '?' )
       return true;
 
-    if( TestChar == ';' )
+    if( testChar == ':' )
       return true;
 
-    if( TestChar == '(' )
+    if( testChar == ';' )
       return true;
 
-    if( TestChar == ')' )
+    if( testChar == '{' )
       return true;
 
-    if( TestChar == '[' )
+    if( testChar == '}' )
       return true;
 
-    if( TestChar == ']' )
+    if( testChar == '(' )
+      return true;
+
+    if( testChar == ')' )
+      return true;
+
+    if( testChar == '[' )
+      return true;
+
+    if( testChar == ']' )
       return true;
 
     return false;
     }
 
 
-
-
-  private static bool IsSecondOperatorCharacter(
-                                   char TestChar,
-                                   char PreviousChar )
-    {
-    if( PreviousChar == '+' )
-      {
-      // ++
-      if( TestChar == '+' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '-' )
-      {
-      // --
-      if( TestChar == '-' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '=' )
-      {
-      // ==
-      if( TestChar == '=' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '>' )
-      {
-      // >=
-      if( TestChar == '=' )
-        return true;
-
-      // >>
-      if( TestChar == '>' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '<' )
-      {
-      // <=
-      if( TestChar == '=' )
-        return true;
-
-      // <<
-      if( TestChar == '<' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '!' )
-      {
-      // !=
-      if( TestChar == '=' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '&' )
-      {
-      // &&
-      if( TestChar == '&' )
-        return true;
-
-      return false;
-      }
-
-    if( PreviousChar == '|' )
-      {
-      // ||
-      if( TestChar == '|' )
-        return true;
-
-      return false;
-      }
-
-    return false;
-    }
 
 
 
