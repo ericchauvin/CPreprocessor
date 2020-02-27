@@ -43,50 +43,54 @@
 
 
 
-/*
-  internal static string RemoveOutsideWhiteSpace( string InString )
+
+  public static String removeOutsideWhiteSpace(
+                                            String in )
     {
-    StringBuilder SBuilder = new StringBuilder();
+    StringBuilder sBuilder = new StringBuilder();
 
-    bool IsInsideObject = false;
-    int Last = InString.Length;
-    for( int Count = 0; Count < Last; Count++ )
+    boolean isInsideObject = false;
+    int last = in.length();
+    for( int count = 0; count < last; count++ )
       {
-      char TestChar = InString[Count];
+      char testChar = in.charAt( count );
 
-      if( TestChar == Markers.Begin )
+      if( testChar == Markers.Begin )
         {
-        IsInsideObject = true;
-        SBuilder.Append( Char.ToString( TestChar ));
+        isInsideObject = true;
+        sBuilder.append( testChar );
         continue;
         }
 
-      if( TestChar == Markers.End )
+      if( testChar == Markers.End )
         {
-        IsInsideObject = false;
-        SBuilder.Append( Char.ToString( TestChar ));
+        isInsideObject = false;
+        sBuilder.append( testChar );
         continue;
         }
 
-      if( IsInsideObject )
+      if( isInsideObject )
         {
-        SBuilder.Append( Char.ToString( TestChar ));
+        sBuilder.append( testChar );
         continue;
         }
 
-      if( TestChar == ' ' )
+      if( testChar == ' ' )
         continue;
 
-      if( TestChar == '\n' )
+      if( testChar == '\n' )
         continue;
 
-      SBuilder.Append( Char.ToString( TestChar ));
+      sBuilder.append( "Right here >" + testChar + "<" );
+
+      sBuilder.append( testChar );
+      sBuilder.append( Markers.ErrorPoint );
+      return sBuilder.toString();
       }
 
-    string Result = SBuilder.ToString();
-    return Result;
+    return sBuilder.toString();
     }
-*/
+
 
 
 /*
