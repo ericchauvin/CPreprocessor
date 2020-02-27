@@ -1,5 +1,6 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
+
 // This removes anything inside the star-slash
 // comments no matter what it is.  Whether it's in
 // a string literal or not.
@@ -27,10 +28,10 @@ public class RemoveComments
   {
 
   public static String removeAllComments( MainApp mApp,
-                                     String inString )
+                                         String in )
     {
     String showError = "";
-    String result = inString;
+    String result = in;
     
     // This fixes line splices too.  (Lines with 
     // an escaped newline character at the end.)
@@ -52,7 +53,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !TestMarkers.testBeginEnd( mApp, result ))
+    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -74,7 +75,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !TestMarkers.testBeginEnd( mApp, result ))
+    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -98,7 +99,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !TestMarkers.testBeginEnd( mApp, result ))
+    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -108,24 +109,17 @@ public class RemoveComments
       return "";
       }
 
-    if( containsTriGraph( result ))
-      {
-      // A Trigraph is an error in a modern program.
-      mApp.showStatus( "This file contains Trigraphs." );
-      return "";
-      }
-
     return result;
     }
 
 
 
   private static String markLineNumbers( MainApp mApp,
-                                      String inString )
+                                      String in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
-    String[] splitS = inString.split( "\n" );
+    String[] splitS = in.split( "\n" );
     int last = splitS.length;
     if( last == 0 )
       return "";
@@ -149,7 +143,8 @@ public class RemoveComments
         {
         // This would be a bad idea, but somebody
         // could split a word right at the end
-        // of a line and it should join the word
+        // of a line and it should (according to
+        // the specs) join the word
         // together with no space.
         // Not this: sBuilder.append( line + " " );
         sBuilder.append( line );
@@ -158,7 +153,7 @@ public class RemoveComments
 
       int lineNumber = count + 1;
       line = line +
-         Character.toString( Markers.Begin ) +
+         Markers.Begin +
          Markers.TypeLineNumber +
          lineNumber +
          Markers.End +
@@ -204,7 +199,8 @@ public class RemoveComments
           {
           // It shouldn't find this start marker
           // if it's already inside a comment.
-          sBuilder.append( Character.toString( Markers.ErrorPoint ));
+          sBuilder.append( Character.toString(
+                                Markers.ErrorPoint ));
 
           mApp.showStatus( " " );
           mApp.showStatus( "Error with nested comment at: " + count );
@@ -247,15 +243,17 @@ public class RemoveComments
 
 
 
+/*
+  Trigraphs were used back in the days of teletype
+  machines, before they had full keyboards.
+  It would be _very_ old code it if had trigraphs
+  in it.
   private static boolean containsTriGraph( String line )
     {
     // There are also DiGraphs.
     // Digraph:        <%  %>   <:  :>  %:  %:%:
     // Punctuator:      {   }   [   ]   #    ##
 
-    // To keep this file itself from containing
-    // trigraphs it would have to be like:
-    // testString = "?" + "?" + "=";
     if( line.contains( "??=" ))
       return true;
 
@@ -285,6 +283,7 @@ public class RemoveComments
 
     return false;
     }
+*/
 
 
 
