@@ -33,6 +33,9 @@ public class Preprocessor
     result = RemoveComments.removeAllComments(
                                   mApp, result );
 
+    if( result.length() == 0 )
+      return "";
+
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
@@ -44,7 +47,7 @@ public class Preprocessor
       return "";
       }
 
-    if( !TestMarkers.testBeginEnd( mApp, result ))
+    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -67,7 +70,7 @@ public class Preprocessor
       return "";
       }
 
-    if( !TestMarkers.testBeginEnd( mApp, result ))
+    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -80,11 +83,11 @@ public class Preprocessor
     result = MarkupForPreproc.MarkItUp( mApp,
                                         result );
 
-    mApp.showStatus( result );
-    mApp.showStatus( " " );
-    mApp.showStatus( "Done preprocessing:" );
-    mApp.showStatus( fileName );
-    mApp.showStatus( " " );
+    // mApp.showStatus( result );
+    // mApp.showStatus( " " );
+    // mApp.showStatus( "Done preprocessing:" );
+    // mApp.showStatus( fileName );
+    // mApp.showStatus( " " );
 
     return result;
     }
