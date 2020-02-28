@@ -145,8 +145,19 @@ public class RemoveComments
         // could split a word right at the end
         // of a line and it should (according to
         // the specs) join the word
-        // together with no space.
-        // Not this: sBuilder.append( line + " " );
+        // together with no space.  That _should_
+        // be an error, but it's a very old thing.
+        int lineLength = line.length();
+        if( lineLength == 1 )
+          {
+          line = "";
+          }
+        else
+          {
+          // substring( int beginIndex, int endIndex )
+          line = line.substring( 0, lineLength - 1 );
+          }
+
         sBuilder.append( line );
         continue;
         }
