@@ -1,6 +1,11 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
 
+// I can make a partial preprocessor and let
+// gcc do the rest until I get the other parts
+// working.
+
+
 
 public class Preprocessor
   {
@@ -80,14 +85,21 @@ public class Preprocessor
       return "";
       }
 
-    result = MarkupForPreproc.MarkItUp( mApp,
-                                        result );
+
+    PreprocIfSection section = new PreprocIfSection(
+                                               mApp );
+    if( !section.setFromString( result ))
+      return "";
+
+    // result = MarkupForPreproc.MarkItUp( mApp,
+       //                                 result );
+
 
     // mApp.showStatus( result );
-    // mApp.showStatus( " " );
-    // mApp.showStatus( "Done preprocessing:" );
-    // mApp.showStatus( fileName );
-    // mApp.showStatus( " " );
+    mApp.showStatus( " " );
+    mApp.showStatus( "Done preprocessing:" );
+    mApp.showStatus( fileName );
+    mApp.showStatus( " " );
 
     return result;
     }
