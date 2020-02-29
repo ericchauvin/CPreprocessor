@@ -225,6 +225,9 @@
 
   private boolean isValidCommand( String in )
     {
+    if( in.equals( "error" ))
+      return true;
+
     if( in.equals( "define" ))
       return true;
 
