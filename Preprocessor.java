@@ -4,6 +4,7 @@
 // I can make a partial preprocessor and let
 // gcc do the rest until I get the other parts
 // working.
+// Leave Mecro functions as an option?
 
 
 
@@ -88,7 +89,8 @@ public class Preprocessor
 
     PreprocIfSection section = new PreprocIfSection(
                                                mApp );
-    if( !section.setFromString( result ))
+    result = section.markLevels( result );
+    if( result.length() == 0 )
       return "";
 
     // result = MarkupForPreproc.MarkItUp( mApp,
