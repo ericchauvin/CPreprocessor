@@ -194,8 +194,12 @@ public class MainWindow extends JFrame implements
 
   private void addComponents( Container pane )
     {
+    // The red colors are for testing.
+    this.setBackground( Color.red );
+    this.setForeground( Color.red );
+
     pane.setBackground( Color.black );
-    // pane.setForeground( Color.red );
+    pane.setForeground( Color.red );
     pane.setLayout( new LayoutSimpleVertical());
 
     mainPanel = new JPanel();
@@ -1038,149 +1042,149 @@ private void editPaste()
                            "backend.h",
                            "basic-block.h",
                            "bb-reorder.c",
-                           "bb-reorder.h" };
+                           "bb-reorder.h",
+                           "bitmap.c",
+                           "bitmap.h",
+                           "bt-load.c",
+                           "builtins.c",
+                           "builtins.h",
+                           "caller-save.c",
+                           "calls.c",
+                           "calls.h",
+                           "ccmp.c",
+                           "ccmp.h",
+                           "cfg.c",
+                           "cfg.h",
+                           "cfganal.c",
+                           "cfganal.h",
+                           "cfgbuild.c",
+                           "cfgbuild.h",
+                           "cfgcleanup.c",
+                           "cfgcleanup.h",
+                           "cfgexpand.c",
+                           "cfgexpand.h",
+                           "cfghooks.c",
+                           "cfghooks.h",
+                           "cfgloop.c",
+                           "cfgloop.h",
+                           "cfgloopanal.c",
+                           "cfgloopmanip.c",
+                           "cfgloopmanip.h",
+                           "cfgrtl.c",
+                           "cfgrtl.h",
+                           "cgraph.c",
+                           "cgraph.h",
+                           "cgraphbuild.c",
+                           "cgraphclones.c",
+                           "cgraphunit.c",
+                           "collect-utils.c",
+                           "collect-utils.h",
+                           "collect2-aix.c",
+                           "collect2-aix.h",
+                           "collect2.c",
+                           "collect2.h",
+                           "color-macros.h",
+                           "combine-stack-adj.c",
+                           "combine.c",
+                           "compare-elim.c",
+                           "conditions.h",
+                           // config.in gets turned in to config.h.
+                           "context.c",
+                           "context.h",
+                           "convert.c",
+                           "convert.h",
+                           "coretypes.h",
+                           "coverage.c",
+                           "coverage.h",
+                           "cppbuiltin.c",
+                           "cppbuiltin.h",
+                           "cppdefault.c",
+                           "cppdefault.h",
+                           "cprop.c",
+                           "cse.c",
+                           "cselib.c",
+                           "cselib.h",
+                           "data-streamer-in.c",
+                           "data-streamer-out.c",
+                           "data-streamer.c",
+                           "data-streamer.h",
+                           "dbgcnt.c",
+                           "dbgcnt.h",
+                           "dbxout.c",
+                           "dbxout.h",
+                           "dce.c",
+                           "dce.h",
+                           "ddg.c",
+                           "ddg.h",
+                           "debug.c",
+                           "debug.h",
+                           "defaults.h",
+                           "df-core.c",
+                           "df-problems.c",
+                           "df-scan.c",
+                           "df.h",
+                           "dfp.c",
+                           "dfp.h",
+                           "diagnostic-color.c",
+                           "diagnostic-color.h",
+                           "diagnostic-core.h",
+                           "diagnostic-format-json.cc",
+                           "diagnostic-show-locus.c",
+                           "diagnostic.c",
+                           "diagnostic.h",
+                           "dojump.c",
+                           "dojump.h",
+                           "dominance.c",
+                           "dominance.h",
+                           "domwalk.c",
+                           "domwalk.h",
+                           "double-int.c",
+                           "double-int.h",
+                           "dse.c",
+                           "dump-context.h",
+                           "dumpfile.c",
+                           "dumpfile.h",
+                           "dwarf2asm.c",
+                           "dwarf2asm.h",
+                           "dwarf2cfi.c",
+                           "dwarf2out.c",
+                           "dwarf2out.h",
+                           "early-remat.c",
+                           "edit-context.c",
+                           "edit-context.h",
+                           "emit-rtl.c",
+                           "emit-rtl.h",
+                           "errors.c",
+                           "errors.h",
+                           "et-forest.c",
+                           "et-forest.h",
+                           "except.c",
+                           "except.h",
+                           "explow.c",
+                           "explow.h",
+                           "expmed.c",
+                           "expmed.h",
+                           "expr.c",
+                           "expr.h",
+                           "fibonacci_heap.c",
+                           "fibonacci_heap.h",
+                           "file-find.c",
+                           "file-find.h",
+                           "file-prefix-map.c",
+                           "file-prefix-map.h",
+                           "final.c",
+                           "fixed-value.c",
+                           "fixed-value.h",
+                           "flag-types.h",
+                           "flags.h",
+                           "fold-const-call.c",
+                           "fold-const-call.h",
+                           "fold-const.c",
+                           "fold-const.h",
+                           "fp-test.c",
+                           "function-tests.c" };
 
 /*
-bitmap.c
-bitmap.h
-bt-load.c
-builtins.c
-builtins.h
-caller-save.c
-calls.c
-calls.h
-ccmp.c
-ccmp.h
-cfg.c
-cfg.h
-cfganal.c
-cfganal.h
-cfgbuild.c
-cfgbuild.h
-cfgcleanup.c
-cfgcleanup.h
-cfgexpand.c
-cfgexpand.h
-cfghooks.c
-cfghooks.h
-cfgloop.c
-cfgloop.h
-cfgloopanal.c
-cfgloopmanip.c
-cfgloopmanip.h
-cfgrtl.c
-cfgrtl.h
-cgraph.c
-cgraph.h
-cgraphbuild.c
-cgraphclones.c
-cgraphunit.c
-collect-utils.c
-collect-utils.h
-collect2-aix.c
-collect2-aix.h
-collect2.c
-collect2.h
-color-macros.h
-combine-stack-adj.c
-combine.c
-compare-elim.c
-conditions.h
-// config.in gets turned in to config.h.
-context.c
-context.h
-convert.c
-convert.h
-coretypes.h
-coverage.c
-coverage.h
-cppbuiltin.c
-cppbuiltin.h
-cppdefault.c
-cppdefault.h
-cprop.c
-cse.c
-cselib.c
-cselib.h
-data-streamer-in.c
-data-streamer-out.c
-data-streamer.c
-data-streamer.h
-dbgcnt.c
-dbgcnt.h
-dbxout.c
-dbxout.h
-dce.c
-dce.h
-ddg.c
-ddg.h
-debug.c
-debug.h
-defaults.h
-df-core.c
-df-problems.c
-df-scan.c
-df.h
-dfp.c
-dfp.h
-diagnostic-color.c
-diagnostic-color.h
-diagnostic-core.h
-diagnostic-format-json.cc
-diagnostic-show-locus.c
-diagnostic.c
-diagnostic.h
-dojump.c
-dojump.h
-dominance.c
-dominance.h
-domwalk.c
-domwalk.h
-double-int.c
-double-int.h
-dse.c
-dump-context.h
-dumpfile.c
-dumpfile.h
-dwarf2asm.c
-dwarf2asm.h
-dwarf2cfi.c
-dwarf2out.c
-dwarf2out.h
-early-remat.c
-edit-context.c
-edit-context.h
-emit-rtl.c
-emit-rtl.h
-errors.c
-errors.h
-et-forest.c
-et-forest.h
-except.c
-except.h
-explow.c
-explow.h
-expmed.c
-expmed.h
-expr.c
-expr.h
-fibonacci_heap.c
-fibonacci_heap.h
-file-find.c
-file-find.h
-file-prefix-map.c
-file-prefix-map.h
-final.c
-fixed-value.c
-fixed-value.h
-flag-types.h
-flags.h
-fold-const-call.c
-fold-const-call.h
-fold-const.c
-fold-const.h
-fp-test.c
-function-tests.c
 function.c
 function.h
 fwprop.c
