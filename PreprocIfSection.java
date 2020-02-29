@@ -1,6 +1,11 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
 
+// This means that I need to get the defined value
+// from a previous macro in this macro.
+// if SWITCHABLE_TARGET
+
+
 
   public class PreprocIfSection
   {
@@ -29,8 +34,11 @@
     }
 
 
-  public boolean setFromString( String in )
+  public String markLevels( String in )
     {
+    StringBuilder sBuilder = new StringBuilder();
+    StringBuilder lineBuilder = new StringBuilder();
+
 /*
     String startMarkers = Character.toString(
                            Markers.Begin ) +
@@ -47,39 +55,146 @@
                                     Markers.Begin ) );
 
     int last = splitS.length;
-    for( int count = 0; count < last; count++ )
+    if( last == 0 )
+      {
+      mApp.showStatus( "There is nothing in the string for markLevels()." );
+      return "";
+      }
+
+    // Before the first Begin marker.
+    sBuilder.append( splitS[0] );
+
+    int level = 0;
+    // Count starts at one with the first Begin marker.
+    for( int count = 1; count < last; count++ )
       {
       String line = splitS[count];
       if( !line.contains( Character.toString(
                           Markers.TypePreprocessor )))
         {
+        sBuilder.append( Markers.Begin );
+        sBuilder.append( splitS[count] );
         continue;
         }
 
-      String[] splitLine = splitS[count].split( " " );
+      // Can I trim this macro line?
+      line = line.trim();
+
+      String[] splitLine = line.split( " " );
       int lastPart = splitLine.length;
       if( lastPart == 0 )
         {
         mApp.showStatus( "Preprocessor line doesn't have parts." );
-        return false;
+        return "";
         }
 
       String command = splitLine[0]; 
       command = command.replace( Character.toString(
                     Markers.TypePreprocessor ), "" ); 
 
-      command = command.replace( Character.toString(
+      boolean commandHasNoBody = command.contains(
+                                  Character.toString(Markers.End ));
+
+      if( commandHasNoBody )
+        {
+        command = command.replace( Character.toString(
                                   Markers.End ), "" ); 
+        }
 
       command = command.toLowerCase();
       if( !isValidCommand( command ))
         {
         mApp.showStatus( command + " is not a valid command." );
-        return false;
+        return "";
+        }
+
+      if( command.equals( "if" ))
+        {
+        level++;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( command.equals( "ifdef" ))
+        {
+        level++;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( command.equals( "ifndef" ))
+        {
+        level++;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( command.equals( "else" ))
+        {
+        // else ends a level but then it begins a new one.
+        level--;
+        level++;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( command.equals( "elif" ))
+        {
+        // elif is actually two statements.  An if
+        // followed by and else.
+  
+        level--;
+        // level++;
+        level++;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( command.equals( "endif" ))
+        {
+        level--;
+        mApp.showStatus( command + ") " + level );
+        }
+
+      if( level < 0 )
+        {
+        mApp.showStatus( "Level is less than zero." );
+        return "";
         }
 
 
-      mApp.showStatus( "Command: " + command ); 
+      String testLine = "";
+      lineBuilder.setLength( 0 );
+
+      if( commandHasNoBody )
+        {
+        testLine = Character.toString( 
+                        Markers.TypePreprocessor ) +
+                        command + Markers.End;
+ 
+        }
+      else
+        {
+        for( int count2 = 1; count2 < lastPart; count2++ )
+          lineBuilder.append( splitLine[count2] + " " );
+ 
+        String macroBody = lineBuilder.toString();
+        macroBody = macroBody.trim();
+
+        // mApp.showStatus( "Command: " + command ); 
+        // mApp.showStatus( "Body: " + macroBody ); 
+        // mApp.showStatus( " " ); 
+
+        testLine = Character.toString( 
+                        Markers.TypePreprocessor ) +
+                        command + " " + macroBody;
+        }
+
+      mApp.showStatus( testLine ); 
+      mApp.showStatus( " " ); 
+      
+      if( !line.equals( testLine ))
+        {
+        mApp.showStatus( "Command + line parts don't match up." ); 
+        mApp.showStatus( testLine ); 
+        mApp.showStatus( line ); 
+        return "";
+        }
 
 
 /*
@@ -97,8 +212,15 @@
 
       }
 
-    return true;
+    if( level != 0 )
+      {
+      mApp.showStatus( "Level is not zero at end." );
+      return "";
+      }
+
+    return sBuilder.toString();
     }
+
 
 
   private boolean isValidCommand( String in )
