@@ -87,11 +87,11 @@ public class Preprocessor
       }
 
 
-    PreprocIfSection section = new PreprocIfSection(
-                                               mApp );
-    result = section.markLevels( result );
+    result = PreprocIfLevels.markLevels( result, mApp );
     if( result.length() == 0 )
       return "";
+
+
 
     // result = MarkupForPreproc.MarkItUp( mApp,
        //                                 result );
