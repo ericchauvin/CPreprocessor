@@ -3,6 +3,36 @@
 
   public class Utility
   {
+
+  public static byte[] resizeByteArraySmaller(
+                                       byte[] in,
+                                       int newSize )
+    {
+    if( newSize >= in.length )
+      return in;
+
+    byte[] newArray = new byte[newSize];
+    for( int count = 0; count < newSize; count++ )
+      newArray[count] = in[count];
+
+    return newArray;
+    }
+
+
+
+  public static byte[] resizeByteArrayBigger(
+                                       byte[] in,
+                                       int sizeToAdd )
+    {
+    byte[] newArray = new byte[in.length + sizeToAdd];
+    int max = in.length;
+    for( int count = 0; count < max; count++ )
+      newArray[count] = in[count];
+
+    return newArray;
+    }
+
+
 /*
   public static int[] ResizeIntArray( int[] in, int sizeToAdd )
     {
