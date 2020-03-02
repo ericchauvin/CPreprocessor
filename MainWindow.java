@@ -1024,7 +1024,6 @@ private void editPaste()
                            "vtableStubs.hpp" };
 */
 
-    String mainDir = "C:\\gccmaster\\gcc\\";
 
     String[] fileArray = { "addresses.h",
                            "alias.c",
@@ -1369,10 +1368,14 @@ ipa-inline.h
 ipa-param-manipulation.c
 */
 
+    String mainDir = "C:\\gccmaster\\gcc\\";
+    String outDir = "C:\\PreprocessOut\\";
+
     int max = fileArray.length;
     for( int count = 0; count < max; count++ )
       {
       String fileName = mainDir + fileArray[count];
+      String outFileName = outDir + fileArray[count];
       String test = Preprocessor.PreprocessFile(
                                           mApp,
                                           fileName );
@@ -1384,6 +1387,12 @@ ipa-param-manipulation.c
         showStatus( fileName );
         return;
         }
+
+      FileUtility.writeStringToFile( mApp,
+                                     outFileName,
+                                     test,
+                                     false );
+
       }
 
     showStatus( " " );
