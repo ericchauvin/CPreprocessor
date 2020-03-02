@@ -2,7 +2,6 @@
 
 
 
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -28,23 +27,26 @@ import java.nio.file.Paths;
       return "";
       }
 
-    byte[] fileArray;
-    fileArray = Files.readAllBytes( path );
+    byte[] fileBytes = Files.readAllBytes( path );
+    if( fileBytes == null )
+      return "";
+
+    String fileS = UTF8Strings.bytesToString(
+                                          fileBytes,
+                                          2000000000 );
+
 
     StringBuilder sBuilder = new StringBuilder();
 
-    // There is a String constructor that reads a byte array
-    // using a particular character set, but this tests it
-    // to make sure it doesn't have bad data in it.
 
-    int nonAsciiCount = 0;
-    short newline = (short)'\n';
-    short space = (short)' ';
-    short tab = (short)'\t';
-    int max = fileArray.length;
+    // int nonAsciiCount = 0;
+    char newline = '\n';
+    char space = ' ';
+    char tab = '\t';
+    int max = fileS.length();
     for( int count = 0; count < max; count++ )
       {
-      short sChar = Utility.ByteToShort( fileArray[count] );
+      char sChar = fileS.charAt( count );
 
       if( !keepTabs )
         {
@@ -53,49 +55,9 @@ import java.nio.file.Paths;
 
         }
 
-      // Handle UTF8 in the future.
-      // Valid/verified UTF8.
-      // Don't exclude any characters in the Basic
-      // Multilingual Plane except markers that
-      // shouldn't be in this.  See the Markers.cs
-      // file.
-      if( Markers.isMarker( (char)sChar ))
+      // Markers shouldn't be in this.
+      if( Markers.isMarker( sChar ))
         sChar = ' ';
-
-
-      // Basic Multilingual Plane
-      // C0 Controls and Basic Latin (Basic Latin)
-      //                                 (0000 007F)
-      // C1 Controls and Latin-1 Supplement (0080 00FF)
-      // Latin Extended-A (0100 017F)
-      // Latin Extended-B (0180 024F)
-      // IPA Extensions (0250 02AF)
-      // Spacing Modifier Letters (02B0 02FF)
-      // Combining Diacritical Marks (0300 036F)
-      // General Punctuation (2000 206F)
-      // Superscripts and Subscripts (2070 209F)
-      // Currency Symbols (20A0 20CF)
-      // Combining Diacritical Marks for Symbols
-      //                                (20D0 20FF)
-      // Letterlike Symbols (2100 214F)
-      // Number Forms (2150 218F)
-      // Arrows (2190 21FF)
-      // Mathematical Operators (2200 22FF)
-      // Box Drawing (2500 257F)
-      // Geometric Shapes (25A0 25FF)
-      // Miscellaneous Symbols (2600 26FF)
-      // Dingbats (2700 27BF)
-      // Miscellaneous Symbols and Arrows (2B00 2BFF)
-
-
-      //  Don't go higher than D800 (Surrogates).
-      // if( ToCheck >= 0xD800 )
-      if( sChar > 126 ) // >= 0xD800
-        {
-        nonAsciiCount++;
-        // Mark this as non-ASCII.
-        sChar = Markers.ErrorPoint;
-        }
 
       if( sChar < space )
         {
@@ -106,15 +68,10 @@ import java.nio.file.Paths;
 
         }
 
-      sBuilder.append( (char)sChar );
+      sBuilder.append( sChar );
       }
 
-    String resultS = sBuilder.toString();
-    if( nonAsciiCount == 0 )
-      return resultS;
-    else
-      return "**** Non-ASCII *****\n" + resultS;
-
+    return sBuilder.toString();
     }
     catch( Exception e )
       {
@@ -127,7 +84,7 @@ import java.nio.file.Paths;
 
 
 
-  public static void writeAsciiStringToFile( MainApp mApp,
+  public static boolean writeStringToFile( MainApp mApp,
                                         String fileName,
                                         String textS,
                                         boolean keepTabs )
@@ -135,10 +92,10 @@ import java.nio.file.Paths;
     try
     {
     if( textS == null )
-      return;
+      return false;
 
     if( textS.trim().length() < 1 )
-      return;
+      return false;
 
     Path path = Paths.get( fileName );
 
@@ -151,15 +108,8 @@ import java.nio.file.Paths;
       {
       char sChar = textS.charAt( count );
 
-      if( sChar > 126 )
+      if( sChar > 0xD800 ) // High Surrogates
         continue;
-
-        /*
-        {
-        nonAsciiCount++;
-        sChar = 0x2700; // Mark this as non-ASCII.
-        }
-        */
 
       if( !keepTabs )
         {
@@ -181,28 +131,30 @@ import java.nio.file.Paths;
 
     String outString = sBuilder.toString();
     if( outString == null )
-      return;
+      return false;
 
     if( outString.trim().length() < 1 )
-      return;
+      return false;
 
-    char[] outCharArray = outString.toCharArray();
-    byte[] outBuffer = new byte[outCharArray.length];
-    max = outCharArray.length;
-    for( int count = 0; count < max; count++ )
+    byte[] outBuffer = UTF8Strings.stringToBytes( outString );
+    if( outBuffer == null )
       {
-      outBuffer[count] = (byte)outCharArray[count];
+      mApp.showStatus( "Could not write to the file: \n" + fileName );
+      mApp.showStatus( "outBuffer was null." );
+      return false;
       }
 
     Files.write( path, outBuffer,  StandardOpenOption.CREATE,
                         StandardOpenOption.TRUNCATE_EXISTING,
                         StandardOpenOption.WRITE );
 
+    return true;
     }
     catch( Exception e )
       {
       mApp.showStatus( "Could not write to the file: \n" + fileName );
       mApp.showStatus( e.getMessage() );
+      return false;
       }
     }
 
