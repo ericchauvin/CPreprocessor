@@ -15,6 +15,8 @@ public class Preprocessor
                                      String fileName )
 
     {
+    try
+    {
     String showError = "";
     mApp.showStatus( "Preprocessing file:\n" + fileName );
 
@@ -86,8 +88,17 @@ public class Preprocessor
       return "";
       }
 
+    // This is created once for each new preprocessed
+    // file.  So if I #include files I need to get
+    // the defines from that other dictionary.
+    DefinesDictionary definesDict = new
+                           DefinesDictionary( mApp );
 
-    result = PreprocIfLevels.markLevels( result, mApp );
+
+    result = PreprocIfLevels.markLevels( result,
+                                         mApp,
+                                         definesDict );
+
     if( result.length() == 0 )
       return "";
 
@@ -99,11 +110,19 @@ public class Preprocessor
 
     // mApp.showStatus( result );
     mApp.showStatus( " " );
-    mApp.showStatus( "Done preprocessing:" );
-    mApp.showStatus( fileName );
-    mApp.showStatus( " " );
+    // mApp.showStatus( "Done preprocessing:" );
+    // mApp.showStatus( fileName );
+    // mApp.showStatus( " " );
 
     return result;
+
+    }
+    catch( Exception e )
+      {
+      mApp.showStatus( "Exception in PreprocessFile()." );
+      mApp.showStatus( e.getMessage() );
+      return "";
+      }
     }
 
 
