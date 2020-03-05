@@ -96,6 +96,8 @@ public class DefinesDictionary
 
   public void setString( String key, String value )
     {
+    try
+    {
     if( key == null )
       return;
 
@@ -109,6 +111,13 @@ public class DefinesDictionary
       lineArray[index] = new DefinesDictionaryLine();
 
     lineArray[index].setString( key, value );
+
+    }
+    catch( Exception e )
+      {
+      mApp.showStatus( "Exception in setString()." );
+      mApp.showStatus( e.getMessage() );
+      }
     }
 
 
@@ -181,5 +190,3 @@ public class DefinesDictionary
 
 
   }
-
-
