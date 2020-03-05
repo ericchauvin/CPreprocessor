@@ -289,9 +289,9 @@ public class MainWindow extends JFrame implements
 
     JMenuItem menuItem;
 
-    menuItem = new JMenuItem( "List Files" );
-    menuItem.setMnemonic( KeyEvent.VK_L );
-    menuItem.setActionCommand( "FileList" );
+    menuItem = new JMenuItem( "Test" );
+    menuItem.setMnemonic( KeyEvent.VK_T );
+    menuItem.setActionCommand( "FileTest" );
     menuItem.addActionListener( this );
     menuItem.setForeground( Color.white );
     menuItem.setBackground( Color.black );
@@ -413,11 +413,11 @@ public class MainWindow extends JFrame implements
 
     //////////////
     // File Menu:
-    if( command == "FileList" )
+    if( command == "FileTest" )
       {
       // The Java launcher starts what?
 
-      String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
+      // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
       // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
       // MarkupForPreproc.MarkItUp( mApp,
          //                                fileName );
@@ -982,6 +982,8 @@ private void editPaste()
 
   private void testFiles()
     {
+    try
+    {
     /*
     String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
 
@@ -1182,6 +1184,7 @@ private void editPaste()
                            "fold-const.h",
                            "fp-test.c",
                            "function-tests.c" };
+
 
 /*
 function.c
@@ -1398,6 +1401,13 @@ ipa-param-manipulation.c
     showStatus( " " );
     showStatus( "Finished processing files." );
     showStatus( " " );
+
+    }
+    catch( Exception e )
+      {
+      showStatus( "Exception in testFiles()." );
+      showStatus( e.getMessage() );
+      }
     }
 
 
