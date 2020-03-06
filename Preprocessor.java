@@ -4,7 +4,6 @@
 // I can make a partial preprocessor and let
 // gcc do the rest until I get the other parts
 // working.
-// Leave Mecro functions as an option?
 
 
 
@@ -39,7 +38,7 @@ public class Preprocessor
     // This adds line number markers and also fixes
     // line splices.
     result = RemoveComments.removeAllComments(
-                                  mApp, result );
+                                      mApp, result );
 
     if( result.length() == 0 )
       return "";
@@ -64,6 +63,11 @@ public class Preprocessor
       return "";
       }
 
+    MarkupForPreproc markUp = new MarkupForPreproc( mApp );
+    result = markUp.mainFileLoop( result );
+
+
+/*
     result = MarkupForPreproc.markPreprocessorLines(
                                         mApp, result );
 
@@ -101,7 +105,7 @@ public class Preprocessor
 
     if( result.length() == 0 )
       return "";
-
+*/
 
 
     // result = MarkupForPreproc.MarkItUp( mApp,
