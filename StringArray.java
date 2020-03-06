@@ -1,25 +1,21 @@
 // Copyright Eric Chauvin 2020.
 
 
-// =====
-// Make my own character array.  Not StringBuilder.
-
 
 public class StringArray
   {
   private String[] valueArray;
   private int[] sortIndexArray;
   private int arrayLast = 0;
-  // Make my own StringBuilder type class.
   private StringBuilder sBuilder;
 
 
   public StringArray()
     {
+    sBuilder = new StringBuilder();
     valueArray = new String[8];
     sortIndexArray = new int[8];
     resetSortIndexArray();
-    sBuilder = new StringBuilder();
     }
 
 
@@ -28,6 +24,12 @@ public class StringArray
     arrayLast = 0;
     }
 
+
+
+  public int length()
+    {
+    return arrayLast;
+    }
 
 
   private void resetSortIndexArray()
@@ -43,12 +45,12 @@ public class StringArray
 
   private void resizeArrays( int toAdd )
     {
-    int max = sortIndexArray.length;
-    sortIndexArray = new int[max + toAdd];
+    int oldLength = sortIndexArray.length;
+    sortIndexArray = new int[oldLength + toAdd];
     resetSortIndexArray();
 
-    String[] tempValueArray = new String[max + toAdd];
-    for( int count = 0; count < max; count++ )
+    String[] tempValueArray = new String[oldLength + toAdd];
+    for( int count = 0; count < arrayLast; count++ )
       {
       tempValueArray[count] = valueArray[count];
       }
@@ -96,7 +98,7 @@ public class StringArray
 
 
 
-  public void addString( String value )
+  public void appendString( String value )
     {
     if( arrayLast >= sortIndexArray.length )
       resizeArrays( 256 );
@@ -106,10 +108,11 @@ public class StringArray
     }
 
 
-  public int makeFieldsFromString( String in, char delimit )
+
+  public int makeFieldsFromString( String in,
+                                   char delimit )
     {
     clear();
-
     sBuilder.setLength( 0 );
 
     if( in == null )
@@ -124,7 +127,7 @@ public class StringArray
       char testChar = in.charAt( count );
       if( testChar == delimit )
         {
-        addString( sBuilder.toString());
+        appendString( sBuilder.toString());
         sBuilder.setLength( 0 );
         }
       else
@@ -135,10 +138,19 @@ public class StringArray
 
     if( sBuilder.length() > 0 )
       {
-      addString( sBuilder.toString());
+      appendString( sBuilder.toString());
       }
 
     return arrayLast;
+    }
+
+
+  public String getStringAt( int where )
+    {
+    if( where >= arrayLast )
+      return null;
+
+    return valueArray[where];
     }
 
 
