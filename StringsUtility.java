@@ -10,8 +10,6 @@
   public class StringsUtility
   {
 
-
-
   public static String trimEnd( String in )
     {
     if( in == null )
@@ -97,6 +95,46 @@
 
     return sBuilder.toString();
     }
+
+
+
+
+  public static String removeSections( String in,
+                                       char startChar,
+                                       char endChar )
+    {
+    if( in == null )
+      return "";
+
+    int max = in.length();
+    if( max == 0 )
+      return "";
+
+    StringBuilder sBuilder = new StringBuilder();
+    boolean isInside = false;
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = in.charAt( count );
+      if( testChar == startChar )
+        {
+        isInside = true;
+        continue;
+        }
+
+      if( testChar == endChar )
+        {
+        isInside = false;
+        continue;
+        }
+
+      if( !isInside )
+        sBuilder.append( testChar );
+
+      }
+
+    return sBuilder.toString();
+    }
+
 
 
 
