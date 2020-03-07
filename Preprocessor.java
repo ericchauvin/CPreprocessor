@@ -54,7 +54,7 @@ public class Preprocessor
       return "";
       }
 
-    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
+    if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -63,52 +63,25 @@ public class Preprocessor
       return "";
       }
 
-    MarkupForPreproc markUp = new MarkupForPreproc( mApp );
-    result = markUp.mainFileLoop( result );
-
-
-/*
-    result = MarkupForPreproc.markPreprocessorLines(
-                                        mApp, result );
-
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( " " );
-      showError = "There was an error marker after" +
-                               " markPreprocessorLines.";
-
-      mApp.showStatus( showError );
-      return "";
-      }
-
-    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      showError = "TestBeginEnd returned false" +
-                       " after markPreprocessorLine.";
-
-      mApp.showStatus( showError );
-      return "";
-      }
 
     // This is created once for each new preprocessed
     // file.  So if I #include files I need to get
     // the defines from that other dictionary.
     DefinesDictionary definesDict = new
                            DefinesDictionary( mApp );
+    
+    PreprocConditionals preprocCond = new
+                      PreprocConditionals( mApp );
+                                 // useDefinesDict );
 
-
-    result = PreprocIfLevels.markLevels( result,
-                                         mApp,
-                                         definesDict );
+    result = preprocCond.mainFileLoop( result );
 
     if( result.length() == 0 )
       return "";
-*/
 
 
-    // result = MarkupForPreproc.MarkItUp( mApp,
+
+    // result = MarkupString.MarkItUp( mApp,
        //                                 result );
 
 
