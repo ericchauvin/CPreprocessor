@@ -53,7 +53,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
+    if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -75,7 +75,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
+    if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
@@ -99,7 +99,7 @@ public class RemoveComments
       return "";
       }
 
-    if( !MarkupForPreproc.testBeginEnd( mApp, result ))
+    if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatus( " " );
       showError = "TestBeginEnd returned false" +
