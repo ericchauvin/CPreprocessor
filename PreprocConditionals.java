@@ -6,7 +6,7 @@ public class PreprocConditionals
   {
   private MainApp mApp;
   StringArray fileLines;
-  StringArray outFileLines;
+  // StringArray outFileLines;
   DefinesDictionary definesDictionary;
 
 
@@ -20,7 +20,7 @@ public class PreprocConditionals
     {
     mApp = useApp;
     fileLines = new StringArray();
-    outFileLines = new StringArray();
+    // outFileLines = new StringArray();
     definesDictionary = new DefinesDictionary( mApp );
     }
 
@@ -74,6 +74,7 @@ public class PreprocConditionals
     {
     boolean levelBool = true;
     int level = 0;
+    StringBuilder sBuilder = new StringBuilder();
     StringBuilder paramBuilder = new StringBuilder();
     StringArray lineSplitter = new StringArray();
 
@@ -86,19 +87,19 @@ public class PreprocConditionals
     for( int count = 0; count < last; count++ )
       {
       String line = fileLines.getStringAt( count );
-      // mApp.showStatus( "Line " + count + ") " + line );
 
       if( '#' != StringsUtility.firstNonSpaceChar(
                                              line ))
         {
         if( levelBool )
-          outFileLines.appendString( line );
+          sBuilder.append( line + "\n" );
         else
-          outFileLines.appendString( "/" + "/  " + line );
+          sBuilder.append( "/" + "/  " + line + "\n" );
 
         continue;
         }
      
+      String originalLine = line;
       line = StringsUtility.replaceFirstChar( line,
                                               '#',
                                               ' ' );
@@ -123,8 +124,6 @@ public class PreprocConditionals
 
       String command = lineSplitter.getStringAt( 0 );
       command = command.toLowerCase();
-      mApp.showStatus( "Command: " + command ); 
-
       if( !isValidCommand( command ))
         {
         mApp.showStatus( command + " is not a valid command." );
@@ -149,10 +148,18 @@ public class PreprocConditionals
 
       String macroBody = paramBuilder.toString();
       macroBody = macroBody.trim();
+      String cResult = processCommand( command,
+                                       macroBody,
+                                       level,
+                                       levelBool );
 
-      if( !processCommand( command, macroBody ))
+      if( cResult.length() == 0 )
         return "";
 
+      // if cResult starts with comment characters
+      // then what?
+
+      sBuilder.append( cResult );
       }
 
     if( level != 0 )
@@ -161,8 +168,7 @@ public class PreprocConditionals
       return "";
       }
 
-    // return sBuilder.toString();
-    return in;
+    return sBuilder.toString();
     }
     catch( Exception e )
       {
@@ -171,6 +177,7 @@ public class PreprocConditionals
       return "";
       }
     }
+
 
 
   private int setLevel( String command, int inLevel )
@@ -194,32 +201,33 @@ public class PreprocConditionals
 
 
 
-  private boolean processCommand( String command,
-                                  String macroBody )
+  private String processCommand( String command,
+                                 String macroBody,
+                                 int level,
+                                 boolean levelBool )
     {
     if( command.equals( "define" ))
       {
-      if( !processDefineStatement( macroBody ))
-        {
-        return false;
-        }
+      if( !levelBool )
+        return "/" + "/ " + command + " " + macroBody;
+
+      return processDefineStatement( macroBody );
       }
 
 
     /*
+    if( levelBool )
+      {
     if( command.equals( "error" ))
       {
-      if( levelBool )
-        {
-        // It should not get here to an error 
-        // if levelBool is true.
-        // mApp.showStatus( "This is an error." );
-        // return "";
-        }
+      // mApp.showStatus( "This is an error." );
+      // return "";
       }
       */
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "undef" ))
         {
         mApp.showStatus( " " );
@@ -231,6 +239,8 @@ public class PreprocConditionals
 
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "include" ))
         {
         // Get the dictionary of #define statements
@@ -239,15 +249,19 @@ public class PreprocConditionals
 */
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "pragma" ))
         {
         }
 */
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "if" ))
         {
-        level++;
+
 /////////
         mApp.showStatus( "If line: " + originalLine );
         levelBool = evaluateIfExpression( macroBody );
@@ -263,9 +277,10 @@ public class PreprocConditionals
 */
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "ifdef" ))
         {
-        level++;
         levelBool = true;
         sBuilder.append( Markers.Begin );
         sBuilder.append( originalLine );
@@ -288,9 +303,10 @@ Same with ifndef.
 
 
 /*
+    if( levelBool )
+      {
       if( command.equals( "ifndef" ))
         {
-        level++;
         levelBool = true;
         sBuilder.append( Markers.Begin );
         sBuilder.append( originalLine );
@@ -301,7 +317,6 @@ Same with ifndef.
 /*
       if( command.equals( "else" ))
         {
-        level--;
         if( levelBool )
           {
           // If it's coming in here as true, then
@@ -349,7 +364,6 @@ all the way down to more elifs and else statements.
 /*
       if( command.equals( "endif" ))
         {
-        level--;
         if( levelBool )
           {
           sBuilder.append( Markers.Begin );
@@ -360,13 +374,14 @@ all the way down to more elifs and else statements.
         }
 */
 
-
-    return true;
+    // mApp.showStatus( "Unrecognized command in processCommand()." );
+    // return "";
+    return "/" + "/ Unrecognized: " + command + " " + macroBody;
     }
 
 
 
-  private boolean processDefineStatement( String in )
+  private String processDefineStatement( String in )
     {
     try
     {
@@ -375,72 +390,63 @@ all the way down to more elifs and else statements.
     if( last == 0 )
       {
       mApp.showStatus( "There is nothing in the define statement." );
-      return false;
+      return "";
       }
 
     String key = splitS[0];
 
     StringBuilder paramBuilder = new StringBuilder();
-
-    if( key.contains( "(" ))
-      {
-      // For keys like this with no space after the
-      // parentheses:
-      // DEF_SANITIZER_BUILTIN_1(ENUM,
-
-      StringArray lineSplitter = new StringArray();
-      lineSplitter.makeFieldsFromString( key, ')' );
-
-      int lastPart = lineSplitter.length();
-      if( lastPart == 0 )
-        {
-        mApp.showStatus( "This key has no parts." );
-        return false;
-        }
-
-      // Make the parentheses part of the key.
-      key = lineSplitter.getStringAt( 0 ) + "(";
-
-
-/*
-      if( splitKeyLength > 2 )
-        {
-        mApp.showStatus( "What is the deal here?" );
-        return false;
-        }
-
-      if( splitKeyLength == 2 )
-        paramBuilder.append( splitKey[1] + " " );
-//////
-     
-      // mApp.showStatus( " " );
-      // mApp.showStatus( "This is a function-like macro." );
-*/
-      }
-
-
-/*
     for( int count = 1; count < last; count++ )
       paramBuilder.append( splitS[count] + " " );
 
-    String paramList = paramBuilder.toString();
-    paramList = paramList.trim();
+    String paramStr = paramBuilder.toString();
+    // Make sure this paramStr starts with a space.
+    paramStr = " " + paramStr.trim();
 
-    definesDict.setString( key, paramList );
+    if( key.contains( "(" ))
+      {
+      // This is a function-like macro because there
+      // was no space before the first parentheses.
+
+      // This key could end with the parentheses,
+      // but sometimes they have no space after the
+      // parentheses too like this:
+      // DEF_SANITIZER_BUILTIN_1(ENUM,
+
+      StringArray lineSplitter = new StringArray();
+      lineSplitter.makeFieldsFromString( key, '(' );
+
+      int lastPart = lineSplitter.length();
+
+      key = lineSplitter.getStringAt( 0 );
+      if( lastPart == 2 )
+        {
+        paramStr = "(" + lineSplitter.getStringAt( 1 ) +
+                              " " + paramStr.trim();
+        }
+      else
+        {
+        // What does that space mean?
+        // paramStr = "( " + paramStr.trim();
+
+        paramStr = "(" + paramStr.trim();
+        }
+      }
+
+    definesDictionary.setString( key, paramStr );
 
     mApp.showStatus( " " );
     mApp.showStatus( "key: " + key );
-    mApp.showStatus( "paramList: " + paramList );
+    mApp.showStatus( "paramStr: " + paramStr );
     mApp.showStatus( " " );
-*/
 
-    return true;
+    return key + paramStr;
     }
     catch( Exception e )
       {
       mApp.showStatus( "Exception in processDefineStatement()." );
       mApp.showStatus( e.getMessage() );
-      return false;
+      return "";
       }
     }
 
