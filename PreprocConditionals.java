@@ -2,6 +2,7 @@
 
 
 
+
 public class PreprocConditionals
   {
   private MainApp mApp;
@@ -37,8 +38,6 @@ public class PreprocConditionals
     if( in.equals( "undef" ))
       return true;
 
-    // Add comments back in to the code to show
-    // where a file was included and all that.
     if( in.equals( "include" ))
       return true;
 
@@ -209,7 +208,11 @@ public class PreprocConditionals
     if( command.equals( "define" ))
       {
       if( !levelBool )
-        return "/" + "/ " + command + " " + macroBody;
+        {
+        return "/" + "/ #define " +
+                               macroBody + "\n";
+
+        }
 
       return processDefineStatement( macroBody );
       }
@@ -241,6 +244,8 @@ public class PreprocConditionals
 /*
     if( levelBool )
       {
+      // Add comments back in to the code to show
+      // where a file was included and all that.
       if( command.equals( "include" ))
         {
         // Get the dictionary of #define statements
@@ -376,7 +381,8 @@ all the way down to more elifs and else statements.
 
     // mApp.showStatus( "Unrecognized command in processCommand()." );
     // return "";
-    return "/" + "/ Unrecognized: " + command + " " + macroBody;
+    return "/" + "/ Unrecognized: " + command + " " +
+                             macroBody + "\n";
     }
 
 
@@ -426,21 +432,34 @@ all the way down to more elifs and else statements.
         }
       else
         {
-        // What does that space mean?
-        // paramStr = "( " + paramStr.trim();
-
         paramStr = "(" + paramStr.trim();
         }
+
+      // definesDictionary.setString( key, paramStr );
+      
+      // Don't do anything else with this for now.
+      return "\n// Function-like macro:\n" +
+             "#define " + key + paramStr + "\n\n";
       }
 
-    definesDictionary.setString( key, paramStr );
+    if( definesDictionary.keyExists( key ))
+      {
+      mApp.showStatus( "define key already exists: " + key );
+      mApp.showStatus( "paramStr: " + paramStr );
+      String showP = definesDictionary.getString( key );
+      mApp.showStatus( "Original paramStr: " + showP );
+      }
+    else
+      {
+      definesDictionary.setString( key, paramStr );
+      }
 
     mApp.showStatus( " " );
     mApp.showStatus( "key: " + key );
     mApp.showStatus( "paramStr: " + paramStr );
     mApp.showStatus( " " );
 
-    return key + paramStr;
+    return "#define " + in + "\n"; // key + paramStr;
     }
     catch( Exception e )
       {
