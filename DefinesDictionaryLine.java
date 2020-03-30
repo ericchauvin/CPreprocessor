@@ -64,7 +64,7 @@ public class DefinesDictionaryLine
       return;
 
     // The worst case scenario for this Bubble Sort is
-    // if the very last item had to "bubble up" from
+    // if the very last item had to bubble up from
     // the very bottom.  So the maximum number of outer
     // loops here is arrayLast number of times.
     for( int count = 0; count < arrayLast; count++ )
@@ -128,7 +128,7 @@ public class DefinesDictionaryLine
     else
       {
       if( arrayLast >= sortIndexArray.length )
-        resizeArrays( 16 );
+        resizeArrays( 64 );
 
       keyArray[arrayLast] = key;
       valueArray[arrayLast] = value;
@@ -145,6 +145,17 @@ public class DefinesDictionaryLine
       return "";
 
     return valueArray[index];
+    }
+
+
+
+  public boolean keyExists( String key )
+    {
+    int index = getIndexOfKey( key );
+    if( index < 0 )
+      return false;
+
+    return true;
     }
 
 
