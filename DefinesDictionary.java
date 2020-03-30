@@ -7,9 +7,6 @@
 // case-sensitive.  But when it's sorted, it is a
 // case-insensitive sort.  So the words Table and
 // table would be considered equal in the sort order.
-// But ConfigureFile.java, for example, sets all its
-// keys to lower case before putting them in here.
-// So ConfigureFile is case-insensitive for its keys.
 
 
 
@@ -186,6 +183,24 @@ public class DefinesDictionary
       }
     }
 
+
+
+
+  public boolean keyExists( String key )
+    {
+    if( key == null )
+      return false;
+
+    key = key.trim();
+    if( key.length() < 1 )
+      return false;
+
+    int index = getIndex( key );
+    if( lineArray[index] == null )
+      return false;
+
+    return lineArray[index].keyExists( key );
+    }
 
 
 
