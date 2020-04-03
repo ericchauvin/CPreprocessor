@@ -1,3 +1,7 @@
+/*
+
+Not used anymore.
+
 // Copyright Eric Chauvin 2018 - 2020.
 
 
@@ -7,7 +11,6 @@ public class PreprocConditionals
   {
   private MainApp mApp;
   StringArray fileLines;
-  // StringArray outFileLines;
   DefinesDictionary definesDictionary;
 
 
@@ -21,7 +24,6 @@ public class PreprocConditionals
     {
     mApp = useApp;
     fileLines = new StringArray();
-    // outFileLines = new StringArray();
     definesDictionary = new DefinesDictionary( mApp );
     }
 
@@ -29,6 +31,8 @@ public class PreprocConditionals
 
   private boolean isValidCommand( String in )
     {
+    // #line
+
     if( in.equals( "error" ))
       return true;
 
@@ -73,14 +77,14 @@ public class PreprocConditionals
     {
     boolean levelBool = true;
     int level = 0;
-    StringBuilder sBuilder = new StringBuilder();
-    StringBuilder paramBuilder = new StringBuilder();
-    StringArray lineSplitter = new StringArray();
 
     if( in.trim().length() == 0 )
       return "";
 
-    // CharArray cArray = new CharArray();
+    StringBuilder sBuilder = new StringBuilder();
+    StringBuilder paramBuilder = new StringBuilder();
+    StringArray lineSplitter = new StringArray();
+
     fileLines.makeFieldsFromString( in, '\n' );
     int last = fileLines.length();
     for( int count = 0; count < last; count++ )
@@ -155,9 +159,6 @@ public class PreprocConditionals
       if( cResult.length() == 0 )
         return "";
 
-      // if cResult starts with comment characters
-      // then what?
-
       sBuilder.append( cResult );
       }
 
@@ -218,7 +219,7 @@ public class PreprocConditionals
       }
 
 
-    /*
+    //////
     if( levelBool )
       {
     if( command.equals( "error" ))
@@ -226,9 +227,9 @@ public class PreprocConditionals
       // mApp.showStatus( "This is an error." );
       // return "";
       }
-      */
+      
 
-/*
+
     if( levelBool )
       {
       if( command.equals( "undef" ))
@@ -238,10 +239,10 @@ public class PreprocConditionals
         mApp.showStatus( originalLine );
         mApp.showStatus( " " );
         }
-*/
 
 
-/*
+
+
     if( levelBool )
       {
       // Add comments back in to the code to show
@@ -251,17 +252,17 @@ public class PreprocConditionals
         // Get the dictionary of #define statements
         // from this included file.
         }
-*/
 
-/*
+
+
     if( levelBool )
       {
       if( command.equals( "pragma" ))
         {
         }
-*/
 
-/*
+
+
     if( levelBool )
       {
       if( command.equals( "if" ))
@@ -279,9 +280,9 @@ public class PreprocConditionals
           }
 //////////
         }
-*/
 
-/*
+
+
     if( levelBool )
       {
       if( command.equals( "ifdef" ))
@@ -304,10 +305,10 @@ Same with ifndef.
 
         // mApp.showStatus( command + ") " + level );
         }
-*/
 
 
-/*
+
+
     if( levelBool )
       {
       if( command.equals( "ifndef" ))
@@ -317,9 +318,9 @@ Same with ifndef.
         sBuilder.append( originalLine );
         // mApp.showStatus( command + ") " + level );
         }
-*/
 
-/*
+
+
       if( command.equals( "else" ))
         {
         if( levelBool )
@@ -341,9 +342,9 @@ Same with ifndef.
 
         level++;
         }
-*/
 
-/*
+
+
       if( command.equals( "elif" ))
         {
         level--;
@@ -363,10 +364,10 @@ all the way down to more elifs and else statements.
         level++;
         levelBool = true;
         }
-*/
 
 
-/*
+
+
       if( command.equals( "endif" ))
         {
         if( levelBool )
@@ -377,7 +378,7 @@ all the way down to more elifs and else statements.
 
         levelBool = true;
         }
-*/
+
 
     // mApp.showStatus( "Unrecognized command in processCommand()." );
     // return "";
@@ -387,10 +388,19 @@ all the way down to more elifs and else statements.
 
 
 
+
   private String processDefineStatement( String in )
     {
     try
     {
+    // A macro can replace something with nothing.
+    // If the parameter list is empty, it replaces
+    // the identifier with nothing.
+    // This would replace the word 'volatile' with
+    // nothing.
+    // #define volatile
+    
+
     String[] splitS = in.split( " " );
     int last = splitS.length;
     if( last == 0 )
@@ -421,7 +431,6 @@ all the way down to more elifs and else statements.
 
       StringArray lineSplitter = new StringArray();
       lineSplitter.makeFieldsFromString( key, '(' );
-
       int lastPart = lineSplitter.length();
 
       key = lineSplitter.getStringAt( 0 );
@@ -473,3 +482,4 @@ all the way down to more elifs and else statements.
 
 
   }
+*/
