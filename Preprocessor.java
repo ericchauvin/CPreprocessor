@@ -1,7 +1,7 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
 
-// I can make a partial preprocessor and let
+// Make a partial preprocessor and let
 // gcc do the rest until I get the other parts
 // working.
 
@@ -12,7 +12,6 @@ public class Preprocessor
 
   public static String PreprocessFile( MainApp mApp,
                                      String fileName )
-
     {
     try
     {
@@ -67,14 +66,14 @@ public class Preprocessor
     // This is created once for each new preprocessed
     // file.  So if I #include files I need to get
     // the defines from that other dictionary.
-    DefinesDictionary definesDict = new
-                           DefinesDictionary( mApp );
+    MacroDictionary macroDict = new
+                           MacroDictionary( mApp );
     
-    PreprocConditionals preprocCond = new
-                      PreprocConditionals( mApp );
+    // PreprocConditionals preprocCond = new
+     //                 PreprocConditionals( mApp );
                                  // useDefinesDict );
 
-    result = preprocCond.mainFileLoop( result );
+    // result = preprocCond.mainFileLoop( result );
 
     if( result.length() == 0 )
       return "";
