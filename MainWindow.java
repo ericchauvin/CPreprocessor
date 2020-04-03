@@ -43,7 +43,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.swing.Timer;
-// import java.io.BufferedInputStream;
 import java.lang.ProcessBuilder.Redirect;
 */
 
@@ -422,9 +421,9 @@ public class MainWindow extends JFrame implements
       // MarkupForPreproc.MarkItUp( mApp,
          //                                fileName );
 
-      testFiles();
+      // testFiles();
 
-      // listFiles();
+      listHeaderFiles();
       return;
       }
 
@@ -492,21 +491,51 @@ public class MainWindow extends JFrame implements
     }
 
 
-
-  private void listFiles()
+  private void listHeaderFiles()
     {
-    showStatus( "Listing the files." );
+    String dir = "\\jdk7hotspotmaster\\src";
 
-    File mainDirFile = new 
-         File( "\\jdk7hotspotmaster\\src\\cpu\\x86\\vm" );
-    String[] filesArray = mainDirFile.list();
+    listFiles( dir );
+    }
+
+
+
+  private void listFiles( String dir )
+    {
+    try
+    {
+    showStatus( " " );
+    showStatus( "Listing: " + dir );
+
+    File dirFile = new File( dir );
+    String[] filesArray = dirFile.list();
     int max = filesArray.length;
     for( int count = 0; count < max; count++ )
       {
-      showStatus( filesArray[count] );
+// use \\cygwin\\usr\\include
+      String fileName = dir + "\\" + filesArray[count]; 
+      if( fileName.contains( "\\jdk7hotspotmaster\\src\\cpu\\sparc" ))
+        continue;
 
+      if( fileName.contains( "\\jdk7hotspotmaster\\src\\os\\solaris\\" ))
+        continue;
+
+
+      File listFile = new File( fileName );
+      if( listFile.isDirectory())
+        {
+        listFiles( fileName );
+        continue;
+        }
+
+      showStatus( fileName );
       }
-
+    }
+    catch( Exception e )
+      {
+      showStatus( "Exception in listFiles()." );
+      showStatus( e.getMessage() );
+      }
     }
 
 
@@ -1030,7 +1059,7 @@ private void editPaste()
     String[] fileArray = { "addresses.h",
                            "alias.c",
                            "alias.h",
-                           "align.h",
+                          "align.h",
                            "alloc-pool.c",
                            "alloc-pool.h",
                            "asan.c",
