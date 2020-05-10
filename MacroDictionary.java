@@ -47,6 +47,9 @@ public class MacroDictionary
 
   private int letterToIndexNumber( char letter )
     {
+    // This is case-insensitive so that it sorts
+    // names in a case-insensitive way.
+
     letter = Character.toLowerCase( letter );
     int index = letter - 'a';
     if( index < 0 )
