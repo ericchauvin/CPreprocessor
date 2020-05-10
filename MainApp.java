@@ -1,10 +1,17 @@
+// Copyright Eric Chauvin 2019 - 2020.
+
+
+
+// Code Analysis for C++ code, written in Java.
+
+
 import javax.swing.SwingUtilities;
 
 
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "4/3/2020";
+  public static final String versionDate = "5/10l/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
