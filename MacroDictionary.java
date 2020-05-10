@@ -67,6 +67,44 @@ public class MacroDictionary
 
 
 
+  private boolean isBadKey( String key )
+    {
+    // C++ named operators.
+    if( key.equals( "and" ))
+      return true;
+
+    if( key.equals( "and_eq" ))
+      return true;
+
+    if( key.equals( "bitand" ))
+      return true;
+
+    if( key.equals( "bitor" ))
+      return true;
+
+    if( key.equals( "compl" ))
+      return true;
+
+    if( key.equals( "not" ))
+      return true;
+
+    if( key.equals( "not_eq" ))
+      return true;
+
+    if( key.equals( "or" ))
+      return true;
+
+    if( key.equals( "or_eq" ))
+      return true;
+
+    if( key.equals( "xor" ))
+      return true;
+
+    return false;
+    }
+
+
+
   private int getIndex( String key )
     {
     // This index needs to be in sorted order.
@@ -104,6 +142,12 @@ public class MacroDictionary
     if( key.length() < 1 )
       return;
 
+    if( isBadKey( key ))
+      {
+      mApp.showStatus( "This can't be used as a key: " + key );
+      return;
+      }
+
     int index = getIndex( key );
 
     if( lineArray[index] == null )
@@ -115,6 +159,35 @@ public class MacroDictionary
     catch( Exception e )
       {
       mApp.showStatus( "Exception in setMacro()." );
+      mApp.showStatus( e.getMessage() );
+      }
+    }
+
+
+
+  public void setMacroEnabled( String key,
+                               boolean setTo )
+    {
+    try
+    {
+    if( key == null )
+      return;
+
+    key = key.trim();
+    if( key.length() < 1 )
+      return;
+
+    int index = getIndex( key );
+
+    if( lineArray[index] == null )
+      return;
+
+    lineArray[index].setMacroEnabled( key, setTo );
+
+    }
+    catch( Exception e )
+      {
+      mApp.showStatus( "Exception in setMacroEnabled()." );
       mApp.showStatus( e.getMessage() );
       }
     }
@@ -135,6 +208,24 @@ public class MacroDictionary
       return null;
 
     return lineArray[index].getMacro( key );
+    }
+
+
+
+  public boolean getMacroEnabled( String key )
+    {
+    if( key == null )
+      return false;
+
+    key = key.trim();
+    if( key.length() < 1 )
+      return false;
+
+    int index = getIndex( key );
+    if( lineArray[index] == null )
+      return false;
+
+    return lineArray[index].getMacroEnabled( key );
     }
 
 
