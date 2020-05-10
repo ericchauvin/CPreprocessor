@@ -2,12 +2,25 @@
 
 
 
+
+// Don't put preprocessor directives inside a macro.
+// The Gnu Compiler Collection is like the poster
+// child of how to do really bad things with macros.
+// In the C and C++ standards a directive in a macro
+// is undefined.  It is an error in this preprocessor.
+
+ 
+
+
 public class Macro
   {
   private MainApp mApp;
   private String key = "";
   private String paramStr = "";
-  private boolean isFunctionType = false;  
+  // private boolean isFunctionType = false;  
+  private MacroDictionary macroDictionary;
+  private boolean enabled = true; // For undef.
+
 
 
   private Macro()
@@ -16,9 +29,24 @@ public class Macro
 
 
 
-  public Macro( MainApp useApp )
+  public Macro( MainApp useApp, 
+                   MacroDictionary dictionaryToUse )
     {
     mApp = useApp;
+    macroDictionary = dictionaryToUse;
+    }
+
+
+
+  public boolean getEnabled()
+    {
+    return enabled;
+    }
+
+
+  public void setEnabled( boolean setTo )
+    {
+    enabled = setTo;
     }
 
 
@@ -27,14 +55,7 @@ public class Macro
     {
     try
     {
-    // A macro can replace something with nothing.
-    // If the parameter list is empty, it replaces
-    // the identifier with nothing.
-    // This would replace the word 'volatile' with
-    // nothing.
-    // #define volatile
-
-    isFunctionType = false;
+    // isFunctionType = false;
 
     String[] splitS = in.split( " " );
     int last = splitS.length;
@@ -53,11 +74,14 @@ public class Macro
     paramStr = paramBuilder.toString();
     paramStr = " " + paramStr.trim();
 
+    // The undef, ifdef and ifndef statements all
+    // use a key without the parentheses.  The
+    // parentheses is not part of the key.
     if( key.contains( "(" ))
       {
       // This is a function-like macro because there
       // was no space before the first parentheses.
-      isFunctionType = true;
+      // isFunctionType = true;
 
       // This key could end with the parentheses,
       // but sometimes they have no space after the
@@ -65,39 +89,39 @@ public class Macro
       // DEF_SANITIZER_BUILTIN_1(ENUM,
 
       StringArray lineSplitter = new StringArray();
-      int lastPart = lineSplitter.makeFieldsFromString( key, '(' );
+      int lastPart = lineSplitter.
+                      makeFieldsFromString( key, '(' );
 
       StringBuilder sBuilder = new StringBuilder();
 
       key = lineSplitter.getStringAt( 0 );
       for( int count = 1; count < lastPart; count++ )
-        sBuilder.append( "(" + lineSplitter.getStringAt( count ));
+        sBuilder.append( "(" + lineSplitter.
+                                getStringAt( count ));
 
       paramStr = sBuilder.toString() +
                               " " + paramStr.trim();
 
-      // definesDictionary.setString( key, paramStr );
-      
       }
 
-/*
-    if( definesDictionary.keyExists( key ))
+    if( macroDictionary.keyExists( key ))
       {
-      mApp.showStatus( "define key already exists: " + key );
+      mApp.showStatus( "Macro key already exists: " + key );
       mApp.showStatus( "paramStr: " + paramStr );
-      String showP = definesDictionary.getString( key );
-      mApp.showStatus( "Original paramStr: " + showP );
+      Macro showMac = macroDictionary.getMacro( key );
+      mApp.showStatus( "Original paramStr: " +
+                                showMac.getString());
+      return false;
       }
     else
       {
-      definesDictionary.setString( key, paramStr );
+      macroDictionary.setMacro( key, this );
       }
 
     mApp.showStatus( " " );
     mApp.showStatus( "key: " + key );
     mApp.showStatus( "paramStr: " + paramStr );
     mApp.showStatus( " " );
-*/
 
     return true;
     }
@@ -110,5 +134,10 @@ public class Macro
     }
 
 
+
+  public String getString()
+    {
+    return key + " " + paramStr;
+    }
 
   }
