@@ -57,7 +57,6 @@ public class MacroDictionaryLine
 
 
 
-
   public void sort()
     {
     if( arrayLast < 2 )
@@ -115,6 +114,9 @@ public class MacroDictionaryLine
 
   public void setMacro( String key, Macro value )
     {
+    // This sets the macro to the new value whether
+    // it's already there or not, and whether it's
+    // enabled or not.
     int index = getIndexOfKey( key );
     if( index >= 0 )
       {
@@ -133,6 +135,18 @@ public class MacroDictionaryLine
 
 
 
+  public void setMacroEnabled( String key,
+                               boolean setTo )
+    {
+    int index = getIndexOfKey( key );
+    if( index >= 0 )
+      {
+      valueArray[index].setEnabled( setTo );
+      }
+    }
+
+
+
   public Macro getMacro( String key )
     {
     int index = getIndexOfKey( key );
@@ -144,13 +158,26 @@ public class MacroDictionaryLine
 
 
 
+
+  public boolean getMacroEnabled( String key )
+    {
+    int index = getIndexOfKey( key );
+    if( index < 0 )
+      return false;
+
+    return valueArray[index].getEnabled();
+    }
+
+
+
   public boolean keyExists( String key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
       return false;
 
-    return true;
+    // Being disabled means it doesn't exist.    
+    return valueArray[index].getEnabled();
     }
 
 
