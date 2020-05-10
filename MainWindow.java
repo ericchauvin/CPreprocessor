@@ -421,9 +421,9 @@ public class MainWindow extends JFrame implements
       // MarkupForPreproc.MarkItUp( mApp,
          //                                fileName );
 
-      // testFiles();
+      testFiles();
+      // listHeaderFiles();
 
-      listHeaderFiles();
       return;
       }
 
@@ -1408,9 +1408,13 @@ ipa-param-manipulation.c
       {
       String fileName = mainDir + fileArray[count];
       String outFileName = outDir + fileArray[count];
+      MacroDictionary macroDictionary = new
+                           MacroDictionary( mApp );
+
       String test = Preprocessor.PreprocessFile(
-                                          mApp,
-                                          fileName );
+                                    mApp,
+                                    fileName,
+                                    macroDictionary );
 
       if( test.length() == 0 )
         {
