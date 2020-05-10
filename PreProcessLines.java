@@ -1,22 +1,13 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-// A macro is a section of code that is given a name.
-// A directive is something like:
-// #include "thisfile.h"
-// The statement directs the preprocessor to do
-// something.
-// But the statement:
-// #define THIS that
-// is a directive to define a macro.
-
 
 
 public class PreProcessLines
   {
   private MainApp mApp;
-  StringArray fileLines;
-  MacroDictionary macroDictionary;
+  private StringArray fileLines;
+  private MacroDictionary macroDictionary;
 
 
   private PreProcessLines()
@@ -24,11 +15,12 @@ public class PreProcessLines
     }
 
 
-  public PreProcessLines( MainApp useApp )
+  public PreProcessLines( MainApp useApp, 
+                   MacroDictionary dictionaryToUse )
     {
     mApp = useApp;
     fileLines = new StringArray();
-    macroDictionary = new MacroDictionary( mApp );
+    macroDictionary = dictionaryToUse;
     }
 
 
@@ -220,8 +212,8 @@ public class PreProcessLines
                                directiveBody + "\n";
 
         }
-
-      Macro macro = new Macro( mApp );
+    
+      Macro macro = new Macro( mApp, macroDictionary );
       if( !macro.setFromString( directiveBody ))
         return "";
 
@@ -259,8 +251,15 @@ public class PreProcessLines
       // where a file was included and all that.
       if( command.equals( "include" ))
         {
-        // Get the dictionary of #define statements
-        // from this included file.
+        Do preprocessing on the included file.
+        String test = Preprocessor.PreprocessFile(
+                                    mApp,
+                                    fileName,
+                                    macroDictionary );
+
+        Once this returns from processing the
+        included files it will have a bunch of new
+        macros defined in the dictionary.
         }
 
 
