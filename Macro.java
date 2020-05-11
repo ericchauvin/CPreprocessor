@@ -2,22 +2,12 @@
 
 
 
-
-// Don't put preprocessor directives inside a macro.
-// The Gnu Compiler Collection is like the poster
-// child of how to do really bad things with macros.
-// In the C and C++ standards a directive in a macro
-// is undefined.  It is an error in this preprocessor.
-
- 
-
-
 public class Macro
   {
   private MainApp mApp;
   private String key = "";
   private String paramStr = "";
-  // private boolean isFunctionType = false;  
+  private boolean isFunctionType = false;  
   private MacroDictionary macroDictionary;
   private boolean enabled = true; // For undef.
 
@@ -51,11 +41,68 @@ public class Macro
 
 
 
+  public boolean setKeyFromString( String in )
+    {
+    try
+    {
+    isFunctionType = false;
+    String line = in.trim();
+
+    String[] splitS = line.split( " " );
+    int last = splitS.length;
+    if( last == 0 )
+      {
+      mApp.showStatus( "There is no key in the directive." );
+      return false;
+      }
+
+    key = splitS[0];
+
+    // The undef, ifdef and ifndef statements all
+    // use a key without the parentheses.  The
+    // parentheses is not part of the key.
+    if( key.contains( "(" ))
+      {
+      // This is a function-like macro because there
+      // was no space before the first parentheses.
+      isFunctionType = true;
+
+      // This key could end with the parentheses,
+      // but sometimes they have no space after the
+      // parentheses too like this:
+      // DEF_SANITIZER_BUILTIN_1(ENUM,
+
+      StringArray lineSplitter = new StringArray();
+      int lastPart = lineSplitter.
+                      makeFieldsFromString( key, '(' );
+
+      key = lineSplitter.getStringAt( 0 );
+      }
+
+    return true;
+    }
+    catch( Exception e )
+      {
+      mApp.showStatus( "Exception in setKeyFromString()." );
+      mApp.showStatus( e.getMessage() );
+      return false;
+      }
+    }
+
+
+
+/*
+I think I have to mark up the tokens and all that.
+So it won't be done like this.
   public boolean setFromString( String in )
     {
     try
     {
     // isFunctionType = false;
+
+    // This is necessary to make the key the first
+    // field.
+    in = in.trim();
 
     String[] splitS = in.split( " " );
     int last = splitS.length;
@@ -72,7 +119,7 @@ public class Macro
       paramBuilder.append( splitS[count] + " " );
 
     paramStr = paramBuilder.toString();
-    paramStr = " " + paramStr.trim();
+    paramStr = paramStr.trim();
 
     // The undef, ifdef and ifndef statements all
     // use a key without the parentheses.  The
@@ -132,12 +179,20 @@ public class Macro
       return false;
       }
     }
-
+*/
 
 
   public String getString()
     {
     return key + " " + paramStr;
     }
+
+
+
+  public String getKey()
+    {
+    return key;
+    }
+
 
   }
