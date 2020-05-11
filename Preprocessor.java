@@ -58,8 +58,6 @@ public class Preprocessor
       mApp.showStatus( showError );
       return "";
       }
-
-
     
     PreProcessLines procLines = new
                               PreProcessLines( mApp,
