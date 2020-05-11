@@ -106,10 +106,19 @@ public class PreProcessLines
                                        Markers.Begin,
                                        Markers.End );
 
+      // This trim is needed to make sure the directive
+      // is the first field.  So there are no empty
+      // fields in front of it.
       line = line.trim();
 
       // mApp.showStatus( "Preproc: " + line );
 
+      // This is splitting the fields by space 
+      // characters, but if there's more than one
+      // space character then it will create a 
+      // zero-length string on the second space
+      // because there was nothing after the first
+      // space.
       int lastPart = lineSplitter.
                     makeFieldsFromString( line, ' ' );
 
@@ -119,18 +128,18 @@ public class PreProcessLines
         return "";
         }
 
-      String command = lineSplitter.getStringAt( 0 );
+      String directive = lineSplitter.getStringAt( 0 );
 
       // If it's not already lower case then that's
       // a problem.
-      // command = command.toLowerCase();
-      if( !isValidCommand( command ))
+      // directive = directive.toLowerCase();
+      if( !isValidCommand( directive ))
         {
-        mApp.showStatus( command + " is not a valid command." );
+        mApp.showStatus( directive + " is not a valid directive." );
         return "";
         }
 
-      level = setLevel( command, level );
+      level = setLevel( directive, level );
       if( level < 0 )
         {
         mApp.showStatus( "Level is less than zero." );
@@ -140,15 +149,22 @@ public class PreProcessLines
       paramBuilder.setLength( 0 );
       for( int countP = 1; countP < lastPart; countP++ )
         {
+        String field = lineSplitter.
+                               getStringAt( countP );
+
+        // Can't do this here because it would reformat
+        // some things like formatted strings.
+        // if( field.length() == 0 )
+          // continue;
+
         paramBuilder.append( 
-                lineSplitter.getStringAt( countP ) +
+                field +
                 " " );
 
         }
 
       String directiveBody = paramBuilder.toString();
-      directiveBody = directiveBody.trim();
-      String cResult = processCommand( command,
+      String cResult = processDirective( directive,
                                        directiveBody,
                                        level,
                                        levelBool );
@@ -199,12 +215,12 @@ public class PreProcessLines
 
 
 
-  private String processCommand( String command,
+  private String processDirective( String directive,
                                  String directiveBody,
                                  int level,
                                  boolean levelBool )
     {
-    if( command.equals( "define" ))
+    if( directive.equals( "define" ))
       {
       if( !levelBool )
         {
@@ -214,17 +230,21 @@ public class PreProcessLines
         }
     
       Macro macro = new Macro( mApp, macroDictionary );
-      if( !macro.setFromString( directiveBody ))
+      if( !macro.setKeyFromString( directiveBody ))
         return "";
 
-      return "#define " + macro.getString();
+      String showKey = macro.getKey();
+      mApp.showStatus( "Key: " + showKey );
+      return "#" + directive + " " + directiveBody;
+      // "#define " + macro.getString();
       }
+
 
 
     /*
     if( levelBool )
       {
-    if( command.equals( "error" ))
+    if( directive.equals( "error" ))
       {
       // mApp.showStatus( "This is an error." );
       // return "";
@@ -234,12 +254,18 @@ public class PreProcessLines
 
     if( levelBool )
       {
-      if( command.equals( "undef" ))
+      if( directive.equals( "undef" ))
         {
         mApp.showStatus( " " );
         mApp.showStatus( "It's a bad idea to use undef." );
         mApp.showStatus( originalLine );
         mApp.showStatus( " " );
+
+Get the key and then disable it.
+        Macro macro = new Macro( mApp, macroDictionary );
+        if( !macro.setKeyFromString( directiveBody ))
+          return "";
+
         }
 
 
@@ -249,7 +275,7 @@ public class PreProcessLines
       {
       // Add comments back in to the code to show
       // where a file was included and all that.
-      if( command.equals( "include" ))
+      if( directive.equals( "include" ))
         {
         Do preprocessing on the included file.
         String test = Preprocessor.PreprocessFile(
@@ -266,7 +292,7 @@ public class PreProcessLines
 
     if( levelBool )
       {
-      if( command.equals( "pragma" ))
+      if( directive.equals( "pragma" ))
         {
         }
 
@@ -274,7 +300,7 @@ public class PreProcessLines
 
     if( levelBool )
       {
-      if( command.equals( "if" ))
+      if( directive.equals( "if" ))
         {
 
 /////////
@@ -294,7 +320,7 @@ public class PreProcessLines
 
     if( levelBool )
       {
-      if( command.equals( "ifdef" ))
+      if( directive.equals( "ifdef" ))
         {
         levelBool = true;
         sBuilder.append( Markers.Begin );
@@ -314,7 +340,7 @@ public class PreProcessLines
 
     if( levelBool )
       {
-      if( command.equals( "ifndef" ))
+      if( directive.equals( "ifndef" ))
         {
         levelBool = true;
         sBuilder.append( Markers.Begin );
@@ -324,7 +350,7 @@ public class PreProcessLines
 
 
 
-      if( command.equals( "else" ))
+      if( directive.equals( "else" ))
         {
         if( levelBool )
           {
@@ -348,7 +374,7 @@ public class PreProcessLines
 
 
 
-      if( command.equals( "elif" ))
+      if( directive.equals( "elif" ))
         {
         level--;
         if( levelBool )
@@ -371,7 +397,7 @@ all the way down to more elifs and else statements.
 
 
 
-      if( command.equals( "endif" ))
+      if( directive.equals( "endif" ))
         {
         if( levelBool )
           {
@@ -385,8 +411,8 @@ all the way down to more elifs and else statements.
 
     // mApp.showStatus( "Unrecognized command in processCommand()." );
     // return "";
-    return "/" + "/ Unrecognized: " + command + " " +
-                             directiveBody + "\n";
+    return "/" + "/ Unrecognized: " + directive +
+                " " + directiveBody + "\n";
     }
 
 
