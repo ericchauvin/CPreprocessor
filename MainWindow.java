@@ -1078,6 +1078,8 @@ private void editPaste()
                            "bt-load.c",
                            "builtins.c",
                            "builtins.h",
+
+/*
                            "caller-save.c",
                            "calls.c",
                            "calls.h",
@@ -1212,6 +1214,7 @@ private void editPaste()
                            "fold-const.c",
                            "fold-const.h",
                            "fp-test.c",
+*/
                            "function-tests.c" };
 
 
