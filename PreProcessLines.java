@@ -25,7 +25,7 @@ public class PreProcessLines
 
 
 
-  private boolean isValidCommand( String in )
+  private boolean isValidDirective( String in )
     {
     // #line
 
@@ -41,7 +41,7 @@ public class PreProcessLines
     if( in.equals( "include" ))
       return true;
 
-    if( in.equals( "pragma" )) // like #pragma once
+    if( in.equals( "pragma" ))
       return true;
 
     if( in.equals( "if" ))
@@ -96,15 +96,15 @@ public class PreProcessLines
         continue;
         }
      
-      String originalLine = line;
+      // String originalLine = line;
       line = StringsUtility.replaceFirstChar( line,
                                               '#',
                                               ' ' );
 
       // Remove the line number markers.
-      line = StringsUtility.removeSections( line,
-                                       Markers.Begin,
-                                       Markers.End );
+      // line = StringsUtility.removeSections( line,
+      //                                  Markers.Begin,
+      //                                  Markers.End );
 
       // This trim is needed to make sure the directive
       // is the first field.  So there are no empty
@@ -115,16 +115,18 @@ public class PreProcessLines
 
       // This is splitting the fields by space 
       // characters, but if there's more than one
-      // space character then it will create a 
-      // zero-length string on the second space
-      // because there was nothing after the first
-      // space.
+      // space character in sequence then it will
+      // create a zero-length string on the second
+      // space because there was nothing after the
+      // first space.
       int lastPart = lineSplitter.
                     makeFieldsFromString( line, ' ' );
 
       if( lastPart == 0 )
         {
-        mApp.showStatus( "Preprocessor line doesn't have parts." );
+        mApp.showStatus(
+             "Preprocessor line doesn't have parts." );
+
         return "";
         }
 
@@ -133,7 +135,7 @@ public class PreProcessLines
       // If it's not already lower case then that's
       // a problem.
       // directive = directive.toLowerCase();
-      if( !isValidCommand( directive ))
+      if( !isValidDirective( directive ))
         {
         mApp.showStatus( directive + " is not a valid directive." );
         return "";
@@ -164,15 +166,15 @@ public class PreProcessLines
         }
 
       String directiveBody = paramBuilder.toString();
-      String cResult = processDirective( directive,
-                                       directiveBody,
-                                       level,
-                                       levelBool );
+      String result = processDirective( directive,
+                                        directiveBody,
+                                        level,
+                                        levelBool );
 
-      if( cResult.length() == 0 )
+      if( result.length() == 0 )
         return "";
 
-      sBuilder.append( cResult );
+      sBuilder.append( result );
       }
 
     if( level != 0 )
@@ -235,6 +237,10 @@ public class PreProcessLines
 
       String showKey = macro.getKey();
       mApp.showStatus( "Key: " + showKey );
+ 
+      if( ! macro.markUpFromString( directiveBody ))
+        return "";
+
       return "#" + directive + " " + directiveBody;
       // "#define " + macro.getString();
       }
