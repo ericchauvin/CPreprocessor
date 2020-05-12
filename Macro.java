@@ -6,7 +6,7 @@ public class Macro
   {
   private MainApp mApp;
   private String key = "";
-  private String paramStr = "";
+  private String markedUpString = "";
   private boolean isFunctionType = false;  
   private MacroDictionary macroDictionary;
   private boolean enabled = true; // For undef.
@@ -67,16 +67,17 @@ public class Macro
       // was no space before the first parentheses.
       isFunctionType = true;
 
-      // This key could end with the parentheses,
-      // but sometimes they have no space after the
-      // parentheses too like this:
-      // DEF_SANITIZER_BUILTIN_1(ENUM,
-
       StringArray lineSplitter = new StringArray();
       int lastPart = lineSplitter.
                       makeFieldsFromString( key, '(' );
 
       key = lineSplitter.getStringAt( 0 );
+      }
+
+    if( key.length() == 0 )
+      {
+      mApp.showStatus( "The key length is zero." );
+      return false;
       }
 
     return true;
@@ -91,18 +92,17 @@ public class Macro
 
 
 
-/*
-I think I have to mark up the tokens and all that.
-So it won't be done like this.
-  public boolean setFromString( String in )
+  public boolean markUpFromString( String in )
     {
     try
     {
-    // isFunctionType = false;
+    markedUpString = MarkupString.MarkItUp( mApp,
+                                            in );
 
-    // This is necessary to make the key the first
-    // field.
-    in = in.trim();
+
+
+/*
+Split it on the Begin marker.
 
     String[] splitS = in.split( " " );
     int last = splitS.length;
@@ -169,24 +169,25 @@ So it won't be done like this.
     mApp.showStatus( "key: " + key );
     mApp.showStatus( "paramStr: " + paramStr );
     mApp.showStatus( " " );
+*/
 
     return true;
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in setFromString()." );
+      mApp.showStatus( "Exception in markUpFromString()." );
       mApp.showStatus( e.getMessage() );
       return false;
       }
     }
-*/
 
 
+/*
   public String getString()
     {
     return key + " " + paramStr;
     }
-
+*/
 
 
   public String getKey()
