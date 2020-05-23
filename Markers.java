@@ -73,4 +73,28 @@
 
 
 
+  public static String removeAllMarkers( String in )
+    {
+    if( in == null )
+      return "";
+
+    int max = in.length();
+    if( max == 0 )
+      return "";
+
+    StringBuilder sBuilder = new StringBuilder();
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = in.charAt( count );
+      if( isMarker( testChar ))
+        continue;
+
+      sBuilder.append( testChar );
+      }
+
+    return sBuilder.toString();
+    }
+
+
+
   }
