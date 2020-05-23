@@ -6,8 +6,8 @@
 public class PreProcessLines
   {
   private MainApp mApp;
-  private StringArray fileLines;
   private MacroDictionary macroDictionary;
+
 
 
   private PreProcessLines()
@@ -19,7 +19,6 @@ public class PreProcessLines
                    MacroDictionary dictionaryToUse )
     {
     mApp = useApp;
-    fileLines = new StringArray();
     macroDictionary = dictionaryToUse;
     }
 
@@ -77,6 +76,7 @@ public class PreProcessLines
     if( in.trim().length() == 0 )
       return "";
 
+    StringArray fileLines = new StringArray();
     StringBuilder sBuilder = new StringBuilder();
     StringBuilder paramBuilder = new StringBuilder();
     StringArray lineSplitter = new StringArray();
@@ -100,11 +100,6 @@ public class PreProcessLines
       line = StringsUtility.replaceFirstChar( line,
                                               '#',
                                               ' ' );
-
-      // Remove the line number markers.
-      // line = StringsUtility.removeSections( line,
-      //                                  Markers.Begin,
-      //                                  Markers.End );
 
       // This trim is needed to make sure the directive
       // is the first field.  So there are no empty
@@ -131,6 +126,11 @@ public class PreProcessLines
         }
 
       String directive = lineSplitter.getStringAt( 0 );
+      // Remove the line number markers.
+      directive = StringsUtility.removeSections(
+                                        directive,
+                                        Markers.Begin,
+                                        Markers.End );
 
       // If it's not already lower case then that's
       // a problem.
@@ -159,10 +159,7 @@ public class PreProcessLines
         // if( field.length() == 0 )
           // continue;
 
-        paramBuilder.append( 
-                field +
-                " " );
-
+        paramBuilder.append( field + " " );
         }
 
       String directiveBody = paramBuilder.toString();
@@ -210,7 +207,7 @@ public class PreProcessLines
     if( command.equals( "endif" ))
       return inLevel - 1;
 
-    // else and elseif don't change it.
+    // else and elseif...
 
     return inLevel;
     }
@@ -238,7 +235,7 @@ public class PreProcessLines
       String showKey = macro.getKey();
       mApp.showStatus( "Key: " + showKey );
  
-      if( ! macro.markUpFromString( directiveBody ))
+      if( !macro.markUpFromString( directiveBody ))
         return "";
 
       return "#" + directive + " " + directiveBody;
