@@ -46,8 +46,12 @@ public class Macro
     try
     {
     isFunctionType = false;
-    String line = in.trim();
 
+    String line = StringsUtility.removeSections( in,
+                                        Markers.Begin,
+                                        Markers.End );
+
+    line = line.trim();
     String[] splitS = line.split( " " );
     int last = splitS.length;
     if( last == 0 )
@@ -99,21 +103,78 @@ public class Macro
     markedUpString = MarkupString.MarkItUp( mApp,
                                             in );
 
+    // mApp.showStatus( markedUpString );
 
+    String[] splitS = markedUpString.split(
+                                 Character.toString(
+                                 Markers.Begin ));
 
-/*
-Split it on the Begin marker.
-
-    String[] splitS = in.split( " " );
     int last = splitS.length;
     if( last == 0 )
       {
-      mApp.showStatus( "There is nothing in the macro." );
+      mApp.showStatus( "There is nothing marked up in the macro." );
       return false;
       }
 
-    key = splitS[0];
+    // The string at zero is what's before the first
+    // Begin marker, which is white space or nothing.
+    for( int count = 1; count < last; count++ )
+      {
+      String token = splitS[count];
+      char firstChar = token.charAt( 0 ); 
+      if( firstChar == Markers.TypeLineNumber )
+        {
+        // If this happened at count 1 it would
+        // never have gotten this far because it
+        // would have found no key.
+        continue;
+        }
 
+      if( firstChar != Markers.TypeIdentifier )
+        {
+        if( count == 1 )
+          {
+          mApp.showStatus( "The key is not an identifier." );
+          return false;
+          }
+
+        continue;
+        }
+
+      token = Markers.removeAllMarkers( token );
+      // There might be a space character after
+      // the end marker.
+      token = token.trim();
+      if( count == 1 )
+        {
+        if( !key.equals( token ))
+          {
+          mApp.showStatus( "The key is not equal to the first token." );
+          mApp.showStatus( "Key: >" + key + "<" );
+          mApp.showStatus( "Token: >" + token + "<" );
+          mApp.showStatus( markedUpString );
+          return false;
+          }
+
+        continue;
+        }
+      
+      // If one of these tokens is the same as
+      // the key then it's self referential.
+
+
+      mApp.showStatus( "Token: " + token );
+==== Does the key exist for this token?
+
+====== if( macroDictionary.keyExists( key ))
+      // {
+
+      }
+
+    mApp.showStatus( " " );
+
+
+/*
     StringBuilder paramBuilder = new StringBuilder();
     for( int count = 1; count < last; count++ )
       paramBuilder.append( splitS[count] + " " );
