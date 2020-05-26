@@ -1,6 +1,11 @@
 // Copyright Eric Chauvin 2020.
 
 
+// The ## makes two _identifiers_ merge in to one.
+// #define COMMAND(NAME)  { #NAME, NAME ## _command }
+// The single # is for stringizing.
+// https://gcc.gnu.org/onlinedocs/gcc-4.8.5/cpp/Stringification.html
+
 
 public class Macro
   {
@@ -103,43 +108,84 @@ public class Macro
     markedUpString = MarkupString.MarkItUp( mApp,
                                             in );
 
-    // mApp.showStatus( markedUpString );
-
     String[] splitS = markedUpString.split(
                                  Character.toString(
                                  Markers.Begin ));
 
     int last = splitS.length;
-    if( last == 0 )
+    if( last < 2 )
       {
-      mApp.showStatus( "There is nothing marked up in the macro." );
+      mApp.showStatus( "This macro has no key marked up." );
+      return false;
+      }
+      
+    // The string at zero is what's before the first
+    // Begin marker, which is nothing.
+
+    String testKey = splitS[1];
+    char firstChar = testKey.charAt( 0 ); 
+    if( firstChar != Markers.TypeIdentifier )
+      {
+      mApp.showStatus( "The key is not an identifier." );
+      mApp.showStatus( markedUpString );
       return false;
       }
 
-    // The string at zero is what's before the first
-    // Begin marker, which is white space or nothing.
-    for( int count = 1; count < last; count++ )
+    testKey = Markers.removeAllMarkers( testKey );
+    if( !key.equals( testKey ))
       {
-      String token = splitS[count];
-      char firstChar = token.charAt( 0 ); 
-      if( firstChar == Markers.TypeLineNumber )
-        {
-        // If this happened at count 1 it would
-        // never have gotten this far because it
-        // would have found no key.
-        continue;
-        }
+      mApp.showStatus( "The key is not equal to the first token." );
+      mApp.showStatus( "Key: >" + key + "<" );
+      mApp.showStatus( "TestKey: >" + testKey + "<" );
+      mApp.showStatus( markedUpString );
+      return false;
+      }
 
-      if( firstChar != Markers.TypeIdentifier )
+    if( last == 2 )
+      {
+      // Like a #define statement with a key but 
+      // no parameters.
+      // A #define statement can define an empty
+      // macro, like to remove a key word.
+      return true;
+      }
+
+    StringBuilder sBuilder = new StringBuilder();
+    for( int count = 2; count < last; count++ )
+      {
+      sBuilder.append( Character.toString( 
+                                  Markers.Begin ) +
+                                  splitS[count] );
+      }
+
+    // Put the paramters back, but leave the key out.
+    markedUpString = sBuilder.toString();
+
+
+
+/*
+=====
+while( true ) for a different function.
+
+      sBuilder.setLength( 0 );
+
+      for( int count = 2; count < last; count++ )
         {
-        if( count == 1 )
+        String token = splitS[count];
+        char firstChar = token.charAt( 0 ); 
+        if( firstChar == Markers.TypeLineNumber )
+          continue;
+
+        if( firstChar != Markers.TypeIdentifier )
           {
-          mApp.showStatus( "The key is not an identifier." );
-          return false;
-          }
+          if( count == 1 )
+            {
+            mApp.showStatus( "The key is not an identifier." );
+            return false;
+            }
 
-        continue;
-        }
+          continue;
+          }
 
       token = Markers.removeAllMarkers( token );
       // There might be a space character after
@@ -174,7 +220,8 @@ public class Macro
     mApp.showStatus( " " );
 
 
-/*
+
+/////////
     StringBuilder paramBuilder = new StringBuilder();
     for( int count = 1; count < last; count++ )
       paramBuilder.append( splitS[count] + " " );
@@ -241,6 +288,8 @@ public class Macro
       return false;
       }
     }
+
+
 
 
 /*
