@@ -70,12 +70,10 @@ public class PreProcessLines
     {
     try
     {
-    boolean levelBool = true;
-    int level = 0;
-
     if( in.trim().length() == 0 )
       return "";
 
+    BooleanLevel boolLevel = new BooleanLevel( mApp );
     StringArray fileLines = new StringArray();
     StringBuilder sBuilder = new StringBuilder();
     StringBuilder paramBuilder = new StringBuilder();
@@ -88,7 +86,7 @@ public class PreProcessLines
       if( '#' != StringsUtility.firstNonSpaceChar(
                                              line ))
         {
-        if( levelBool )
+        if( boolLevel.getValue() )
           sBuilder.append( line + "\n" );
         else
           sBuilder.append( "/" + "/  " + line + "\n" );
@@ -141,8 +139,8 @@ public class PreProcessLines
         return "";
         }
 
-      level = setLevel( directive, level );
-      if( level < 0 )
+      boolLevel.setLevel( directive );
+      if( boolLevel.getCurrentLevel() < 0 )
         {
         mApp.showStatus( "Level is less than zero." );
         return "";
@@ -165,8 +163,7 @@ public class PreProcessLines
       String directiveBody = paramBuilder.toString();
       String result = processDirective( directive,
                                         directiveBody,
-                                        level,
-                                        levelBool );
+                                        boolLevel );
 
       if( result.length() == 0 )
         return "";
@@ -174,7 +171,7 @@ public class PreProcessLines
       sBuilder.append( result );
       }
 
-    if( level != 0 )
+    if( boolLevel.getCurrentLevel() != 0 )
       {
       mApp.showStatus( "Level is not zero at end." );
       return "";
@@ -193,35 +190,13 @@ public class PreProcessLines
 
 
 
-  private int setLevel( String command, int inLevel )
-    {
-    if( command.equals( "if" ))
-      return inLevel + 1;
-
-    if( command.equals( "ifdef" ))
-      return inLevel + 1;
-
-    if( command.equals( "ifndef" ))
-      return inLevel + 1;
-
-    if( command.equals( "endif" ))
-      return inLevel - 1;
-
-    // else and elseif...
-
-    return inLevel;
-    }
-
-
-
   private String processDirective( String directive,
-                                 String directiveBody,
-                                 int level,
-                                 boolean levelBool )
+                              String directiveBody,
+                              BooleanLevel boolLevel )
     {
     if( directive.equals( "define" ))
       {
-      if( !levelBool )
+      if( !boolLevel.getValue() )
         {
         return "/" + "/ #define " +
                                directiveBody + "\n";
