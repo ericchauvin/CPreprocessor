@@ -9,10 +9,6 @@ public class MarkupString
                                     String result )
 
     {
-    // If each of these passes was done by a state
-    // machine, then the state machine would be
-    // relatively simple for each pass.
-
     result = markStrings( mApp, result );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
@@ -104,7 +100,6 @@ public class MarkupString
       }
 
 
-    /*
     result = removeOutsideWhiteSpace( result );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
@@ -114,67 +109,10 @@ public class MarkupString
       mApp.showStatus( "There was an error marker after removeOutsideWhiteSpace." );
       return "";
       }
-*/
 
-
-    /////////////
     // mApp.showStatus( result );
     // mApp.showStatus( " " );
-    // mApp.showStatus( "Finished markup." );
-    // mApp.showStatus( " " );
-    // mApp.showStatus( " " );
     return result;
-
-
-
-/*
-
-    if( !TestBrackets( MForm, Result ))
-      {
-      // ShowStatus( Result );
-      return null;
-      }
-
-    IDDictionary IdentDictionary = new
-                               IDDictionary( MForm );
-
-    // CSharpFixIdentifiers CSFixIDs = new
-    //                    CSharpFixIdentifiers( MForm,
-    //                                IdentDictionary );
-
-    // if( !CSFixIDs.GetIdentifiers( Result ))
-      // {
-      // ShowStatus( "GetIdentifiers returned false." );
-      // return "";
-      // }
-
-    // Result = CSFixIDs.MakeIdentifiersLowerCase( Result );
-
-    // IdentDictionary.ShowIDs();
-
-    // CSFixIDs = null;
-    if( !MForm.CheckEvents())
-      return null;
-
-
-    Result = BracketLevel.SetLevelChars( MForm, Result );
-    if( Result == "" )
-      {
-      // ShowStatus( Result );
-      return null;
-      }
-
-
-    Token Tk = new Token( MForm );
-    Tk.AddTokensFromString( Result );
-    Tk.SetLowestTokenBlocks();
-
-    ShowStatus( " " );
-    Tk.ShowTokensAtLevel( 1 );
-
-    return Tk;
-    */
-
     }
 
 
@@ -604,7 +542,6 @@ public class MarkupString
       // It is continuing inside a number.
       sBuilder.append( testChar );
       }
-
    
     return sBuilder.toString();
     }
@@ -764,9 +701,8 @@ public class MarkupString
     // C++ user defined literals 
     // long double operator"" _kg( long double x ) 
 
-    // Preprocessing?
     if( testChar == '#' )
-      return false;
+      return true;
 
     if( testChar == ',' )
       return true;
@@ -1001,4 +937,3 @@ public class MarkupString
 
 
   }
-
