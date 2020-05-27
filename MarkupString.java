@@ -10,105 +10,28 @@ public class MarkupString
 
     {
     result = markStrings( mApp, result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error after markStrings." );
-      mApp.showStatus( " " );
-      mApp.showStatus( result );
+    if( !testMarkers( result, "markStrings().", mApp ))
       return "";
-      }
 
-    if( !testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after mareStrings." );
-      return "";
-      }
-
-
-    ///////////
     result = markCharacters( mApp, result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error marker after markCharacters." );
+    if( !testMarkers( result, "markCharacters().", mApp ))
       return "";
-      }
 
-    if( !testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after markCharacters." );
-      return "";
-      }
-
-
-    /////////////
     result = markIdentifiers( mApp, result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error marker after markIdentifiers." );
+    if( !testMarkers( result, "markIdentifiers().", mApp ))
       return "";
-      }
 
-    if( !testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after markIdentifiers." );
-      return "";
-      }
-
-
-    //////////
     result = markNumbers( result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error marker after markNumbers." );
+    if( !testMarkers( result, "markNumbers().", mApp ))
       return "";
-      }
 
-    if( !testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after markNumbers." );
-      return "";
-      }
-
-
-    ////////
     result = markOperators( result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( result );
-      mApp.showStatus( "There was an error marker after markOperators." );
+    if( !testMarkers( result, "markOperators().", mApp ))
       return "";
-      }
-
-    if( !testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after markOperators." );
-      return "";
-      }
-
 
     result = removeOutsideWhiteSpace( result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
-      {
-      mApp.showStatus( result );
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error marker after removeOutsideWhiteSpace." );
+    if( !testMarkers( result, "removeOutsideWhiteSpace().", mApp ))
       return "";
-      }
 
     // mApp.showStatus( result );
     // mApp.showStatus( " " );
@@ -117,15 +40,39 @@ public class MarkupString
 
 
 
+  public static boolean testMarkers( String testS, 
+                                     String errorS,
+                                     MainApp mApp )
+    {
+    if( testS.length() == 0 )
+      return false;
+
+    if( testS.contains( Character.toString(
+                      Markers.ErrorPoint )))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "There was an error after: " + errorS );
+      mApp.showStatus( " " );
+      mApp.showStatus( testS );
+      return false;
+      }
+
+    if( !testBeginEnd( mApp, testS ))
+      {
+      mApp.showStatus( " " );
+      mApp.showStatus( "TestBeginEnd returned false after: " + errorS );
+      return false;
+      }
+
+    return true;
+    }
+
+
+
   private static String markStrings( MainApp mApp,
                                      String in )
     {
-    // A string can have zero length.  For example it
-    // can be used in a printf function to tell it 
-    // that the first thing is a string.
-    // Like printf( "" + count + " that" );
-
-    // In C, a wide character string literal looks
+    // A wide character string literal looks
     // like:  L"This string." with the L in front of
     // it.
 
@@ -865,74 +812,6 @@ public class MarkupString
 
     return sBuilder.toString();
     }
-
-
-
-/*
-  internal static bool TestBrackets( MainForm MForm, string InString )
-    {
-    StringBuilder SBuilder = new StringBuilder();
-    int BracketCount = 0;
-    bool IsInsideObject = false;
-    int Last = InString.Length;
-    for( int Count = 0; Count < Last; Count++ )
-      {
-      char TestChar = InString[Count];
-      SBuilder.Append( Char.ToString( TestChar ));
-
-      if( IsInsideObject )
-        {
-        if( TestChar == Markers.End )
-          IsInsideObject = false;
-
-        continue;
-        }
-
-      if( TestChar == Markers.Begin )
-        {
-        IsInsideObject = true;
-        continue;
-        }
-
-      if( !((TestChar == '{') || (TestChar == '}')))
-        {
-        string ShowS = SBuilder.ToString();
-        ShowS = ShowS.Replace(
-             Char.ToString( Markers.Begin ), "\r\n" );
-
-        MForm.ShowStatus( ShowS );
-        MForm.ShowStatus( "This is not a bracket: " + Char.ToString( TestChar ));
-        return false;
-        }
-
-      if( TestChar == '{' )
-        BracketCount++;
-
-      if( TestChar == '}' )
-        BracketCount--;
-
-      if( BracketCount < 0 )
-        {
-        string ShowS = SBuilder.ToString();
-        ShowS = ShowS.Replace(
-             Char.ToString( Markers.Begin ), "\r\n" );
-
-        MForm.ShowStatus( ShowS );
-        MForm.ShowStatus( "Bracket count went negative." );
-        return false;
-        }
-
-      }
-
-    if( BracketCount != 0 )
-      {
-      MForm.ShowStatus( "Bracket count is not zero at the end." );
-      return false;
-      }
-
-    return true;
-    }
-*/
 
 
 
