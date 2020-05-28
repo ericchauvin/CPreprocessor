@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "5/26/2020";
+  public static final String versionDate = "5/28/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
@@ -76,6 +76,15 @@ public class MainApp implements Runnable
     // showStatus( " " );
     }
 
+
+
+  public void showStatusAsync( String toShow )
+    {
+    if( mainWin == null )
+      return;
+
+    mainWin.showStatusAsync( toShow );
+    }
 
 
 
