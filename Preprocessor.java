@@ -33,8 +33,9 @@ public class Preprocessor
 
     // This adds line number markers and also fixes
     // line splices.
-    result = RemoveComments.removeAllComments(
-                                      mApp, result );
+    result = RemoveComments.removeAllComments( mApp,
+                                           result,
+                                           fileName );
 
     if( result.length() == 0 )
       return "";
