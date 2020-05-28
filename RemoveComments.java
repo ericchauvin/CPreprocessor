@@ -28,7 +28,8 @@ public class RemoveComments
   {
 
   public static String removeAllComments( MainApp mApp,
-                                         String in )
+                                     String in,
+                                     String fileName )
     {
     String showError = "";
     String result = in;
@@ -40,7 +41,7 @@ public class RemoveComments
     // programmer can see which line has an error
     // in it.
 
-    result = markLineNumbers( mApp, result );
+    result = markLineNumbers( mApp, result, fileName );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
@@ -115,7 +116,8 @@ public class RemoveComments
 
 
   private static String markLineNumbers( MainApp mApp,
-                                      String in )
+                                     String in,
+                                     String fileName )
     {
     StringBuilder sBuilder = new StringBuilder();
 
@@ -167,6 +169,8 @@ public class RemoveComments
          Markers.Begin +
          Markers.TypeLineNumber +
          lineNumber +
+         ";" +
+         fileName +
          Markers.End +
          "\n";
 
