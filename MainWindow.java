@@ -4,7 +4,7 @@
 // Code Analysis for C++ code, written in Java.
 
 
-
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -29,23 +29,6 @@ import java.io.File;
 
 
 
-/*
-// import java.awt.Insets;
-// import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-import javax.swing.KeyStroke;
-import javax.swing.JTabbedPane;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.swing.Timer;
-import java.lang.ProcessBuilder.Redirect;
-*/
-
 
 // black, blue, cyan, darkGray, gray, green, lightGray,
 // magenta, orange, pink, red, white, yellow.
@@ -67,6 +50,8 @@ public class MainWindow extends JFrame implements
   private JTextArea statusTextArea;
   private String statusFileName = "";
   private JPanel mainPanel = null;
+  private Thread fileThread;
+  private String uiThreadName = "";
 
 
 /*
@@ -90,10 +75,13 @@ public class MainWindow extends JFrame implements
     super( showText );
 
     mApp = useApp;
+    uiThreadName = Thread.currentThread().getName();
 
-    mainFont = new Font( Font.MONOSPACED, Font.PLAIN, 40 );
+    mainFont = new Font( Font.MONOSPACED, Font.PLAIN,
+                                                 40 );
 
-    setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
+    setDefaultCloseOperation( WindowConstants.
+                                      EXIT_ON_CLOSE );
 
     setSize( 1200, 600 );
     addComponents( getContentPane() );
@@ -216,10 +204,35 @@ public class MainWindow extends JFrame implements
 
 
 
+  public void showStatusAsync( String toShow )
+    {
+    SwingUtilities.invokeLater( new Runnable()
+      {
+      public void run()
+        {
+        showStatus( toShow );
+        }
+      });
+    }
+
+
+
   public void showStatus( String toShow )
     {
     if( statusTextArea == null )
       return;
+
+    String thisThread = Thread.currentThread().
+                                           getName();
+
+    if( !uiThreadName.equals( thisThread ))
+      {
+      String showWarn = "showStatus() is being" +
+                " called from the wrong thread.\n\n";
+ 
+      statusTextArea.setText( showWarn );
+      return;
+      }
 
     statusTextArea.append( toShow + "\n" );
     }
@@ -291,6 +304,15 @@ public class MainWindow extends JFrame implements
     menuItem = new JMenuItem( "Test" );
     menuItem.setMnemonic( KeyEvent.VK_T );
     menuItem.setActionCommand( "FileTest" );
+    menuItem.addActionListener( this );
+    menuItem.setForeground( Color.white );
+    menuItem.setBackground( Color.black );
+    menuItem.setFont( mainFont );
+    fileMenu.add( menuItem );
+
+    menuItem = new JMenuItem( "Cancel" );
+    menuItem.setMnemonic( KeyEvent.VK_C );
+    menuItem.setActionCommand( "FileCancel" );
     menuItem.addActionListener( this );
     menuItem.setForeground( Color.white );
     menuItem.setBackground( Color.black );
@@ -421,10 +443,22 @@ public class MainWindow extends JFrame implements
       // MarkupForPreproc.MarkItUp( mApp,
          //                                fileName );
 
-      testFiles();
-      // listHeaderFiles();
+      // testFiles();
+      listHeaderFiles();
 
       return;
+      }
+
+    if( command == "FileCancel" )
+      {
+      showStatus( "Cancel got called." );
+      if( fileThread != null )
+        {
+        showStatus( "Canceling..." );
+        fileThread.interrupt();
+        fileThread = null;
+        return;
+        }
       }
 
     if( command == "FileExit" )
@@ -491,6 +525,7 @@ public class MainWindow extends JFrame implements
     }
 
 
+
   private void listHeaderFiles()
     {
     String dir = "\\jdk7hotspotmaster\\src";
@@ -504,6 +539,23 @@ public class MainWindow extends JFrame implements
     {
     try
     {
+    if( fileThread != null )
+      {
+      showStatus( "The thread is already running." );
+      return;
+      }
+
+    FileSearchRunnable fileSearch = new 
+                       FileSearchRunnable( mApp,
+                       "\\cygwin64\\usr\\include" );
+
+    fileThread = new Thread( fileSearch );
+    fileThread.start();
+
+
+
+
+/*
     showStatus( " " );
     showStatus( "Listing: " + dir );
 
@@ -530,6 +582,7 @@ public class MainWindow extends JFrame implements
 
       showStatus( fileName );
       }
+*/
     }
     catch( Exception e )
       {
@@ -541,7 +594,7 @@ public class MainWindow extends JFrame implements
 
 
 /*
-Execute C++ programs with this?
+Execute a C++ program with this.
   private void runBuildFile()
     {
     try
@@ -836,140 +889,6 @@ private void editPaste()
     }
 
 
-
-/*
-  private void findText()
-    {
-    try
-    {
-    int selectedIndex = mainTabbedPane.getSelectedIndex();
-    if( (selectedIndex < 1) ||
-        (selectedIndex >= tabPagesArrayLast))
-      {
-      showStatusTab();
-      showStatus( "No tab page selected." );
-      return;
-      }
-
-    String sResult = (String)JOptionPane.showInputDialog(
-                    this,
-                    "Search for:",
-                    "Search For", // Dialog title.
-                    JOptionPane.PLAIN_MESSAGE,
-                    null, // icon,
-                    null, // possibilities to choose from.
-                    "" ); // The default value.
-
-    if( sResult == null )
-      return;
-
-    searchText = sResult.trim().toLowerCase();
-    if( searchText.length() < 1 )
-      return;
-
-    // showStatus( "Search text: " + searchText );
-
-    findTextNext();
-    }
-    catch( Exception e )
-      {
-      showStatusTab();
-      showStatus( "Exception in findText()." );
-      showStatus( e.getMessage() );
-      }
-    }
-*/
-
-
-/*
-  private int searchTextMatches( int position,
-                                 String textToSearch,
-                                 String searchText )
-    {
-    int sLength = searchText.length();
-    if( sLength < 1 )
-      return -1;
-
-    if( (position + sLength - 1) >= textToSearch.length() )
-      return -1;
-
-    for( int count = 0; count < sLength; count++ )
-      {
-      if( searchText.charAt( count ) != textToSearch.
-                            charAt( position + count ) )
-        return -1;
-
-      }
-
-    return position;
-    }
-*/
-
-
-/*
-  private void findTextNext()
-    {
-    try
-    {
-    int selectedIndex = mainTabbedPane.getSelectedIndex();
-    if( (selectedIndex < 1) ||
-        (selectedIndex >= tabPagesArrayLast ))
-      {
-      showStatusTab();
-      showStatus( "No tab page selected." );
-      return;
-      }
-
-    if( searchText.length() < 1 )
-      {
-      showStatusTab();
-      showStatus( "There is no searchText." );
-      return;
-      }
-
-    // showStatus( "Search text: " + searchText );
-
-    JTextArea selectedTextArea = getSelectedTextArea();
-    if( selectedTextArea == null )
-      {
-      showStatusTab();
-      showStatus( "No text area selected." );
-      return;
-      }
-
-    int start = selectedTextArea. getCaretPosition();
-    if( start < 0 )
-      start = 0;
-
-    String textS = selectedTextArea.getText().toLowerCase();
-    int textLength = textS.length();
-    for( int count = start; count < textLength; count++ )
-      {
-      if( textS.charAt( count ) == searchText.charAt( 0 ) )
-        {
-        int where = searchTextMatches( count,
-                                       textS,
-                                       searchText );
-        if( where >= 0 )
-          {
-          // showStatus( "Found at: " + where );
-          selectedTextArea. setCaretPosition( where );
-          return;
-          }
-        }
-      }
-
-    showStatusTab();
-    showStatus( "Nothing found." );
-    }
-    catch( Exception e )
-      {
-      showStatusTab();
-      showStatus( "Exception in findTextNext()." );
-      showStatus( e.getMessage() );
-      }
-    }
-*/
 
 
 /*
