@@ -50,17 +50,17 @@ public class MarkupString
     if( testS.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
-      mApp.showStatus( " " );
-      mApp.showStatus( "There was an error after: " + errorS );
-      mApp.showStatus( " " );
-      mApp.showStatus( testS );
+      mApp.showStatusAsync( " " );
+      mApp.showStatusAsync( "There was an error after: " + errorS );
+      mApp.showStatusAsync( " " );
+      mApp.showStatusAsync( testS );
       return false;
       }
 
     if( !testBeginEnd( mApp, testS ))
       {
-      mApp.showStatus( " " );
-      mApp.showStatus( "TestBeginEnd returned false after: " + errorS );
+      mApp.showStatusAsync( " " );
+      mApp.showStatusAsync( "TestBeginEnd returned false after: " + errorS );
       return false;
       }
 
@@ -97,7 +97,7 @@ public class MarkupString
     String singleQuoteCharStr = "\'\"\'";
     if( singleQuoteCharStr.length() != 3 )
       {
-      mApp.showStatus( "SingleQuoteCharStr.length() != 3" );
+      mApp.showStatusAsync( "SingleQuoteCharStr.length() != 3" );
       return Character.toString( Markers.ErrorPoint );
       }
 
@@ -752,10 +752,10 @@ public class MarkupString
       if( !line.contains( Character.toString(
                                        Markers.End )))
         {
-        mApp.showStatus( sBuilder.toString() );
-        mApp.showStatus( " " );
-        mApp.showStatus( "The line has no end marker." );
-        mApp.showStatus( "Line: " + line );
+        mApp.showStatusAsync( sBuilder.toString() );
+        mApp.showStatusAsync( " " );
+        mApp.showStatusAsync( "The line has no end marker." );
+        mApp.showStatusAsync( "Line: " + line );
         return false;
         }
       }
