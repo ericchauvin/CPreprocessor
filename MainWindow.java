@@ -217,15 +217,15 @@ public class MainWindow extends JFrame implements
 
 
 
-  public void showStatus( String toShow )
+  private void showStatus( String toShow )
     {
     if( statusTextArea == null )
       return;
 
-    String thisThread = Thread.currentThread().
+    String thisThreadName = Thread.currentThread().
                                            getName();
 
-    if( !uiThreadName.equals( thisThread ))
+    if( !uiThreadName.equals( thisThreadName ))
       {
       String showWarn = "showStatus() is being" +
                 " called from the wrong thread.\n\n";
@@ -436,14 +436,11 @@ public class MainWindow extends JFrame implements
     // File Menu:
     if( command == "FileTest" )
       {
-      // The Java launcher starts what?
-
       // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
       // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
-      // MarkupForPreproc.MarkItUp( mApp,
-         //                                fileName );
 
       // testFiles();
+
       listHeaderFiles();
 
       return;
@@ -529,60 +526,42 @@ public class MainWindow extends JFrame implements
   private void listHeaderFiles()
     {
     String dir = "\\jdk7hotspotmaster\\src";
+    // String dir = "\\cygwin64\\usr\\include";
 
-    listFiles( dir );
+    // Add it to the semicolon delimited dictionary file.
+    // endsWith( fileToFind )
+    String fileToFind = ""; // this/that.h";
+    listFiles( dir, fileToFind );
     }
 
 
 
-  private void listFiles( String dir )
+  private void listFiles( String dir,
+                          String fileToFind )
     {
     try
     {
     if( fileThread != null )
       {
-      showStatus( "The thread is already running." );
-      return;
+      // If it's not still doing something.
+      if( !fileThread.isAlive())
+        {
+        fileThread = null;
+        }
+      else
+        {
+        showStatus( "The thread is already running." );
+        return;
+        }
       }
 
+// ===== fileToFind
     FileSearchRunnable fileSearch = new 
                        FileSearchRunnable( mApp,
-                       "\\cygwin64\\usr\\include" );
+                       dir );
 
     fileThread = new Thread( fileSearch );
     fileThread.start();
-
-
-
-
-/*
-    showStatus( " " );
-    showStatus( "Listing: " + dir );
-
-    File dirFile = new File( dir );
-    String[] filesArray = dirFile.list();
-    int max = filesArray.length;
-    for( int count = 0; count < max; count++ )
-      {
-// use \\cygwin\\usr\\include
-      String fileName = dir + "\\" + filesArray[count]; 
-      if( fileName.contains( "\\jdk7hotspotmaster\\src\\cpu\\sparc" ))
-        continue;
-
-      if( fileName.contains( "\\jdk7hotspotmaster\\src\\os\\solaris\\" ))
-        continue;
-
-
-      File listFile = new File( fileName );
-      if( listFile.isDirectory())
-        {
-        listFiles( fileName );
-        continue;
-        }
-
-      showStatus( fileName );
-      }
-*/
     }
     catch( Exception e )
       {
@@ -932,13 +911,13 @@ private void editPaste()
     {
     try
     {
-    /*
     String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
 
     String[] fileArray = { "codeBlob.cpp",
                            "codeBlob.hpp",
                            "codeCache.cpp",
                            "codeCache.hpp",
+/*
                            "compiledIC.cpp",
                            "compiledIC.hpp",
                            "compressedStream.cpp",
@@ -971,13 +950,16 @@ private void editPaste()
                            "vmreg.cpp",
                            "vmreg.hpp",
                            "vtableStubs.cpp",
-                           "vtableStubs.hpp" };
 */
+                           "vtableStubs.hpp" };
 
+
+/*
 
     String[] fileArray = { "addresses.h",
                            "alias.c",
                            "alias.h",
+=====
                           "align.h",
                            "alloc-pool.c",
                            "alloc-pool.h",
@@ -997,8 +979,6 @@ private void editPaste()
                            "bt-load.c",
                            "builtins.c",
                            "builtins.h",
-
-/*
                            "caller-save.c",
                            "calls.c",
                            "calls.h",
@@ -1133,11 +1113,11 @@ private void editPaste()
                            "fold-const.c",
                            "fold-const.h",
                            "fp-test.c",
-*/
+=====
                            "function-tests.c" };
 
 
-/*
+=====
 function.c
 function.h
 fwprop.c
@@ -1320,9 +1300,11 @@ ipa-inline-transform.c
 ipa-inline.c
 ipa-inline.h
 ipa-param-manipulation.c
-*/
+
 
     String mainDir = "C:\\gccmaster\\gcc\\";
+*/
+
     String outDir = "C:\\PreprocessOut\\";
 
     int max = fileArray.length;
@@ -1346,16 +1328,16 @@ ipa-param-manipulation.c
         return;
         }
 
-      FileUtility.writeStringToFile( mApp,
-                                     outFileName,
-                                     test,
-                                     false );
+      // FileUtility.writeStringToFile( mApp,
+      //                                outFileName,
+      //                                test,
+      //                                false );
 
       }
 
-    showStatus( " " );
-    showStatus( "Finished processing files." );
-    showStatus( " " );
+    // showStatus( " " );
+    // showStatus( "Finished processing files." );
+    // showStatus( " " );
 
     }
     catch( Exception e )
