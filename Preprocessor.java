@@ -13,7 +13,7 @@ public class Preprocessor
     try
     {
     String showError = "";
-    mApp.showStatus( "Preprocessing file:\n" + fileName );
+    mApp.showStatusAsync( "Preprocessing file:\n" + fileName );
 
     // The first level of lexical analysis and
     // processing is inside FileUtility.java when
@@ -25,7 +25,7 @@ public class Preprocessor
 
     if( result.trim().length() == 0 )
       {
-      mApp.showStatus( "Nothing in Source File." );
+      mApp.showStatusAsync( "Nothing in Source File." );
       // Return an empty string to stop further 
       // processing.
       return "";
@@ -40,23 +40,10 @@ public class Preprocessor
     if( result.length() == 0 )
       return "";
 
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
+    if( !MarkupString.testMarkers( result, 
+                                  "RemoveAllComments()",
+                                  mApp ))
       {
-      mApp.showStatus( " " );
-      showError = "There was an error marker after" +
-                               " RemoveAllComments.";
-
-      mApp.showStatus( showError );
-      return "";
-      }
-
-    if( !MarkupString.testBeginEnd( mApp, result ))
-      {
-      mApp.showStatus( " " );
-      showError = "TestBeginEnd returned false" +
-                        " after RemoveAllComments.";
-      mApp.showStatus( showError );
       return "";
       }
     
@@ -75,9 +62,9 @@ public class Preprocessor
        //                                 result );
 
 
-    // mApp.showStatus( result );
-    mApp.showStatus( " " );
-    // mApp.showStatus( "Done preprocessing:" );
+    // mApp.showStatusAsync( result );
+    mApp.showStatusAsync( " " );
+    // mApp.showStatusAsync( "Done preprocessing:" );
     // mApp.showStatus( fileName );
     // mApp.showStatus( " " );
 
@@ -86,8 +73,8 @@ public class Preprocessor
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in PreprocessFile()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in PreprocessFile()." );
+      mApp.showStatusAsync( e.getMessage() );
       return "";
       }
     }
