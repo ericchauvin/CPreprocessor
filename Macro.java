@@ -59,7 +59,7 @@ public class Macro
     int last = splitS.length;
     if( last == 0 )
       {
-      mApp.showStatus( "There is no key in the directive." );
+      mApp.showStatusAsync( "There is no key in the directive." );
       return false;
       }
 
@@ -83,7 +83,7 @@ public class Macro
 
     if( key.length() == 0 )
       {
-      mApp.showStatus( "The key length is zero." );
+      mApp.showStatusAsync( "The key length is zero." );
       return false;
       }
 
@@ -91,8 +91,8 @@ public class Macro
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in setKeyFromString()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in setKeyFromString()." );
+      mApp.showStatusAsync( e.getMessage() );
       return false;
       }
     }
@@ -113,7 +113,7 @@ public class Macro
     int last = splitS.length;
     if( last < 2 )
       {
-      mApp.showStatus( "This macro has no key marked up." );
+      mApp.showStatusAsync( "This macro has no key marked up." );
       return false;
       }
       
@@ -124,18 +124,18 @@ public class Macro
     char firstChar = testKey.charAt( 0 ); 
     if( firstChar != Markers.TypeIdentifier )
       {
-      mApp.showStatus( "The key is not an identifier." );
-      mApp.showStatus( markedUpString );
+      mApp.showStatusAsync( "The key is not an identifier." );
+      mApp.showStatusAsync( markedUpString );
       return false;
       }
 
     testKey = Markers.removeAllMarkers( testKey );
     if( !key.equals( testKey ))
       {
-      mApp.showStatus( "The key is not equal to the first token." );
-      mApp.showStatus( "Key: >" + key + "<" );
-      mApp.showStatus( "TestKey: >" + testKey + "<" );
-      mApp.showStatus( markedUpString );
+      mApp.showStatusAsync( "The key is not equal to the first token." );
+      mApp.showStatusAsync( "Key: >" + key + "<" );
+      mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
+      mApp.showStatusAsync( markedUpString );
       return false;
       }
 
@@ -172,8 +172,8 @@ What if a macro has the same name as a variable name?
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in markUpFromString()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in markUpFromString()." );
+      mApp.showStatusAsync( e.getMessage() );
       return false;
       }
     }
@@ -184,19 +184,19 @@ What if a macro has the same name as a variable name?
     {
     if( macroDictionary.keyExists( key ))
       {
-      mApp.showStatus( "Macro key already exists: " + key );
-      mApp.showStatus( "markedUpString: " + markedUpString );
+      mApp.showStatusAsync( "Macro key already exists: " + key );
+      mApp.showStatusAsync( "markedUpString: " + markedUpString );
       Macro showMac = macroDictionary.getMacro( key );
-      mApp.showStatus( "Original markedUpString: " +
+      mApp.showStatusAsync( "Original markedUpString: " +
                             showMac.getMarkedUpString());
       return false;
       }
 
     macroDictionary.setMacro( key, this );
-    // mApp.showStatus( " " );
-    // mApp.showStatus( "Setting new key: " + key );
-    // mApp.showStatus( "markedUpString: " + markedUpString );
-    // mApp.showStatus( " " );
+    // mApp.showStatusAsync( " " );
+    // mApp.showStatusAsync( "Setting new key: " + key );
+    // mApp.showStatusAsync( "markedUpString: " + markedUpString );
+    // mApp.showStatusAsync( " " );
     return true;
     }
 
@@ -249,9 +249,9 @@ What if a macro has the same name as a variable name?
       token = Markers.removeAllMarkers( token );
       if( token.equals( key ))
         {
-        mApp.showStatus( "This macro has a self referential key." );
-        mApp.showStatus( "Key: " + key );
-        mApp.showStatus( markedUpString );
+        mApp.showStatusAsync( "This macro has a self referential key." );
+        mApp.showStatusAsync( "Key: " + key );
+        mApp.showStatusAsync( markedUpString );
         return false;
         }
 
@@ -281,7 +281,7 @@ What if a macro has the same name as a variable name?
       }
 
     if( replacedIdentifier )
-      mApp.showStatus( "markedUpString: " + markedUpString );
+      mApp.showStatusAsync( "markedUpString: " + markedUpString );
 
     return replacedIdentifier; 
     }
