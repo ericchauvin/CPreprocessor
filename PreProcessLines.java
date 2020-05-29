@@ -117,7 +117,7 @@ public class PreProcessLines
 
       if( lastPart == 0 )
         {
-        mApp.showStatus(
+        mApp.showStatusAsync(
              "Preprocessor line doesn't have parts." );
 
         return "";
@@ -135,14 +135,14 @@ public class PreProcessLines
       // directive = directive.toLowerCase();
       if( !isValidDirective( directive ))
         {
-        mApp.showStatus( directive + " is not a valid directive." );
+        mApp.showStatusAsync( directive + " is not a valid directive." );
         return "";
         }
 
       boolLevel.setLevel( directive );
       if( boolLevel.getCurrentLevel() < 0 )
         {
-        mApp.showStatus( "Level is less than zero." );
+        mApp.showStatusAsync( "Level is less than zero." );
         return "";
         }
 
@@ -173,7 +173,7 @@ public class PreProcessLines
 
     if( boolLevel.getCurrentLevel() != 0 )
       {
-      mApp.showStatus( "Level is not zero at end." );
+      mApp.showStatusAsync( "Level is not zero at end." );
       return "";
       }
 
@@ -181,8 +181,8 @@ public class PreProcessLines
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in mainFileLoop()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in mainFileLoop()." );
+      mApp.showStatusAsync( e.getMessage() );
       return "";
       }
     }
@@ -208,7 +208,7 @@ public class PreProcessLines
         return "";
 
       String showKey = macro.getKey();
-      mApp.showStatus( "Key: " + showKey );
+      // mApp.showStatusAsync( "Key: " + showKey );
  
       if( !macro.markUpFromString( directiveBody ))
         return "";
@@ -245,16 +245,25 @@ Get the key and then disable it.
           return "";
 
         }
+*/
 
 
 
-
-    if( levelBool )
+    if( boolLevel.getValue() )
       {
       // Add comments back in to the code to show
-      // where a file was included and all that.
+      // where a file was included andl all that.
       if( directive.equals( "include" ))
         {
+        String inclFile = StringsUtility.
+                                    removeSections(
+                                        directiveBody,
+                                        Markers.Begin,
+                                        Markers.End );
+
+        mApp.showStatusAsync( inclFile );
+
+/*
         Do preprocessing on the included file.
         String test = Preprocessor.PreprocessFile(
                                     mApp,
@@ -264,10 +273,13 @@ Get the key and then disable it.
         Once this returns from processing the
         included files it will have a bunch of new
         macros defined in the dictionary.
+*/
         }
+      }
 
 
 
+/*
     if( levelBool )
       {
       if( directive.equals( "pragma" ))
