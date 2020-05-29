@@ -144,7 +144,7 @@ public class MacroDictionary
 
     if( isBadKey( key ))
       {
-      mApp.showStatus( "This can't be used as a key: " + key );
+      mApp.showStatusAsync( "This can't be used as a key: " + key );
       return;
       }
 
@@ -158,8 +158,8 @@ public class MacroDictionary
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in setMacro()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in setMacro()." );
+      mApp.showStatusAsync( e.getMessage() );
       }
     }
 
@@ -187,8 +187,8 @@ public class MacroDictionary
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in setMacroEnabled()." );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Exception in setMacroEnabled()." );
+      mApp.showStatusAsync( e.getMessage() );
       }
     }
 
