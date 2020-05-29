@@ -5,19 +5,6 @@
 import java.io.File;
 
 
-/*
-
-Make a files dictionary.
-endsWith()
-#include "this\that.h" shows the key for the file.
-So get its path to go with the key.
-*/
-
-
-// while (t.isAlive()) {
-//            Still waiting
-
-*/
 
 
 public class FileSearchRunnable  implements Runnable
@@ -49,22 +36,7 @@ public class FileSearchRunnable  implements Runnable
     // It has to be showStatusAsync().
     // mApp.showStatus( "Test async." );
 
-    listFiles( directory, false );
-
-/*
-    for( int count = 0; count < 10; count++ )
-      {
-      if( Thread.interrupted() )
-        {
-        mApp.showStatusAsync( "Thread interrupted." );
-        return;
-        }
-
-      mApp.showStatusAsync( "Showing it async " +
-                                              count );
-      Thread.sleep( 1000 );
-      }
-*/
+    listFiles( directory, true );
 
     }
     catch( Exception e )
@@ -75,37 +47,99 @@ public class FileSearchRunnable  implements Runnable
     }
 
 
+
   private void listFiles( String dir,
                           boolean recursive )
     {
-    mApp.showStatusAsync( " " );
-    mApp.showStatusAsync( "Listing: " + dir );
+    String d = "\\jdk7hotspotmaster\\src\\";
+    // mApp.showStatusAsync( " " );
+    // mApp.showStatusAsync( "// Listing: " + dir );
+    // mApp.showStatusAsync( " " );
 
     File dirFile = new File( dir );
     String[] filesArray = dirFile.list();
     int max = filesArray.length;
     for( int count = 0; count < max; count++ )
       {
-      String fileName = dir + "\\" + filesArray[count]; 
-      if( fileName.contains( "\\jdk7hotspotmaster\\src\\cpu\\sparc" ))
-        continue;
+      // Thread.sleep( 1000 );
+      if( Thread.interrupted() )
+        {
+        mApp.showStatusAsync( "Thread interrupted." );
+        return;
+        }
 
-      if( fileName.contains( "\\jdk7hotspotmaster\\src\\os\\solaris\\" ))
-        continue;
+      String fileName = dir + "\\" + filesArray[count]; 
 
       File listFile = new File( fileName );
-      if( recursive )
+      if( listFile.isDirectory())
         {
-        if( listFile.isDirectory())
+        // mApp.showStatusAsync( " " );
+        // mApp.showStatusAsync( "// dir: " + fileName );
+        // mApp.showStatusAsync( " " );
+
+        if( recursive )
           {
           listFiles( fileName, recursive );
-          continue;
           }
+
+        continue;
         }
+
+      if( fileName.startsWith( 
+         "\\jdk7hotspotmaster\\src\\cpu\\sparc\\" ))
+        continue;
+
+      if( fileName.startsWith(
+            "\\jdk7hotspotmaster\\src\\cpu\\zero\\" ))
+        continue;
+
+      if( fileName.startsWith(
+             "\\jdk7hotspotmaster\\src\\os\\bsd\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+            "\\jdk7hotspotmaster\\src\\os\\linux\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+          "\\jdk7hotspotmaster\\src\\os\\solaris\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+        "\\jdk7hotspotmaster\\src\\os\\posix\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+        "\\jdk7hotspotmaster\\src\\os_cpu\\bsd_x86\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+        "\\jdk7hotspotmaster\\src\\os_cpu\\bsd_zero\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+                       d + "os_cpu\\linux_sparc\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+                         d + "os_cpu\\linux_x86\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+                        d + "os_cpu\\linux_zero\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+                      d + "os_cpu\\solaris_sparc\\" ))
+        continue;
+
+      if( fileName.startsWith( 
+                       d + "os_cpu\\solaris_x86\\" ))
+        continue;
+
 
       mApp.showStatusAsync( fileName );
       }
-
     }
 
 
