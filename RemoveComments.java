@@ -19,8 +19,12 @@
 // string StarSlash = "*" + "/";
 // Otherwise it will interpret it as the end
 // of a comment, not as part of a string-literal.
-// That's how it should be writtin inside a string-
+// That's how it should be written inside a string-
 // literal.
+
+
+
+import java.io.File;
 
 
 
@@ -41,26 +45,31 @@ public class RemoveComments
     // programmer can see which line has an error
     // in it.
 
+    File file = new File( fileName );
+    fileName = file.getName();
+    // String pathName = file.getPath();
+    // showStatus( "Path name picked is: " + pathName );
+
     result = markLineNumbers( mApp, result, fileName );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "There was an error marker after" +
                                " markLineNumbers.";
 
-      // mApp.showStatus( result );
-      mApp.showStatus( showError );
+      // mApp.showStatusAsync( result );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "TestBeginEnd returned false" +
                        " after markLineNumbers.";
 
-      mApp.showStatus( showError );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
@@ -68,21 +77,21 @@ public class RemoveComments
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "There was an error marker after" +
                                " removeStarComments.";
 
-      mApp.showStatus( showError );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "TestBeginEnd returned false" +
                        " after removeStarComments.";
 
-      mApp.showStatus( showError );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
@@ -92,21 +101,21 @@ public class RemoveComments
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "There was an error marker after" +
                      " removeAllDoubleSlashComments.";
 
-      mApp.showStatus( showError );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatus( " " );
+      mApp.showStatusAsync( " " );
       showError = "TestBeginEnd returned false" +
                " after removeAllDoubleSlashComments.";
 
-      mApp.showStatus( showError );
+      mApp.showStatusAsync( showError );
       return "";
       }
 
@@ -217,8 +226,8 @@ public class RemoveComments
           sBuilder.append( Character.toString(
                                 Markers.ErrorPoint ));
 
-          mApp.showStatus( " " );
-          mApp.showStatus( "Error with nested comment at: " + count );
+          mApp.showStatusAsync( " " );
+          mApp.showStatusAsync( "Error with nested comment at: " + count );
           return sBuilder.toString();
           }
 
@@ -244,8 +253,8 @@ public class RemoveComments
           // if it's not already inside a comment.
           sBuilder.append( Character.toString( Markers.ErrorPoint ));
 
-          mApp.showStatus( " " );
-          mApp.showStatus( "Error with star-slash outside of a comment at: " + count );
+          mApp.showStatusAsync( " " );
+          mApp.showStatusAsync( "Error with star-slash outside of a comment at: " + count );
           return sBuilder.toString();
           }
 
@@ -358,7 +367,7 @@ public class RemoveComments
     String singleQuoteCharStr = "\'\"\'";
     if( singleQuoteCharStr.length() != 3 )
       {
-      mApp.showStatus( "SingleQuoteCharStr.Length != 3" );
+      mApp.showStatusAsync( "SingleQuoteCharStr.Length != 3" );
       return Character.toString( Markers.ErrorPoint );
       }
 
