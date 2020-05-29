@@ -75,8 +75,8 @@ import java.nio.file.Paths;
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Could not read the file: \n" + fileName );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Could not read the file: \n" + fileName );
+      mApp.showStatusAsync( e.getMessage() );
       return "";
       }
     }
@@ -139,8 +139,8 @@ import java.nio.file.Paths;
     byte[] outBuffer = UTF8Strings.stringToBytes( outString );
     if( outBuffer == null )
       {
-      mApp.showStatus( "Could not write to the file: \n" + fileName );
-      mApp.showStatus( "outBuffer was null." );
+      mApp.showStatusAsync( "Could not write to the file: \n" + fileName );
+      mApp.showStatusAsync( "outBuffer was null." );
       return false;
       }
 
@@ -152,8 +152,8 @@ import java.nio.file.Paths;
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Could not write to the file: \n" + fileName );
-      mApp.showStatus( e.getMessage() );
+      mApp.showStatusAsync( "Could not write to the file: \n" + fileName );
+      mApp.showStatusAsync( e.getMessage() );
       return false;
       }
     }
