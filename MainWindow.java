@@ -103,9 +103,12 @@ public class MainWindow extends JFrame implements
   // Do this after the constructor has returned.
   public void initialize()
     {
-    showStatus( "Programming by Eric Chauvin." );
-    showStatus( "Version date: " + MainApp.versionDate );
-    showStatus( " " );
+    String allTogether = 
+             "Programming by Eric Chauvin.\n" + 
+             "Version date: " +
+             MainApp.versionDate + "\n\n";
+
+    showStatusAsync( allTogether );
  
     // setupTimer();
     }
@@ -114,26 +117,26 @@ public class MainWindow extends JFrame implements
 
   public void windowStateChanged( WindowEvent e )
     {
-    // showStatus( "windowStateChanged" );
+    // showStatusAsync( "windowStateChanged" );
     }
 
 
   public void windowGainedFocus( WindowEvent e )
     {
-    // showStatus( "windowGainedFocus" );
+    // showStatusAsync( "windowGainedFocus" );
     }
 
 
   public void windowLostFocus( WindowEvent e )
     {
-    // showStatus( "windowLostFocus" );
+    // showStatusAsync( "windowLostFocus" );
     }
 
 
 
   public void windowOpened( WindowEvent e )
     {
-    // showStatus( "windowOpened" );
+    // showStatusAsync( "windowOpened" );
     }
 
 
@@ -146,14 +149,14 @@ public class MainWindow extends JFrame implements
 
   public void windowClosed( WindowEvent e )
     {
-    // showStatus( "windowClosed" );
+    // showStatusAsync( "windowClosed" );
     }
 
 
   public void windowIconified( WindowEvent e )
     {
     // keyboardTimer.stop();
-    // showStatus( "windowIconified" );
+    // showStatusAsync( "windowIconified" );
     }
 
 
@@ -161,20 +164,20 @@ public class MainWindow extends JFrame implements
   public void windowDeiconified( WindowEvent e )
     {
     // keyboardTimer.start();
-    // showStatus( "windowDeiconified" );
+    // showStatusAsync( "windowDeiconified" );
     }
 
 
 
   public void windowActivated( WindowEvent e )
     {
-    // showStatus( "windowActivated" );
+    // showStatusAsync( "windowActivated" );
     }
 
 
   public void windowDeactivated( WindowEvent e )
     {
-    // showStatus( "windowDeactivated" );
+    // showStatusAsync( "windowDeactivated" );
     }
 
 
@@ -210,14 +213,14 @@ public class MainWindow extends JFrame implements
       {
       public void run()
         {
-        showStatus( toShow );
+        showStatusA( toShow );
         }
       });
     }
 
 
 
-  private void showStatus( String toShow )
+  private void showStatusA( String toShow )
     {
     if( statusTextArea == null )
       return;
@@ -227,7 +230,7 @@ public class MainWindow extends JFrame implements
 
     if( !uiThreadName.equals( thisThreadName ))
       {
-      String showWarn = "showStatus() is being" +
+      String showWarn = "showStatusA() is being" +
                 " called from the wrong thread.\n\n";
  
       statusTextArea.setText( showWarn );
@@ -252,6 +255,7 @@ public class MainWindow extends JFrame implements
   private void addStatusTextPane()
     {
     statusTextArea = new JTextArea();
+    // statusTextArea.setEditable( false );
     statusTextArea.setDragEnabled( false );
     statusTextArea.setFont( mainFont );
     statusTextArea.setLineWrap( true );
@@ -430,7 +434,7 @@ public class MainWindow extends JFrame implements
       return;
       }
 
-    // showStatus( "ActionEvent Command is: " + command );
+    // showStatusAsync( "ActionEvent Command is: " + command );
 
     //////////////
     // File Menu:
@@ -439,19 +443,19 @@ public class MainWindow extends JFrame implements
       // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
       // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
 
-      // testFiles();
+      testFiles();
 
-      listHeaderFiles();
+      // listHeaderFiles();
 
       return;
       }
 
     if( command == "FileCancel" )
       {
-      showStatus( "Cancel got called." );
+      showStatusAsync( "Cancel got called." );
       if( fileThread != null )
         {
-        showStatus( "Canceling..." );
+        showStatusAsync( "Canceling..." );
         fileThread.interrupt();
         fileThread = null;
         return;
@@ -516,8 +520,8 @@ public class MainWindow extends JFrame implements
     }
     catch( Exception e )
       {
-      showStatus( "Exception in actionPerformed()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in actionPerformed()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 
@@ -525,8 +529,8 @@ public class MainWindow extends JFrame implements
 
   private void listHeaderFiles()
     {
-    String dir = "\\jdk7hotspotmaster\\src";
-    // String dir = "\\cygwin64\\usr\\include";
+    // String dir = "\\jdk7hotspotmaster\\src";
+    String dir = "\\cygwin64\\usr\\include";
 
     // Add it to the semicolon delimited dictionary file.
     // endsWith( fileToFind )
@@ -550,7 +554,7 @@ public class MainWindow extends JFrame implements
         }
       else
         {
-        showStatus( "The thread is already running." );
+        showStatusAsync( "The thread is already running." );
         return;
         }
       }
@@ -565,8 +569,8 @@ public class MainWindow extends JFrame implements
     }
     catch( Exception e )
       {
-      showStatus( "Exception in listFiles()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in listFiles()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 
@@ -589,7 +593,7 @@ Execute a C++ program with this.
     String runFile = mApp.projectConfigFile.getString(
                                           "BuildFile" );
 
-    showStatus( "Running Build File: " + runFile );
+    showStatusAsync( "Running Build File: " + runFile );
 
     // java.lang.Runtime
     // java.lang.ProcessBuilder
@@ -599,18 +603,18 @@ Execute a C++ program with this.
     buildProcess = Runtime.getRuntime().exec( runFile );
     if( buildProcess == null )
       {
-      showStatus( "exec() returned null for the Build Process." );
+      showStatusAsync( "exec() returned null for the Build Process." );
       return;
       }
 
-    showStatus( "Started Build File." );
+    showStatusAsync( "Started Build File." );
 
     }
     catch( Exception e )
       {
       showStatusTab();
-      showStatus( "Exception in runBuildFile()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in runBuildFile()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 */
@@ -654,7 +658,7 @@ Execute a C++ program with this.
       // It has not yet terminated.
       buildTimerCount++;
       if( (buildTimerCount % 4) == 1 )
-        showStatus( "Build process is running. " + buildTimerCount );
+        showStatusAsync( "Build process is running. " + buildTimerCount );
 
       // Kill the process.
       // buildProcess.destroy();
@@ -675,7 +679,7 @@ Execute a C++ program with this.
     {
     try
     {
-    // showStatus( "keyboardTimerEvent called." );
+    // showStatusAsync( "keyboardTimerEvent called." );
     // keyboardTimer.stop();
 
     if( windowIsClosing )
@@ -734,8 +738,8 @@ Execute a C++ program with this.
     }
     catch( Exception e )
       {
-      showStatus( "Exception in keyboardTimerEvent()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in keyboardTimerEvent()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 */
@@ -754,8 +758,8 @@ Execute a C++ program with this.
     }
     catch( Exception e )
       {
-      showStatus( "Exception in editCopy()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in editCopy()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 
@@ -774,8 +778,8 @@ Execute a C++ program with this.
     }
     catch( Exception e )
       {
-      showStatus( "Exception in editCut()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in editCut()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 */
@@ -794,8 +798,8 @@ private void editPaste()
     }
     catch( Exception e )
       {
-      showStatus( "Exception in editPaste()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in editPaste()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 */
@@ -849,22 +853,22 @@ private void editPaste()
     //    Dingbats (270027BF)
 
     // for( int Count = 0x2700; Count < 0x27BF; Count++ )
-      // ShowStatus( Count.ToString( "X2" ) + ") " + Char.ToString( (char)Count ));
+      // ShowStatusAsync( Count.ToString( "X2" ) + ") " + Char.ToString( (char)Count ));
 
     // for( int Count = 128; Count < 256; Count++ )
-      // ShowStatus( "      case (int)'" + Char.ToString( (char)Count ) + "': return " + Count.ToString( "X4" ) + ";" );
+      // ShowStatusAsync( "      case (int)'" + Char.ToString( (char)Count ) + "': return " + Count.ToString( "X4" ) + ";" );
 
 
     // for( int Count = 32; Count < 256; Count++ )
-      // ShowStatus( "    CharacterArray[" + Count.ToString() + "] = '" + Char.ToString( (char)Count ) + "';  //  0x" + Count.ToString( "X2" ) );
+      // ShowStatusAsync( "    CharacterArray[" + Count.ToString() + "] = '" + Char.ToString( (char)Count ) + "';  //  0x" + Count.ToString( "X2" ) );
 
      // &#147;
 
-    // ShowStatus( " " );
+    // ShowStatusAsync( " " );
     */
 
     int getVal = 0x252F;
-    showStatus( "Character: " + (char)getVal );
+    showStatusAsync( "Character: " + (char)getVal );
     }
 
 
@@ -912,6 +916,20 @@ private void editPaste()
     try
     {
     String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
+    // String mainDir = "C:\\gccmaster\\gcc\\";
+    String outDir = "C:\\PreprocessOut\\";
+
+    // This list of files would be different for 
+    // different projects.  Like if it's a Linux
+    // or Windows project.
+
+    String projectFileList = 
+           "\\Eric\\CodeAnalysisJava\\FileList.txt";
+
+    HeaderFileDictionary headerDictionary = new
+                        HeaderFileDictionary( mApp );
+
+    headerDictionary.readFileList( projectFileList );
 
     String[] fileArray = { "codeBlob.cpp",
                            "codeBlob.hpp",
@@ -954,359 +972,6 @@ private void editPaste()
                            "vtableStubs.hpp" };
 
 
-/*
-
-    String[] fileArray = { "addresses.h",
-                           "alias.c",
-                           "alias.h",
-=====
-                          "align.h",
-                           "alloc-pool.c",
-                           "alloc-pool.h",
-                           "asan.c",
-                           "asan.h",
-                           "attribs.c",
-                           "attribs.h",
-                           "auto-inc-dec.c",
-                           "auto-profile.c",
-                           "auto-profile.h",
-                           "backend.h",
-                           "basic-block.h",
-                           "bb-reorder.c",
-                           "bb-reorder.h",
-                           "bitmap.c",
-                           "bitmap.h",
-                           "bt-load.c",
-                           "builtins.c",
-                           "builtins.h",
-                           "caller-save.c",
-                           "calls.c",
-                           "calls.h",
-                           "ccmp.c",
-                           "ccmp.h",
-                           "cfg.c",
-                           "cfg.h",
-                           "cfganal.c",
-                           "cfganal.h",
-                           "cfgbuild.c",
-                           "cfgbuild.h",
-                           "cfgcleanup.c",
-                           "cfgcleanup.h",
-                           "cfgexpand.c",
-                           "cfgexpand.h",
-                           "cfghooks.c",
-                           "cfghooks.h",
-                           "cfgloop.c",
-                           "cfgloop.h",
-                           "cfgloopanal.c",
-                           "cfgloopmanip.c",
-                           "cfgloopmanip.h",
-                           "cfgrtl.c",
-                           "cfgrtl.h",
-                           "cgraph.c",
-                           "cgraph.h",
-                           "cgraphbuild.c",
-                           "cgraphclones.c",
-                           "cgraphunit.c",
-                           "collect-utils.c",
-                           "collect-utils.h",
-                           "collect2-aix.c",
-                           "collect2-aix.h",
-                           "collect2.c",
-                           "collect2.h",
-                           "color-macros.h",
-                           "combine-stack-adj.c",
-                           "combine.c",
-                           "compare-elim.c",
-                           "conditions.h",
-                           // config.in gets turned in to config.h.
-                           "context.c",
-                           "context.h",
-                           "convert.c",
-                           "convert.h",
-                           "coretypes.h",
-                           "coverage.c",
-                           "coverage.h",
-                           "cppbuiltin.c",
-                           "cppbuiltin.h",
-                           "cppdefault.c",
-                           "cppdefault.h",
-                           "cprop.c",
-                           "cse.c",
-                           "cselib.c",
-                           "cselib.h",
-                           "data-streamer-in.c",
-                           "data-streamer-out.c",
-                           "data-streamer.c",
-                           "data-streamer.h",
-                           "dbgcnt.c",
-                           "dbgcnt.h",
-                           "dbxout.c",
-                           "dbxout.h",
-                           "dce.c",
-                           "dce.h",
-                           "ddg.c",
-                           "ddg.h",
-                           "debug.c",
-                           "debug.h",
-                           "defaults.h",
-                           "df-core.c",
-                           "df-problems.c",
-                           "df-scan.c",
-                           "df.h",
-                           "dfp.c",
-                           "dfp.h",
-                           "diagnostic-color.c",
-                           "diagnostic-color.h",
-                           "diagnostic-core.h",
-                           "diagnostic-format-json.cc",
-                           "diagnostic-show-locus.c",
-                           "diagnostic.c",
-                           "diagnostic.h",
-                           "dojump.c",
-                           "dojump.h",
-                           "dominance.c",
-                           "dominance.h",
-                           "domwalk.c",
-                           "domwalk.h",
-                           "double-int.c",
-                           "double-int.h",
-                           "dse.c",
-                           "dump-context.h",
-                           "dumpfile.c",
-                           "dumpfile.h",
-                           "dwarf2asm.c",
-                           "dwarf2asm.h",
-                           "dwarf2cfi.c",
-                           "dwarf2out.c",
-                           "dwarf2out.h",
-                           "early-remat.c",
-                           "edit-context.c",
-                           "edit-context.h",
-                           "emit-rtl.c",
-                           "emit-rtl.h",
-                           "errors.c",
-                           "errors.h",
-                           "et-forest.c",
-                           "et-forest.h",
-                           "except.c",
-                           "except.h",
-                           "explow.c",
-                           "explow.h",
-                           "expmed.c",
-                           "expmed.h",
-                           "expr.c",
-                           "expr.h",
-                           "fibonacci_heap.c",
-                           "fibonacci_heap.h",
-                           "file-find.c",
-                           "file-find.h",
-                           "file-prefix-map.c",
-                           "file-prefix-map.h",
-                           "final.c",
-                           "fixed-value.c",
-                           "fixed-value.h",
-                           "flag-types.h",
-                           "flags.h",
-                           "fold-const-call.c",
-                           "fold-const-call.h",
-                           "fold-const.c",
-                           "fold-const.h",
-                           "fp-test.c",
-=====
-                           "function-tests.c" };
-
-
-=====
-function.c
-function.h
-fwprop.c
-gcc-ar.c
-gcc-main.c
-gcc-plugin.h
-gcc-rich-location.c
-gcc-rich-location.h
-gcc-symtab.h
-gcc.c
-gcc.h
-gcov-dump.c
-gcov-io.c
-gcov-io.h
-gcov-iov.c
-gcov-tool.c
-gcov.c
-gcse-common.c
-gcse-common.h
-gcse.c
-gcse.h
-genattr-common.c
-genattr.c
-genattrtab.c
-genautomata.c
-gencfn-macros.c
-gencheck.c
-genchecksum.c
-gencodes.c
-genconditions.c
-genconfig.c
-genconstants.c
-genemit.c
-genenums.c
-generic-match-head.c
-generic-match.h
-genextract.c
-genflags.c
-gengenrtl.c
-gengtype-lex.l
-gengtype-parse.c
-gengtype-state.c
-gengtype.c
-gengtype.h
-genhooks.c
-genmatch.c
-genmddeps.c
-genmddump.c
-genmodes.c
-genmultilib
-genopinit.c
-genoutput.c
-genpeep.c
-genpreds.c
-genrecog.c
-gensupport.c
-gensupport.h
-gentarget-def.c
-ggc-common.c
-ggc-internal.h
-ggc-none.c
-ggc-page.c
-ggc-tests.c
-ggc.h
-gimple-builder.c
-gimple-builder.h
-gimple-expr.c
-gimple-expr.h
-gimple-fold.c
-gimple-fold.h
-gimple-iterator.c
-gimple-iterator.h
-gimple-laddress.c
-gimple-loop-interchange.cc
-gimple-loop-jam.c
-gimple-loop-versioning.cc
-gimple-low.c
-gimple-low.h
-gimple-match-head.c
-gimple-match.h
-gimple-predict.h
-gimple-pretty-print.c
-gimple-pretty-print.h
-gimple-ssa-backprop.c
-gimple-ssa-evrp-analyze.c
-gimple-ssa-evrp-analyze.h
-gimple-ssa-evrp.c
-gimple-ssa-isolate-paths.c
-gimple-ssa-nonnull-compare.c
-gimple-ssa-split-paths.c
-gimple-ssa-sprintf.c
-gimple-ssa-store-merging.c
-gimple-ssa-strength-reduction.c
-gimple-ssa-warn-alloca.c
-gimple-ssa-warn-restrict.c
-gimple-ssa-warn-restrict.h
-gimple-ssa.h
-gimple-streamer-in.c
-gimple-streamer-out.c
-gimple-streamer.h
-gimple-walk.c
-gimple-walk.h
-gimple.c
-gimple.h
-gimplify-me.c
-gimplify-me.h
-gimplify.c
-gimplify.h
-glimits.h
-godump.c
-graph.c
-graph.h
-graphds.c
-graphds.h
-graphite-dependences.c
-graphite-isl-ast-to-gimple.c
-graphite-optimize-isl.c
-graphite-poly.c
-graphite-scop-detection.c
-graphite-sese-to-poly.c
-graphite.c
-graphite.h
-gstab.h
-gsyms.h
-gsyslimits.h
-haifa-sched.c
-hard-reg-set.h
-hash-map-tests.c
-hash-map-traits.h
-hash-map.h
-hash-set-tests.c
-hash-set.h
-hash-table.c
-hash-table.h
-hash-traits.h
-highlev-plugin-common.h
-hooks.c
-hooks.h
-host-default.c
-hosthooks-def.h
-hosthooks.h
-hsa-brig-format.h
-hsa-brig.c
-hsa-common.c
-hsa-common.h
-hsa-dump.c
-hsa-gen.c
-hsa-regalloc.c
-hw-doloop.c
-hw-doloop.h
-hwint.c
-hwint.h
-ifcvt.c
-ifcvt.h
-inchash.c
-inchash.h
-incpath.c
-incpath.h
-init-regs.c
-input.c
-input.h
-insn-addr.h
-int-vector-builder.h
-internal-fn.c
-internal-fn.h
-intl.c
-intl.h
-ipa-comdats.c
-ipa-cp.c
-ipa-devirt.c
-ipa-fnsummary.c
-ipa-fnsummary.h
-ipa-hsa.c
-ipa-icf-gimple.c
-ipa-icf-gimple.h
-ipa-icf.c
-ipa-icf.h
-ipa-inline-analysis.c
-ipa-inline-transform.c
-ipa-inline.c
-ipa-inline.h
-ipa-param-manipulation.c
-
-
-    String mainDir = "C:\\gccmaster\\gcc\\";
-*/
-
-    String outDir = "C:\\PreprocessOut\\";
-
     int max = fileArray.length;
     for( int count = 0; count < max; count++ )
       {
@@ -1318,13 +983,14 @@ ipa-param-manipulation.c
       String test = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
-                                    macroDictionary );
+                                    macroDictionary,
+                                    headerDictionary );
 
       if( test.length() == 0 )
         {
-        showStatus( " " );
-        showStatus( "The file had an error." );
-        showStatus( fileName );
+        showStatusAsync( " " );
+        showStatusAsync( "The file had an error." );
+        showStatusAsync( fileName );
         return;
         }
 
@@ -1335,15 +1001,15 @@ ipa-param-manipulation.c
 
       }
 
-    // showStatus( " " );
-    // showStatus( "Finished processing files." );
-    // showStatus( " " );
+    showStatusAsync( " " );
+    showStatusAsync( "Finished processing files." );
+    showStatusAsync( " " );
 
     }
     catch( Exception e )
       {
-      showStatus( "Exception in testFiles()." );
-      showStatus( e.getMessage() );
+      showStatusAsync( "Exception in testFiles()." );
+      showStatusAsync( e.getMessage() );
       }
     }
 
