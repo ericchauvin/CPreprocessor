@@ -36,7 +36,7 @@ public class FileSearchRunnable  implements Runnable
     // It has to be showStatusAsync().
     // mApp.showStatus( "Test async." );
 
-    listFiles( directory, true );
+    listFiles( directory, false );
 
     }
     catch( Exception e )
@@ -86,35 +86,35 @@ public class FileSearchRunnable  implements Runnable
         }
 
       if( fileName.startsWith( 
-         "\\jdk7hotspotmaster\\src\\cpu\\sparc\\" ))
+                               d + "cpu\\sparc\\" ))
         continue;
 
       if( fileName.startsWith(
-            "\\jdk7hotspotmaster\\src\\cpu\\zero\\" ))
+                                d + "cpu\\zero\\" ))
         continue;
 
       if( fileName.startsWith(
-             "\\jdk7hotspotmaster\\src\\os\\bsd\\" ))
+                                  d + "os\\bsd\\" ))
         continue;
 
       if( fileName.startsWith( 
-            "\\jdk7hotspotmaster\\src\\os\\linux\\" ))
+                                 d + "os\\linux\\" ))
         continue;
 
       if( fileName.startsWith( 
-          "\\jdk7hotspotmaster\\src\\os\\solaris\\" ))
+                               d + "os\\solaris\\" ))
         continue;
 
       if( fileName.startsWith( 
-        "\\jdk7hotspotmaster\\src\\os\\posix\\" ))
+                                d + "os\\posix\\" ))
         continue;
 
       if( fileName.startsWith( 
-        "\\jdk7hotspotmaster\\src\\os_cpu\\bsd_x86\\" ))
+                         d + "os_cpu\\bsd_x86\\" ))
         continue;
 
       if( fileName.startsWith( 
-        "\\jdk7hotspotmaster\\src\\os_cpu\\bsd_zero\\" ))
+                         d + "os_cpu\\bsd_zero\\" ))
         continue;
 
       if( fileName.startsWith( 
