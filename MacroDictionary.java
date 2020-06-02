@@ -249,10 +249,8 @@ public class MacroDictionary
     {
     try
     {
-    // mApp.showStatus( "Sorting..." );
     sort();
-    // mApp.showStatus( "Finished sorting." );
-
+  
     StringBuilder sBuilder = new StringBuilder();
 
     for( int count = 0; count < keySize; count++ )
@@ -270,7 +268,7 @@ public class MacroDictionary
     }
     catch( Exception e )
       {
-      mApp.showStatus( "Exception in DefinesDictionary.makeKeysValuesString():\n" );
+      mApp.showStatus( "Exception in MacroDictionary.makeKeysValuesString():\n" );
       mApp.showStatus( e.getMessage() );
       return "";
       }
