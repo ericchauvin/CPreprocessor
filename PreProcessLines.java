@@ -7,6 +7,7 @@ public class PreProcessLines
   {
   private MainApp mApp;
   private MacroDictionary macroDictionary;
+  private HeaderFileDictionary headerDictionary;
 
 
 
@@ -16,10 +17,14 @@ public class PreProcessLines
 
 
   public PreProcessLines( MainApp useApp, 
-                   MacroDictionary dictionaryToUse )
+                               MacroDictionary
+                               macroDictionaryToUse,
+                               HeaderFileDictionary
+                               headerDictionaryToUse )
     {
     mApp = useApp;
-    macroDictionary = dictionaryToUse;
+    macroDictionary = macroDictionaryToUse;
+    headerDictionary = headerDictionaryToUse;
     }
 
 
@@ -194,8 +199,11 @@ public class PreProcessLines
                               String directiveBody,
                               BooleanLevel boolLevel )
     {
+/*
     if( directive.equals( "define" ))
       {
+      // ======
+      // do a processDefine()
       if( !boolLevel.getValue() )
         {
         return "/" + "/ #define " +
@@ -216,6 +224,7 @@ public class PreProcessLines
       return "#" + directive + " " + directiveBody;
       // "#define " + macro.getString();
       }
+*/
 
 
 
@@ -227,9 +236,11 @@ public class PreProcessLines
       // mApp.showStatus( "This is an error." );
       // return "";
       }
+*/
       
 
 
+/*
     if( levelBool )
       {
       if( directive.equals( "undef" ))
@@ -249,33 +260,12 @@ Get the key and then disable it.
 
 
 
-    if( boolLevel.getValue() )
+    if( directive.equals( "include" ))
       {
-      // Add comments back in to the code to show
-      // where a file was included andl all that.
-      if( directive.equals( "include" ))
-        {
-        String inclFile = StringsUtility.
-                                    removeSections(
-                                        directiveBody,
-                                        Markers.Begin,
-                                        Markers.End );
-
-        mApp.showStatusAsync( inclFile );
-
-/*
-        Do preprocessing on the included file.
-        String test = Preprocessor.PreprocessFile(
-                                    mApp,
-                                    fileName,
-                                    macroDictionary );
-
-        Once this returns from processing the
-        included files it will have a bunch of new
-        macros defined in the dictionary.
-*/
-        }
+      return processInclude( boolLevel,
+                             directiveBody );
       }
+
 
 
 
@@ -403,6 +393,69 @@ all the way down to more elifs and else statements.
     // return "";
     return "/" + "/ Unrecognized: " + directive +
                 " " + directiveBody + "\n";
+    }
+
+
+
+  private String processInclude( 
+                              BooleanLevel boolLevel,
+                              String directiveBody )
+    {
+    if( !boolLevel.getValue() )
+      return "// #include " + directiveBody;
+      
+    // Add comments back in to the code to show
+    // where a file was included and all that.
+
+
+    String inclFile = StringsUtility.removeSections(
+                                        directiveBody,
+                                        Markers.Begin,
+                                        Markers.End );
+
+    inclFile = inclFile.replace( "\"", "" );
+    inclFile = inclFile.replace( "<", "" );
+    inclFile = inclFile.replace( ">", "" );
+    inclFile = inclFile.trim();
+    inclFile = inclFile.toLowerCase();
+    
+    // Make this work for your operating system.
+    String pathDelim = "\\";
+    String linuxPathDelim = "/";
+    inclFile = inclFile.replace( linuxPathDelim,
+                                 pathDelim );
+
+    if( inclFile.equals( "precompiled.hpp" ))
+      return "// #include precompiled.hpp is not used.";
+
+    // mApp.showStatusAsync( "Looking for: " + inclFile );
+    String fileName = headerDictionary.
+                         getFileFromList( inclFile );
+    
+    if( fileName.length() == 0 )
+      {
+      mApp.showStatusAsync( "No file found for: " + inclFile );
+      return ""; 
+      }
+
+    
+    // String showS = "Filename found is:\n" + fileName;
+    // mApp.showStatusAsync( showS );
+
+
+    /*
+        Do preprocessing on the included file.
+        String test = Preprocessor.PreprocessFile(
+                                    mApp,
+                                    fileName,
+                                    macroDictionary );
+
+        Once this returns from processing the
+        included files it will have a bunch of new
+        macros defined in the dictionary.
+    */
+
+    return "What's this?";
     }
 
 
