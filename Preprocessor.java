@@ -7,8 +7,9 @@ public class Preprocessor
 
 
   public static String PreprocessFile( MainApp mApp,
-                     String fileName,
-                     MacroDictionary macroDictionary )
+               String fileName,
+               MacroDictionary macroDictionary,
+               HeaderFileDictionary headerDictionary )
     {
     try
     {
@@ -49,7 +50,8 @@ public class Preprocessor
     
     PreProcessLines procLines = new
                               PreProcessLines( mApp,
-                                  macroDictionary );
+                              macroDictionary,
+                              headerDictionary );
 
     result = procLines.mainFileLoop( result );
 
