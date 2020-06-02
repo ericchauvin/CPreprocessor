@@ -125,7 +125,7 @@ public class MacroDictionaryLine
     else
       {
       if( arrayLast >= sortIndexArray.length )
-        resizeArrays( 64 );
+        resizeArrays( 1024 * 4 );
 
       keyArray[arrayLast] = key;
       valueArray[arrayLast] = value;
