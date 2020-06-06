@@ -144,13 +144,6 @@ public class PreProcessLines
         return "";
         }
 
-      boolLevel.setLevel( directive );
-      if( boolLevel.getCurrentLevel() < 0 )
-        {
-        mApp.showStatusAsync( "Level is less than zero." );
-        return "";
-        }
-
       paramBuilder.setLength( 0 );
       for( int countP = 1; countP < lastPart; countP++ )
         {
@@ -199,201 +192,72 @@ public class PreProcessLines
                               String directiveBody,
                               BooleanLevel boolLevel )
     {
-/*
     if( directive.equals( "define" ))
       {
-      // ======
-      // do a processDefine()
-      if( !boolLevel.getValue() )
-        {
-        return "/" + "/ #define " +
-                               directiveBody + "\n";
-
-        }
-    
-      Macro macro = new Macro( mApp, macroDictionary );
-      if( !macro.setKeyFromString( directiveBody ))
-        return "";
-
-      String showKey = macro.getKey();
-      // mApp.showStatusAsync( "Key: " + showKey );
- 
-      if( !macro.markUpFromString( directiveBody ))
-        return "";
-
-      return "#" + directive + " " + directiveBody;
-      // "#define " + macro.getString();
+      return processDefine( boolLevel,
+                            directiveBody );
       }
-*/
 
-
-
-    /*
-    if( levelBool )
-      {
     if( directive.equals( "error" ))
       {
-      // mApp.showStatus( "This is an error." );
-      // return "";
+      return processError( boolLevel,
+                           directiveBody );
       }
-*/
-      
 
-
-/*
-    if( levelBool )
+    if( directive.equals( "undef" ))
       {
-      if( directive.equals( "undef" ))
-        {
-        mApp.showStatus( " " );
-        mApp.showStatus( "It's a bad idea to use undef." );
-        mApp.showStatus( originalLine );
-        mApp.showStatus( " " );
-
-Get the key and then disable it.
-        Macro macro = new Macro( mApp, macroDictionary );
-        if( !macro.setKeyFromString( directiveBody ))
-          return "";
-
-        }
-*/
-
-
+      return processUndef( boolLevel,
+                           directiveBody );
+      }
 
     if( directive.equals( "include" ))
       {
-      return processInclude( boolLevel,
-                             directiveBody );
+      return processInclude( boolLevel, directiveBody );
       }
 
-
-
-
-/*
-    if( levelBool )
+    if( directive.equals( "pragma" ))
       {
-      if( directive.equals( "pragma" ))
-        {
-        }
+      return processPragma( boolLevel, directiveBody ); 
+      }
 
-
-
-    if( levelBool )
+    if( directive.equals( "if" ))
       {
-      if( directive.equals( "if" ))
-        {
+      return processIf( boolLevel, directiveBody );
+      }
 
-/////////
-        mApp.showStatus( "If line: " + originalLine );
-        levelBool = evaluateIfExpression( macroBody );
-        if( levelBool )
-          {
-          // This means to leave it as-is if 
-          // it's true.
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
-//////////
-        }
-
-
-
-    if( levelBool )
+    if( directive.equals( "ifdef" ))
       {
-      if( directive.equals( "ifdef" ))
-        {
-        levelBool = true;
-        sBuilder.append( Markers.Begin );
-        sBuilder.append( originalLine );
+      return processIfDef( boolLevel, directive,
+                                      directiveBody );
+      }
 
-   if( key.contains( "(" ))
+    if( directive.equals( "ifndef" ))
       {
-      mApp.showStatus( " " );
-      mApp.showStatus( "This is a function-like macro." );
-////////
+      return processIfDef( boolLevel, directive,
+                                     directiveBody );
+      }
 
-        // mApp.showStatus( command + ") " + level );
-        }
-
-
-
-
-    if( levelBool )
+    if( directive.equals( "else" ))
       {
-      if( directive.equals( "ifndef" ))
-        {
-        levelBool = true;
-        sBuilder.append( Markers.Begin );
-        sBuilder.append( originalLine );
-        // mApp.showStatus( command + ") " + level );
-        }
+      return processElse( boolLevel, directiveBody );
+      }
 
+    if( directive.equals( "elif" ))
+      {
+      return processElif( boolLevel, directiveBody );
+      }
 
-
-      if( directive.equals( "else" ))
-        {
-        if( levelBool )
-          {
-          // If it's coming in here as true, then
-          // this else=part is false.
-          levelBool = false;
-
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
-        else
-          {
-          levelBool = true;
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-
-          }
-
-        level++;
-        }
-
-
-
-      if( directive.equals( "elif" ))
-        {
-        level--;
-        if( levelBool )
-          {
-////////
-if levelBool is true then this is false.
-  And vice versa.
-
-all the way down to more elifs and else statements.
-/////////
-
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
-
-        level++;
-        levelBool = true;
-        }
-
-
-
-
-      if( directive.equals( "endif" ))
-        {
-        if( levelBool )
-          {
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
-
-        levelBool = true;
-        }
-*/
+    if( directive.equals( "endif" ))
+      {
+      return processEndIf( boolLevel );
+      }
 
     // mApp.showStatus( "Unrecognized command in processCommand()." );
     // return "";
-    return "/" + "/ Unrecognized: " + directive +
+    return "// Unrecognized: " + directive +
                 " " + directiveBody + "\n";
     }
+
 
 
 
@@ -455,9 +319,196 @@ all the way down to more elifs and else statements.
         macros defined in the dictionary.
     */
 
-    return "What's this?";
+    return "// #include " + directiveBody;
     }
 
+
+
+  private String processIfDef( BooleanLevel boolLevel,
+                               String directive,
+                               String directiveBody )
+
+    {
+    // directive is either ifdef or ifndef.
+
+    boolLevel.setLevel( directive );
+    if( boolLevel.getCurrentLevel() < 0 )
+      {
+      mApp.showStatusAsync( "Level is less than zero." );
+      return "";
+      }
+
+
+    return "// #" + directive + " " + directiveBody;
+
+    /*
+    if( levelBool )
+      {
+      if( macroDictionary.keyExists( String key )
+
+        levelBool = true;
+        sBuilder.append( Markers.Begin );
+        sBuilder.append( originalLine );
+
+    if( key.contains( "(" ))
+      {
+      mApp.showStatus( " " );
+      }
+    */
+    }
+
+
+
+  private String processEndIf( BooleanLevel boolLevel )
+    {
+    boolLevel.setLevel( "endif" );
+    if( boolLevel.getCurrentLevel() < 0 )
+      {
+      mApp.showStatusAsync( "Level is less than zero." );
+      return "";
+      }
+
+    return "// #endif\n";
+    }
+
+
+
+  private String processDefine( BooleanLevel boolLevel,
+                                String directiveBody )
+    {
+    if( !boolLevel.getValue() )
+      return "// #define " + directiveBody + "\n";
+
+    Macro macro = new Macro( mApp );
+    if( !macro.setKeyFromString( directiveBody ))
+      return "";
+
+    // String showKey = macro.getKey();
+    // mApp.showStatusAsync( "Key: " + showKey );
+
+    // This adds it to the macroDictionary. 
+    if( !macro.markUpFromString( directiveBody,
+                                 macroDictionary ))
+      return "";
+
+    return "// #define " + directiveBody + "\n";
+    }
+
+
+
+  private String processError( BooleanLevel boolLevel,
+                               String directiveBody )
+    {
+    if( !boolLevel.getValue() )
+      return "// #error " + directiveBody + "\n";
+
+    mApp.showStatusAsync( "Error directive: " + directiveBody );
+    return "";
+    }
+
+
+
+  private String processUndef( BooleanLevel boolLevel,
+                               String directiveBody ) 
+    {
+    if( !boolLevel.getValue() )
+      return "// #undef " + directiveBody;
+
+    // mApp.showStatus( "It's a bad idea to use undef." );
+    // mApp.showStatus( directiveBody );
+
+    directiveBody = directiveBody.trim();
+    macroDictionary.setMacroEnabled( directiveBody,
+                                     false );
+    return "// #undef " + directiveBody;
+    }
+
+
+
+
+  private String processIf( BooleanLevel boolLevel,
+                            String directiveBody ) 
+    {
+    if( !boolLevel.getValue() )
+      return "// #if " + directiveBody;
+
+    mApp.showStatusAsync( "If line: " + directiveBody );
+    return "// #if " + directiveBody;
+
+/*
+        levelBool = evaluateIfExpression( macroBody );
+        if( levelBool )
+          {
+          // This means to leave it as-is if 
+          // it's true.
+          sBuilder.append( Markers.Begin );
+          sBuilder.append( originalLine );
+          }
+*/
+    }
+
+
+
+
+  private String processElse( BooleanLevel boolLevel,
+                              String directiveBody ) 
+    {
+    return "// else";
+
+/*
+
+          // If it's coming in here as true, then
+          // this else=part is false.
+          levelBool = false;
+
+          sBuilder.append( Markers.Begin );
+          sBuilder.append( originalLine );
+          }
+        else
+          {
+          levelBool = true;
+          sBuilder.append( Markers.Begin );
+          sBuilder.append( originalLine );
+
+          }
+
+        level++;
+        }
+    */
+    }
+
+
+
+  private String processElif( BooleanLevel boolLevel,
+                              String directiveBody ) 
+    {
+    return "// elif";
+
+/*
+
+if levelBool is true then this is false.
+  And vice versa.
+
+all the way down to more elifs and else statements.
+/////////
+
+          sBuilder.append( Markers.Begin );
+          sBuilder.append( originalLine );
+          }
+
+        level++;
+        levelBool = true;
+        }
+*/
+    }
+
+
+
+  private String processPragma( BooleanLevel boolLevel,
+                                String directiveBody ) 
+    {
+    return "// pragma";
+    }
 
 
   }
