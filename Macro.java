@@ -11,7 +11,6 @@ public class Macro
   private String key = "";
   private String markedUpString = "";
   private boolean isFunctionType = false;  
-  private MacroDictionary macroDictionary;
   private boolean enabled = true; // For undef.
 
 
@@ -22,11 +21,24 @@ public class Macro
 
 
 
-  public Macro( MainApp useApp, 
-                   MacroDictionary dictionaryToUse )
+  public Macro( MainApp useApp )
     {
     mApp = useApp;
-    macroDictionary = dictionaryToUse;
+    enabled = true;
+    }
+
+
+  public void setMacroWithEmptyParams(
+                                     String keyToUse )
+    {
+    key = keyToUse;
+    markedUpString = "";
+    // markedUpString = paramBody;
+    // if( markedUpString.length() > 0 )
+      // {
+      // markedUpString = MarkupString.MarkItUp( mApp,
+      //                               markUpString );
+      // }
     }
 
 
@@ -99,7 +111,8 @@ public class Macro
 
 
 
-  public boolean markUpFromString( String in )
+  public boolean markUpFromString( String in,
+                     MacroDictionary macroDictionary )
     {
     try
     {
@@ -163,12 +176,12 @@ What if a macro has the same name as a variable name?
     // How many loops would be abnormal?
     for( int count = 0; count < 100; count++ )
       {
-      if( !replaceMacros())
+      if( !replaceMacros( macroDictionary ))
         break;
 
       }
 
-    return setNewMacroInDictionary();
+    return setNewMacroInDictionary( macroDictionary );
     }
     catch( Exception e )
       {
@@ -180,7 +193,9 @@ What if a macro has the same name as a variable name?
 
 
 
-  private boolean setNewMacroInDictionary()
+  private boolean setNewMacroInDictionary( 
+                                  MacroDictionary
+                                  macroDictionary )
     {
     if( macroDictionary.keyExists( key ))
       {
@@ -202,7 +217,8 @@ What if a macro has the same name as a variable name?
 
 
 
-  private boolean replaceMacros()
+  private boolean replaceMacros( MacroDictionary
+                                 macroDictionary )
     {
     boolean replacedIdentifier = false;
 
