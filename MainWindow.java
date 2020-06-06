@@ -980,6 +980,23 @@ private void editPaste()
       MacroDictionary macroDictionary = new
                            MacroDictionary( mApp );
 
+      // Make a configuration file for these.
+      // Target Architechture.
+      // TARGET_ARCH_zero, TARGET_ARCH_arm,
+      Macro macro = new Macro( mApp );
+      macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
+      macroDictionary.setMacro( "TARGET_ARCH_x86",
+                                macro );
+
+      // JIT compilers.    
+      // C1 compiler.  Bytecode compiler.
+      // C2 compiler.  Called opto?  Higher
+      // optimization.
+
+      macro = new Macro( mApp );
+      macro.setMacroWithEmptyParams( "COMPILER1" );
+      macroDictionary.setMacro( "COMPILER1", macro );
+
       String test = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
