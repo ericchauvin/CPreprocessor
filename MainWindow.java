@@ -915,6 +915,13 @@ private void editPaste()
     {
     try
     {
+    // This test code will be replaced with a 
+    // PreprocessProject.java object, which would 
+    // preprocess a whole project and it would have
+    // configuration files and header file lists
+    // as part of the project.
+
+ 
     String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
     // String mainDir = "C:\\gccmaster\\gcc\\";
     String outDir = "C:\\PreprocessOut\\";
@@ -981,7 +988,12 @@ private void editPaste()
                            MacroDictionary( mApp );
 
       // Make a configuration file for these.
+
       // Target Architechture.
+      // "Zero-Assembler Project: Zero is a port of
+      // OpenJDK that uses no assembler and therefore
+      // can trivially be built on any system."
+
       // TARGET_ARCH_zero, TARGET_ARCH_arm,
       Macro macro = new Macro( mApp );
       macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
@@ -997,6 +1009,9 @@ private void editPaste()
       macro.setMacroWithEmptyParams( "COMPILER1" );
       macroDictionary.setMacro( "COMPILER1", macro );
 
+      // .pch is Precompiled header.
+      // or  .gch for Gnu.  Gnu compiled header.
+
       String test = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
@@ -1011,10 +1026,10 @@ private void editPaste()
         return;
         }
 
-      // FileUtility.writeStringToFile( mApp,
-      //                                outFileName,
-      //                                test,
-      //                                false );
+      FileUtility.writeStringToFile( mApp,
+                                     outFileName,
+                                     test,
+                                     false );
 
       }
 
