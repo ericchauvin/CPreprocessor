@@ -8,8 +8,7 @@ public class PreProcessLines
   private MainApp mApp;
   private MacroDictionary macroDictionary;
   private HeaderFileDictionary headerDictionary;
-  private boolean[] levelArray;
-  private int levelArrayLast = 0;
+  private BoolLevelArray boolLevArray;
 
 
 
@@ -27,83 +26,7 @@ public class PreProcessLines
     mApp = useApp;
     macroDictionary = macroDictionaryToUse;
     headerDictionary = headerDictionaryToUse;
-    levelArray = new boolean[2];
-    }
-
-
-
-  private void resizeLevelArray( int toAdd )
-    {
-    int oldLength = levelArray.length;
-
-    boolean[] tempLevelArray = new boolean[oldLength + toAdd];
-    for( int count = 0; count < levelArrayLast; count++ )
-      {
-      tempLevelArray[count] = levelArray[count];
-      }
-
-    levelArray = tempLevelArray;
-    }
-
-
-
-  private boolean getLevelValue()
-    {
-    // It is always true at the zero level.
-    if( levelArrayLast == 0 )
-      return true;
-
-    // If any level above this is false, then
-    // this level is false.
-    for( int count = 0; count < arrayLast; count++ )
-      {
-      if( !levelArray[count] )
-        return false;
-
-      }
-
-    return true;
-    }
-
-
-
-  private boolean setLevelValue( boolean setTo )
-    {
-    // It is always true at the zero level.
-    if( levelArrayLast == 0 )
-      {
-      if( !setTo )
-        return false; 
-
-      }
-     
-    levelArray[levelArrayLast] = setTo;
-    return true;
-    }
-
-
-
-  private boolean subtractBooleanLevel()
-    {
-    if( levelArrayLast == 0 )
-      {
-      mApp.showStatusAsync( "Level is less than zero." );
-      return false;
-      }
-
-    levelArrayLast--;
-    return true;
-    }
-
-
-
-  private void addNewBooleanLevel( boolean setTo )
-    {
-    if( levelArrayLast >= levelArray.length )
-      resizeArrays( 16 );
-
-    levelArray[levelArrayLast] = setTo;
-    levelArrayLast++;
+    boolLevArray = new BoolLevelArray( mApp );
     }
 
 
@@ -169,10 +92,10 @@ public class PreProcessLines
       if( '#' != StringsUtility.firstNonSpaceChar(
                                              line ))
         {
-        if( boolLevArray.getValue() )
+        if( boolLevArray.getCurrentValue())
           sBuilder.append( line + "\n" );
         else
-          sBuilder.append( "/" + "/  " + line + "\n" );
+          sBuilder.append( "//  " + line + "\n" );
 
         continue;
         }
@@ -235,8 +158,7 @@ public class PreProcessLines
       String directiveBody = paramBuilder.toString().
                                                trim();
       String result = processDirective( directive,
-                                        directiveBody,
-                                        boolLevArray );
+                                       directiveBody );
 
       if( result.length() == 0 )
         return "";
@@ -247,7 +169,7 @@ public class PreProcessLines
       sBuilder.append( result );
       }
 
-    if( boolLevArray.getCurrentLevel() != 0 )
+    if( boolLevArray.getLevel() != 0 )
       {
       mApp.showStatusAsync( "Level is not zero at end." );
       return "";
@@ -265,9 +187,8 @@ public class PreProcessLines
 
 
 
-
   private String processDirective( String directive,
-                       String directiveBody )
+                                String directiveBody )
     {
     // Anything that gets returned here should end
     // with a newline.  And include files will have
@@ -349,7 +270,7 @@ public class PreProcessLines
 
   private String processEndIf()
     {
-    if( !subtractBooleanLevel())
+    if( !boolLevArray.subtractLevel())
       return "";
 
     return "// #endif\n";
@@ -363,27 +284,27 @@ public class PreProcessLines
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
-    if( !getLevelValue())
+    if( !boolLevArray.getCurrentValue())
       {
-      addNewBooleanLevel( false );
+      // If what's above it is false, then this
+      // has to be false.
+      boolLevArray.addNewLevel( false );
       return result;
       }
 
     boolean isDefined = macroDictionary.
-                            keyExists( directiveBody );
-
-    mApp.showStatusAsync( " " );
+                           keyExists( directiveBody );
 
     if( isDefined )
       {
-      mApp.showStatusAsync( "Is defined: " + directiveBody );
-      addNewBooleanLevel( true );
+      // mApp.showStatusAsync( "Is defined: " + directiveBody );
+      boolLevArray.addNewLevel( true );
       return result;
       }
     else
       {
-      mApp.showStatusAsync( "Is not defined: " + directiveBody );
-      addNewBooleanLevel( false );
+      // mApp.showStatusAsync( "Is not defined: " + directiveBody );
+      boolLevArray.addNewLevel( false );
       return result;
       }
     }
@@ -396,27 +317,25 @@ public class PreProcessLines
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
-    if( !getLevelValue())
+    if( !boolLevArray.getCurrentValue())
       {
-      addNewBooleanLevel( false );
+      boolLevArray.addNewLevel( false );
       return result;
       }
 
     boolean isDefined = macroDictionary.
                             keyExists( directiveBody );
 
-    mApp.showStatusAsync( " " );
-
     if( !isDefined )
       {
-      mApp.showStatusAsync( "Is not defined: " + directiveBody );
-      addNewBooleanLevel( true );
+      // mApp.showStatusAsync( "Is not defined: " + directiveBody );
+      boolLevArray.addNewLevel( true );
       return result;
       }
     else
       {
-      mApp.showStatusAsync( "Is defined: " + directiveBody );
-      addNewBooleanLevel( false );
+      // mApp.showStatusAsync( "Is defined: " + directiveBody );
+      boolLevArray.addNewLevel( false );
       return result;
       }
     }
@@ -425,7 +344,7 @@ public class PreProcessLines
 
   private String processError( String directiveBody )
     {
-    if( !getLevelValue())
+    if( !boolLevArray.getCurrentValue())
       return "// #error " + directiveBody + "\n";
 
     mApp.showStatusAsync( "Error directive: " + directiveBody );
@@ -433,28 +352,28 @@ public class PreProcessLines
     }
 
 
-  private String processPragma(
-                        BooleanLevelArray boolLevArray,
-                        String directiveBody ) 
+
+  private String processPragma( String directiveBody ) 
     {
     String result = "// #pragma " + directiveBody;
 
-    if( !getLevelValue())
+    if( !boolLevArray.getCurrentValue())
       return result;
 
     mApp.showStatusAsync( "#pragma needs to be done: " + directiveBody );
-    return result;
+    return ""; // result;
     }
 
 
 
   private String processUndef( String directiveBody ) 
     {
-    if( !getLevelValue() )
-      return "// #undef " + directiveBody;
+    String result = "// #undef " + directiveBody + "\n"; 
+    if( !boolLevArray.getCurrentValue())
+      return result;
 
-    // mApp.showStatus( "It's a bad idea to use undef." );
-    // mApp.showStatus( directiveBody );
+    // mApp.showStatusAsync( "It's a bad idea to use undef." );
+    // mApp.showStatusAsync( directiveBody );
 
     directiveBody = directiveBody.trim();
     if( macroDictionary.keyExists( directiveBody ))
@@ -468,44 +387,19 @@ public class PreProcessLines
       mApp.showStatusAsync( directiveBody );
       }
 
-    return "// #undef " + directiveBody;
-    }
-
-
-
-  private String processElse( String directiveBody ) 
-    {
-    if( getLevelValue() )
-      {
-      if( !setLevelValue( false ))
-        return "";
-
-      }
-    else
-      {
-      if( !setLevelValue( true ))
-        return "";
-
-      }
-
-    return "// #else " + directiveBody;
+    return result;
     }
 
 
 
 
-
-
-  private String processInclude( 
-                        BooleanLevelArray boolLevArray,
-                        String directiveBody )
+  private String processInclude( String directiveBody )
     {
-    if( !boolLevArray.getValue() )
+    if( !boolLevArray.getCurrentValue())
       return "// #include " + directiveBody + "\n";
       
     // Add comments back in to the code to show
     // where a file was included and all that.
-
 
     String inclFileName = StringsUtility.removeSections(
                                         directiveBody,
@@ -538,38 +432,35 @@ public class PreProcessLines
       return ""; 
       }
     
-    // String showS = "Filename found is:\n" + fileName;
-    // mApp.showStatusAsync( showS );
+    String showS = "Filename found is:\n" + fileName;
+    mApp.showStatusAsync( showS );
 
-
-    /*
-        Do preprocessing on the included file.
-        String test = Preprocessor.PreprocessFile(
+    String inclFileStr = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
-                                    macroDictionary );
+                                    macroDictionary,
+                                    headerDictionary );
 
-        Once this returns from processing the
-        included files it will have a bunch of new
-        macros defined in the dictionary.
+    if( inclFileStr.length() == 0 )
+      return "";
 
-    Add a newline at the end of the included file.
-    And comments to show where it ends.
-    */
+    // Once this returns from processing the
+    // included files it will have a bunch of new
+    // macros defined in the dictionary.
 
-    return "// #include " + directiveBody + "\n";
+    inclFileStr = "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n" +
+           "// #include " + fileName + "\n" +
+           inclFileStr +
+           "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n";
+
+    return inclFileStr;
     }
 
 
 
-  private String processDefine(
-                       BooleanLevelArray boolLevArray,
-                       String directiveBody )
+  private String processDefine( String directiveBody )
     {
-    return "Not yet.";
-
-    /*
-    if( !boolLevel.getValue() )
+    if( !boolLevArray.getCurrentValue())
       return "// #define " + directiveBody + "\n";
 
     Macro macro = new Macro( mApp );
@@ -585,77 +476,127 @@ public class PreProcessLines
       return "";
 
     return "// #define " + directiveBody + "\n";
-    */
     }
 
 
 
-
-
-
-  private String processIf( 
-                       BooleanLevelArray boolLevArray,
-                       String directiveBody ) 
+  private String processIf( String directiveBody ) 
     {
-    return "Not yet.";
-/*
-    boolLevel.setLevel( "if" );
-    if( boolLevel.getCurrentLevel() < 0 )
+    String result = "// if " + directiveBody + "\n";
+    if( !boolLevArray.getCurrentValue())
       {
-      mApp.showStatusAsync( "Level is less than zero." );
+      if( !boolLevArray.setCurrentValue( false ))
+        return "";
+
+      return result;
+      }
+
+    mApp.showStatusAsync( "if body: " + directiveBody );
+
+    //   bool = evaluateIfExpression( macroBody );
+      
+    //  if( !boolLevArray.setCurrentValue( false ))
+    //    return "";
+
+
+    return result;
+    }
+
+
+
+  private String processElif( String directiveBody ) 
+    {
+    int currentLevel = boolLevArray.getLevel();
+    if( currentLevel == 0 )
+      {
+      mApp.showStatusAsync( "elif can't be at zero." );
       return "";
       }
 
-    if( !boolLevel.getValue() )
-      return "// #if " + directiveBody;
+    String result = "// #elif " + directiveBody + "\n";
 
-    mApp.showStatusAsync( "If line: " + directiveBody );
-    return "// #if " + directiveBody;
-*/
+    boolean currentVal = boolLevArray.
+                           getValueAt( currentLevel );
 
+    boolean oneUp = boolLevArray.
+                       getValueAt( currentLevel - 1 );
 
+    ///////////////////////
+    // Test
+    if( !oneUp && currentVal )
+      {
+      mApp.showStatusAsync( "This shouldn't happen with oneUp." );
+      return result;
+      }
+    ///////////////////
 
-/*
-        levelBool = evaluateIfExpression( macroBody );
-        if( levelBool )
-          {
-          // This means to leave it as-is if 
-          // it's true.
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
-*/
+    if( !oneUp )
+      return result;
+
+    mApp.showStatusAsync( "elif body: " + directiveBody );
+      
+    if( currentVal )
+      {
+      if( !boolLevArray.setCurrentValue( false ))
+        return "";
+
+      return result;
+      }
+    else
+      {
+      if( !boolLevArray.setCurrentValue( true ))
+        return "";
+
+      return result;
+      }
     }
 
 
 
-
-  private String processElif(
-                        BooleanLevelArray boolLevArray,
-                        String directiveBody ) 
+  private String processElse( String directiveBody ) 
     {
-    return "Not yet.";
-/*    return "// elif";
+    int currentLevel = boolLevArray.getLevel();
+    if( currentLevel == 0 )
+      {
+      mApp.showStatusAsync( "else can't be at zero." );
+      return "";
+      }
 
+    String result = "// #else " + directiveBody + "\n";
 
+    boolean currentVal = boolLevArray.
+                           getValueAt( currentLevel );
 
-if levelBool is true then this is false.
-  And vice versa.
+    boolean oneUp = boolLevArray.
+                       getValueAt( currentLevel - 1 );
 
-all the way down to more elifs and else statements.
-/////////
+    ///////////////////////
+    // Test
+    if( !oneUp && currentVal )
+      {
+      mApp.showStatusAsync( "This shouldn't happen with oneUp in else." );
+      return result;
+      }
+    /////////////
 
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( originalLine );
-          }
+    if( !oneUp )
+      return result;
+      
+    if( currentVal )
+      {
+      if( !boolLevArray.setCurrentValue( false ))
+        return "";
 
-        level++;
-        levelBool = true;
-        }
-*/
+      return result;
+      }
+    else
+      {
+      if( !boolLevArray.setCurrentValue( true ))
+        return "";
+
+      return result;
+      }
     }
-
-
 
 
   }
