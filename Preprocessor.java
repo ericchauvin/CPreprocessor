@@ -53,7 +53,7 @@ public class Preprocessor
                               macroDictionary,
                               headerDictionary );
 
-    result = procLines.mainFileLoop( result );
+    result = procLines.mainFileLoop( result, fileName );
 
     if( result.length() == 0 )
       return "";
