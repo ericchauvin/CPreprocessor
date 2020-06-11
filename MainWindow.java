@@ -530,7 +530,12 @@ public class MainWindow extends JFrame implements
   private void listHeaderFiles()
     {
     // String dir = "\\jdk7hotspotmaster\\src";
-    String dir = "\\cygwin64\\usr\\include";
+    // String dir = "\\cygwin64\\usr\\include";
+    // String dir = "\\cygwin64\\usr\\include\\sys";
+    // String dir = "\\cygwin64\\usr\\include\\machine";
+    String dir = "\\cygwin64\\usr\\include\\bits";
+
+
 
     // Add it to the semicolon delimited dictionary file.
     // endsWith( fileToFind )
@@ -930,13 +935,17 @@ private void editPaste()
     // different projects.  Like if it's a Linux
     // or Windows project.
 
-    String projectFileList = 
+    String projectFileListName = 
            "\\Eric\\CodeAnalysisJava\\FileList.txt";
+
+    String headerFileName = 
+           "\\Eric\\CodeAnalysisJava\\HeaderFiles.txt";
 
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
 
-    headerDictionary.readFileList( projectFileList );
+    headerDictionary.readFile( headerFileName );
+    headerDictionary.readFileList( projectFileListName );
 
     String[] fileArray = { "codeBlob.cpp",
                            "codeBlob.hpp",
@@ -1000,6 +1009,18 @@ private void editPaste()
       macroDictionary.setMacro( "TARGET_ARCH_x86",
                                 macro );
 
+      // __cplusplus
+     
+      macro = new Macro( mApp );
+      macro.setMacroWithEmptyParams( "__x86_64__" );
+      macroDictionary.setMacro( "__x86_64__",
+                                macro );
+
+      macro = new Macro( mApp );
+      macro.setMacroWithEmptyParams( "__STRICT_ANSI__" );
+      macroDictionary.setMacro( "__STRICT_ANSI__",
+                                macro );
+
       // JIT compilers.    
       // C1 compiler.  Bytecode compiler.
       // C2 compiler.  Called opto?  Higher
@@ -1033,10 +1054,11 @@ private void editPaste()
 
       }
 
+    headerDictionary.writeFile( headerFileName );
+
     showStatusAsync( " " );
     showStatusAsync( "Finished processing files." );
     showStatusAsync( " " );
-
     }
     catch( Exception e )
       {
