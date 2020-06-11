@@ -5,15 +5,6 @@
 // comments no matter what it is.  Whether it's in
 // a string literal or not.
 
-// In recent decades, when you use star-slash
-// comments you usually use it to block out a
-// larger section of code.  (As opposed to using 
-// single-line double-slash comments.)  You might
-// comment-out a section for hundreds of lines.
-// So you can't worry about if there is a string
-// literal somewhere in there that would cause a
-// problem.
-
 // In C# code (for example) I have to define the
 // string with separated characters like this:
 // string StarSlash = "*" + "/";
@@ -201,6 +192,12 @@ public class RemoveComments
       return "";
 
     StringBuilder sBuilder = new StringBuilder();
+
+    // There is a form of comment like this:
+    String strangeComment = "/" + "/" + "*" + "*";
+    String twoSlashes = "/" + "/";
+    inString = inString.replace( strangeComment,
+                                 twoSlashes );
 
     String slashStar = "/" + "*";
     String starSlash = "*" + "/";
