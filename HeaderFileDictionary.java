@@ -44,11 +44,15 @@ public class HeaderFileDictionary
 
 
 
-  public String getFileFromList( String key )
+  public String getFileFromList( String key,
+                                 String pathDelim )
     {
     String result = "";
 
     key = key.trim().toLowerCase();
+    if( !key.startsWith( pathDelim ))
+      key = pathDelim + key;
+
     int last = fileListArray.length;
     int matches = 0;
     for( int count = 0; count < last; count++ )
@@ -58,19 +62,32 @@ public class HeaderFileDictionary
       // mApp.showStatusAsync( "Line: " + line );
       if( line.endsWith( key ))
         {
+        if( key.equals( "stdio.h" ))
+          {
+          // The right key would be sys\stdio.h.
+          if( line.endsWith( "sys\\stdio.h" ))
+            continue;
+
+          }
+
         result = line;
         // mApp.showStatusAsync( "Found: " + result );        
+        setValue( key, result );
         matches++;
         }
       }
 
     if( matches > 1 )
       {
+      // stdio.h includes sys/stdio.h.
+      // stdio.h
+      // sys/stdio.h
+
       String showS = "Duplicates for key: " +
                           key + "\n";
                           
       mApp.showStatusAsync( showS );
-      return "";
+      // return "";
       }
 
     return result;
@@ -176,9 +193,13 @@ public class HeaderFileDictionary
 
     int index = getIndex( key );
     if( lineArray[index] == null )
-      return "";
+      return getFileFromList( key, "\\" );
 
-    return lineArray[index].getValue( key );
+    String result = lineArray[index].getValue( key );
+    if( result.length() == 0 )
+      return getFileFromList( key, "\\" );
+
+    return result;
     }
 
 
@@ -217,7 +238,6 @@ public class HeaderFileDictionary
       }
 
     return sBuilder.toString();
-
     }
     catch( Exception e )
       {
@@ -227,6 +247,44 @@ public class HeaderFileDictionary
       }
     }
 
+
+  public void writeFile( String fileName )
+    {
+    String toWrite = makeKeysValuesString();
+
+    FileUtility.writeStringToFile( mApp,
+                                   fileName,
+                                   toWrite,
+                                   false );
+    }
+
+
+
+  public void readFile( String fileName )
+    {
+    String fileStr = FileUtility.readFileToString(
+                                        mApp,
+                                        fileName,
+                                        false );
+
+    if( fileStr.length() == 0 )
+      return;
+   
+    String[] fileLines = fileStr.split( "\n" );
+    int last = fileLines.length;
+    for( int count = 0; count < last; count++ )
+      {
+      String line = fileLines[count];
+      mApp.showStatusAsync( line );
+      String[] parts = line.split( ";" );
+      if( parts.length < 2 )
+        {
+        mApp.showStatusAsync( "This line has less than two parts.\n" + line );
+        }
+
+      setValue( parts[0], parts[1] );
+      }
+    }
 
 
 
@@ -245,7 +303,6 @@ public class HeaderFileDictionary
 
     return lineArray[index].keyExists( key );
     }
-
 
 
 
