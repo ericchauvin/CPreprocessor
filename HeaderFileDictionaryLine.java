@@ -162,7 +162,7 @@ public class HeaderFileDictionaryLine
       {
       // Using the sortIndexArray for the sorted order.
       String oneLine = keyArray[sortIndexArray[count]] +
-                       "\t" +
+                       ";" +
                        valueArray[sortIndexArray[count]] +
                        "\n";
 
