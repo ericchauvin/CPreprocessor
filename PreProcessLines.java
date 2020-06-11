@@ -1,5 +1,4 @@
-// Copyright Eric Chauvin 2019 - 2020.
-
+ 2019 - 2020.
 
 
 
@@ -73,7 +72,7 @@ public class PreProcessLines
 
 
 
-  public String mainFileLoop( String in )
+  public String mainFileLoop( String in, String fileName )
     {
     try
     {
@@ -110,7 +109,7 @@ public class PreProcessLines
       // fields in front of it.
       line = line.trim();
 
-      // mApp.showStatus( "Preproc: " + line );
+      // mApp.showStatusAsync( "Preproc: " + line );
 
       // This is splitting the fields by space 
       // characters, but if there's more than one
@@ -157,6 +156,9 @@ public class PreProcessLines
 
       String directiveBody = paramBuilder.toString().
                                                trim();
+
+      // mApp.showStatusAsync( directive + " " + directiveBody );
+
       String result = processDirective( directive,
                                        directiveBody );
 
@@ -171,7 +173,12 @@ public class PreProcessLines
 
     if( boolLevArray.getLevel() != 0 )
       {
-      mApp.showStatusAsync( "Level is not zero at end." );
+      String showS = "Level is not zero at end.\n" +
+                     "Level: " +
+                     boolLevArray.getLevel() + "\n" +
+                     fileName;
+
+      mApp.showStatusAsync( showS );
       return "";
       }
 
@@ -233,7 +240,7 @@ public class PreProcessLines
 
     if( directive.equals( "ifndef" ))
       {
-      result = processIfDef( directive,
+      result = processIfNDef( directive,
                                      directiveBody );
       }
 
@@ -317,11 +324,17 @@ public class PreProcessLines
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
+    mApp.showStatusAsync( result );
+
     if( !boolLevArray.getCurrentValue())
       {
+      // mApp.showStatusAsync( "CurrentValue is false." );
+
       boolLevArray.addNewLevel( false );
       return result;
       }
+
+    // mApp.showStatusAsync( "ifndef " + directiveBody );
 
     boolean isDefined = macroDictionary.
                             keyExists( directiveBody );
@@ -412,6 +425,7 @@ public class PreProcessLines
     inclFileName = inclFileName.trim();
     inclFileName = inclFileName.toLowerCase();
     
+    // Make a configuration file.
     // Make this work for your operating system.
     String pathDelim = "\\";
     String linuxPathDelim = "/";
@@ -423,8 +437,8 @@ public class PreProcessLines
       return "// #include precompiled.hpp is not used.\n";
 
     // mApp.showStatusAsync( "Looking for: " + inclFileName );
-    String fileName = headerDictionary.
-                         getFileFromList( inclFileName );
+    String fileName = headerDictionary.getFileFromList(
+                                  inclFileName, "\\" );
     
     if( fileName.length() == 0 )
       {
@@ -482,16 +496,23 @@ public class PreProcessLines
 
   private String processIf( String directiveBody ) 
     {
+// #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
+
+
     String result = "// if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
-      if( !boolLevArray.setCurrentValue( false ))
-        return "";
-
+      // If what's above it is false, then this
+      // has to be false.
+      boolLevArray.addNewLevel( false );
       return result;
       }
 
+
     mApp.showStatusAsync( "if body: " + directiveBody );
+    // Once I evaluate the expression...
+    // =====
+    boolLevArray.addNewLevel( true );
 
     //   bool = evaluateIfExpression( macroBody );
       
