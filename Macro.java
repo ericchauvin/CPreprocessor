@@ -296,8 +296,8 @@ What if a macro has the same name as a variable name?
       return false;
       }
 
-    if( replacedIdentifier )
-      mApp.showStatusAsync( "markedUpString: " + markedUpString );
+    // if( replacedIdentifier )
+      // mApp.showStatusAsync( "markedUpString: " + markedUpString );
 
     return replacedIdentifier; 
     }
