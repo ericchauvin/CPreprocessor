@@ -2,7 +2,7 @@
 
 
 
-// Code Analysis for C++ code, written in Java.
+// C/C++ Preprocessor, written in Java.
 
 
 import javax.swing.SwingUtilities;
@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "6/11/2020";
+  public static final String versionDate = "6/12/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
