@@ -1,4 +1,4 @@
- 2019 - 2020.
+// Copyright Eric Chauvin 2019 - 2020.
 
 
 
@@ -324,7 +324,7 @@ public class PreProcessLines
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
-    mApp.showStatusAsync( result );
+    // mApp.showStatusAsync( result );
 
     if( !boolLevArray.getCurrentValue())
       {
@@ -437,8 +437,8 @@ public class PreProcessLines
       return "// #include precompiled.hpp is not used.\n";
 
     // mApp.showStatusAsync( "Looking for: " + inclFileName );
-    String fileName = headerDictionary.getFileFromList(
-                                  inclFileName, "\\" );
+    String fileName = headerDictionary.
+                            getValue( inclFileName );
     
     if( fileName.length() == 0 )
       {
@@ -446,8 +446,8 @@ public class PreProcessLines
       return ""; 
       }
     
-    String showS = "Filename found is:\n" + fileName;
-    mApp.showStatusAsync( showS );
+    // String showS = "Filename found is:\n" + fileName;
+    // mApp.showStatusAsync( showS );
 
     String inclFileStr = Preprocessor.PreprocessFile(
                                     mApp,
@@ -497,6 +497,11 @@ public class PreProcessLines
   private String processIf( String directiveBody ) 
     {
 // #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
+//   #if !defined(_POSIX_SOURCE) && 
+//       !defined(_POSIX_C_SOURCE) &&
+//       ((!defined(__STRICT_ANSI__) &&
+//       !defined(_ANSI_SOURCE)) ||
+//       (_XOPEN_SOURCE - 0) >= 500)
 
 
     String result = "// if " + directiveBody + "\n";
@@ -508,19 +513,87 @@ public class PreProcessLines
       return result;
       }
 
+    boolean exprValue = evaluateExpression( 
+                                      directiveBody );
 
-    mApp.showStatusAsync( "if body: " + directiveBody );
+
     // Once I evaluate the expression...
-    // =====
-    boolLevArray.addNewLevel( true );
+    boolLevArray.addNewLevel( exprValue );
 
-    //   bool = evaluateIfExpression( macroBody );
       
     //  if( !boolLevArray.setCurrentValue( false ))
     //    return "";
 
 
     return result;
+    }
+
+
+
+  private boolean evaluateExpression( String expr )
+    {
+    String originalExpr = expr;
+    // Remove line number markers.
+    expr = StringsUtility.removeSections( expr,
+                                        Markers.Begin,
+                                        Markers.End );
+
+    expr = expr.trim();
+    if( expr.equals( "1" ))
+      return true;
+
+    if( expr.equals( "0" ))
+      return false;
+
+    String markedUp = MarkupString.MarkItUp( 
+                                         mApp, expr );
+
+    mApp.showStatusAsync( "\nExpression: " + markedUp );
+    // expr = setDefineStatemlents( expr );
+
+
+    return false;
+    }
+
+
+  private String setDefineStatements( String expr )
+    {
+    return "";
+
+/*
+    String[] splitS = markedUpString.split(
+                                 Character.toString(
+                                 Markers.Begin ));
+
+    int last = splitS.length;
+    if( last < 2 )
+      {
+      mApp.showStatusAsync( "This macro has no key marked up." );
+      return false;
+      }
+      
+    // The string at zero is what's before the first
+    // Begin marker, which is nothing.
+
+    String testKey = splitS[1];
+    char firstChar = testKey.charAt( 0 ); 
+    if( firstChar != Markers.TypeIdentifier )
+      {
+      mApp.showStatusAsync( "The key is not an identifier." );
+      mApp.showStatusAsync( markedUpString );
+      return false;
+      }
+
+    testKey = Markers.removeAllMarkers( testKey );
+    if( !key.equals( testKey ))
+      {
+      mApp.showStatusAsync( "The key is not equal to the first token." );
+      mApp.showStatusAsync( "Key: >" + key + "<" );
+      mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
+      mApp.showStatusAsync( markedUpString );
+      return false;
+      }
+*/
     }
 
 
