@@ -62,14 +62,6 @@ public class HeaderFileDictionary
       // mApp.showStatusAsync( "Line: " + line );
       if( line.endsWith( key ))
         {
-        if( key.equals( "stdio.h" ))
-          {
-          // The right key would be sys\stdio.h.
-          if( line.endsWith( "sys\\stdio.h" ))
-            continue;
-
-          }
-
         result = line;
         // mApp.showStatusAsync( "Found: " + result );        
         setValue( key, result );
@@ -80,8 +72,8 @@ public class HeaderFileDictionary
     if( matches > 1 )
       {
       // stdio.h includes sys/stdio.h.
-      // stdio.h
-      // sys/stdio.h
+      // So there are two keys:
+      // stdio.h and sys/stdio.h
 
       String showS = "Duplicates for key: " +
                           key + "\n";
