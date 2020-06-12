@@ -18,7 +18,6 @@ public class PreprocessProject
   public PreprocessProject( MainApp useApp )
     {
     mApp = useApp;
-
     }
 
 
@@ -59,10 +58,10 @@ public class PreprocessProject
     // or Windows project.
 
     String projectFileListName = 
-           "\\Eric\\CodeAnalysisJava\\FileList.txt";
+           "\\Eric\\CPreprocessor\\FileList.txt";
 
     String headerFileName = 
-           "\\Eric\\CodeAnalysisJava\\HeaderFiles.txt";
+           "\\Eric\\CPreprocessor\\HeaderFiles.txt";
 
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
@@ -119,42 +118,7 @@ public class PreprocessProject
       MacroDictionary macroDictionary = new
                            MacroDictionary( mApp );
 
-      // Make a configuration file for these.
-
-      // Target Architechture.
-      // "Zero-Assembler Project: Zero is a port of
-      // OpenJDK that uses no assembler and therefore
-      // can trivially be built on any system."
-
-      // TARGET_ARCH_zero, TARGET_ARCH_arm,
-      Macro macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
-      macroDictionary.setMacro( "TARGET_ARCH_x86",
-                                macro );
-
-      // __cplusplus
-     
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "__x86_64__" );
-      macroDictionary.setMacro( "__x86_64__",
-                                macro );
-
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "__STRICT_ANSI__" );
-      macroDictionary.setMacro( "__STRICT_ANSI__",
-                                macro );
-
-      // JIT compilers.    
-      // C1 compiler.  Bytecode compiler.
-      // C2 compiler.  Called opto?  Higher
-      // optimization.
-
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "COMPILER1" );
-      macroDictionary.setMacro( "COMPILER1", macro );
-
-      // .pch is Precompiled header.
-      // or  .gch for Gnu.  Gnu compiled header.
+      addMacros( macroDictionary );
 
       String test = Preprocessor.PreprocessFile(
                                     mApp,
@@ -189,6 +153,55 @@ public class PreprocessProject
       mApp.showStatusAsync( "Exception in testFiles()." );
       mApp.showStatusAsync( e.getMessage() );
       }
+    }
+
+
+
+  private void addMacros( MacroDictionary
+                          macroDictionary )
+    {
+    // Make a configuration file for these.
+
+    // Target Architechture.
+    // "Zero-Assembler Project: Zero is a port of
+    // OpenJDK that uses no assembler and therefore
+    // can trivially be built on any system."
+
+    // TARGET_ARCH_zero, TARGET_ARCH_arm,
+    Macro macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
+    macroDictionary.setMacro( "TARGET_ARCH_x86",
+                                macro );
+
+
+// __IEEE_BIG_ENDIAN
+// __IEEE_LITTLE_ENDIAN
+
+
+
+    // __cplusplus
+     
+    macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "__x86_64__" );
+    macroDictionary.setMacro( "__x86_64__",
+                                macro );
+
+    macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "__STRICT_ANSI__" );
+    macroDictionary.setMacro( "__STRICT_ANSI__",
+                                macro );
+
+    // JIT compilers.    
+    // C1 compiler.  Bytecode compiler.
+    // C2 compiler.  Called opto?  Higher
+    // optimization.
+
+    macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "COMPILER1" );
+    macroDictionary.setMacro( "COMPILER1", macro );
+
+    // .pch is Precompiled header.
+    // or  .gch for Gnu.  Gnu compiled header.
     }
 
 
