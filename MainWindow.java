@@ -1,7 +1,8 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-// Code Analysis for C++ code, written in Java.
+// C/C++ Preprocessor, written in Java.
+
 
 
 import javax.swing.SwingUtilities;
@@ -50,18 +51,10 @@ public class MainWindow extends JFrame implements
   private JTextArea statusTextArea;
   private String statusFileName = "";
   private JPanel mainPanel = null;
-  private Thread fileThread;
   private String uiThreadName = "";
+  private PreprocessProject project = null;
 
 
-/*
-  private String searchText = "";
-  private Timer keyboardTimer;
-  private Process buildProcess = null;
-  private int buildTimerCount = 0;
-  private int exeTimerCount = 0;
-  private Process executableProcess = null;
-*/
 
 
   private MainWindow()
@@ -109,8 +102,6 @@ public class MainWindow extends JFrame implements
              MainApp.versionDate + "\n\n";
 
     showStatusAsync( allTogether );
- 
-    // setupTimer();
     }
 
 
@@ -350,44 +341,6 @@ public class MainWindow extends JFrame implements
     menuItem.addActionListener( this );
     editMenu.add( menuItem );
 
-/*
-    menuItem = new JMenuItem( "Cut" );
-    menuItem.setMnemonic( KeyEvent.VK_T );
-    menuItem.setForeground( Color.white );
-    menuItem.setBackground( Color.black );
-    menuItem.setFont( mainFont );
-    menuItem.setActionCommand( "EditCut" );
-    menuItem.addActionListener( this );
-    editMenu.add( menuItem );
-
-    menuItem = new JMenuItem( "Paste" );
-    menuItem.setMnemonic( KeyEvent.VK_P );
-    menuItem.setForeground( Color.white );
-    menuItem.setBackground( Color.black );
-    menuItem.setFont( mainFont );
-    menuItem.setActionCommand( "EditPaste" );
-    menuItem.addActionListener( this );
-    editMenu.add( menuItem );
-
-    menuItem = new JMenuItem( "Find" );
-    menuItem.setMnemonic( KeyEvent.VK_F );
-    menuItem.setForeground( Color.white );
-    menuItem.setBackground( Color.black );
-    menuItem.setFont( mainFont );
-    menuItem.setActionCommand( "EditFind" );
-    menuItem.addActionListener( this );
-    editMenu.add( menuItem );
-
-    menuItem = new JMenuItem( "Find Next" );
-    menuItem.setMnemonic( KeyEvent.VK_X );
-    menuItem.setForeground( Color.white );
-    menuItem.setBackground( Color.black );
-    menuItem.setFont( mainFont );
-    menuItem.setActionCommand( "EditFindNext" );
-    menuItem.addActionListener( this );
-    editMenu.add( menuItem );
-*/
-
 
     ///////////////////////
     // Help Menu:
@@ -440,25 +393,24 @@ public class MainWindow extends JFrame implements
     // File Menu:
     if( command == "FileTest" )
       {
-      // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
-      // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
+      if( project != null )
+        {
+        mApp.showStatusAsync( "Project is already running." );
+        return;
+        }
 
-      testFiles();
-
-      // listHeaderFiles();
-
+      project = new PreprocessProject( mApp );
+      project.doProject();
       return;
       }
 
     if( command == "FileCancel" )
       {
-      showStatusAsync( "Cancel got called." );
-      if( fileThread != null )
+      showStatusAsync( "Canceled...." );
+      if( project != null )
         {
-        showStatusAsync( "Canceling..." );
-        fileThread.interrupt();
-        fileThread = null;
-        return;
+        project.cancel();
+        project = null;
         }
       }
 
@@ -478,31 +430,6 @@ public class MainWindow extends JFrame implements
       return;
       }
 
-/*
-    if( command == "EditCut" )
-      {
-      editCut();
-      return;
-      }
-
-    if( command == "EditPaste" )
-      {
-      editPaste();
-      return;
-      }
-
-    if( command == "EditFind" )
-      {
-      findText();
-      return;
-      }
-
-    if( command == "EditFindNext" )
-      {
-      findTextNext();
-      return;
-      }
-*/
 
     //////////////
     // Help Menu:
@@ -527,231 +454,6 @@ public class MainWindow extends JFrame implements
 
 
 
-  private void listHeaderFiles()
-    {
-    // String dir = "\\jdk7hotspotmaster\\src";
-    // String dir = "\\cygwin64\\usr\\include";
-    // String dir = "\\cygwin64\\usr\\include\\sys";
-    // String dir = "\\cygwin64\\usr\\include\\machine";
-    String dir = "\\cygwin64\\usr\\include\\bits";
-
-
-
-    // Add it to the semicolon delimited dictionary file.
-    // endsWith( fileToFind )
-    String fileToFind = ""; // this/that.h";
-    listFiles( dir, fileToFind );
-    }
-
-
-
-  private void listFiles( String dir,
-                          String fileToFind )
-    {
-    try
-    {
-    if( fileThread != null )
-      {
-      // If it's not still doing something.
-      if( !fileThread.isAlive())
-        {
-        fileThread = null;
-        }
-      else
-        {
-        showStatusAsync( "The thread is already running." );
-        return;
-        }
-      }
-
-// ===== fileToFind
-    FileSearchRunnable fileSearch = new 
-                       FileSearchRunnable( mApp,
-                       dir );
-
-    fileThread = new Thread( fileSearch );
-    fileThread.start();
-    }
-    catch( Exception e )
-      {
-      showStatusAsync( "Exception in listFiles()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-
-
-
-/*
-Execute a C++ program with this.
-  private void runBuildFile()
-    {
-    try
-    {
-    showStatusTab();
-
-    if( buildProcess != null )
-      {
-      showStatus( "The build file is already running." );
-      return;
-      }
-
-    String runFile = mApp.projectConfigFile.getString(
-                                          "BuildFile" );
-
-    showStatusAsync( "Running Build File: " + runFile );
-
-    // java.lang.Runtime
-    // java.lang.ProcessBuilder
-    // java.lang.Process
-
-    buildTimerCount = 0;
-    buildProcess = Runtime.getRuntime().exec( runFile );
-    if( buildProcess == null )
-      {
-      showStatusAsync( "exec() returned null for the Build Process." );
-      return;
-      }
-
-    showStatusAsync( "Started Build File." );
-
-    }
-    catch( Exception e )
-      {
-      showStatusTab();
-      showStatusAsync( "Exception in runBuildFile()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-*/
-
-
-
-
-/*
-  private void setupTimer()
-    {
-    int delay = 250;
-    keyboardTimer = new Timer( delay, this );
-    keyboardTimer.start();
-    }
-*/
-
-
-/*
-    // FileFilter filter = new FileNameExtensionFilter( "Text file", "txt" );
-    // fc.setFileFilter( filter );
-    // fc.addChoosableFileFilter( filter );
-*/
-
-
-/*
-  private void checkBuildProcess()
-    {
-    if( buildProcess == null )
-      return;
-
-    boolean buildHasReturned = false;
-    try
-    {
-    int returnVal = buildProcess.exitValue();
-    buildHasReturned = true;
-    }
-    catch( IllegalThreadStateException e )
-      {
-      // Make sure there is no "pause" at the end
-      // of the batch file.
-      // It has not yet terminated.
-      buildTimerCount++;
-      if( (buildTimerCount % 4) == 1 )
-        showStatusAsync( "Build process is running. " + buildTimerCount );
-
-      // Kill the process.
-      // buildProcess.destroy();
-      }
-
-    if( buildHasReturned )
-      {
-      buildProcess = null;
-      showBuildLog();
-      }
-    }
-*/
-
-
-
-/*
-  private void keyboardTimerEvent()
-    {
-    try
-    {
-    // showStatusAsync( "keyboardTimerEvent called." );
-    // keyboardTimer.stop();
-
-    if( windowIsClosing )
-      {
-      keyboardTimer.stop();
-      return;
-      }
-
-    checkBuildProcess();
-    checkExecutableProcess();
-
-    // readFromExecutableOutput();
-
-    int selectedIndex = mainTabbedPane.getSelectedIndex();
-
-    // The status page is at zero.
-    if( selectedIndex == 0 )
-      {
-      statusLabel.setText( "Status page." );
-      return;
-      }
-
-    if( selectedIndex < 1 )
-      {
-      statusLabel.setText( "No text area selected." );
-      return;
-      }
-
-    if( selectedIndex >= tabPagesArrayLast )
-      {
-      statusLabel.setText( "No text area selected." );
-      return;
-      }
-
-    String tabTitle = tabPagesArray[selectedIndex].getTabTitle();
-
-    JTextArea selectedTextArea = getSelectedTextArea();
-    if( selectedTextArea == null )
-      return;
-
-    int position = selectedTextArea.getCaretPosition();
-
-    int line = selectedTextArea.getLineOfOffset( position );
-
-    // The +1 is for display and matching with
-    // the compiler error line number.
-    line++;
-
-    String showText = "Line: " + line +
-                    "     " + tabTitle +
-                    "      Proj: " + showProjectText;
-
-    statusLabel.setText( showText );
-
-    // keyboardTimer.start();
-    }
-    catch( Exception e )
-      {
-      showStatusAsync( "Exception in keyboardTimerEvent()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-*/
-
-
-
-
   private void editCopy()
     {
     try
@@ -767,47 +469,6 @@ Execute a C++ program with this.
       showStatusAsync( e.getMessage() );
       }
     }
-
-
-
-/*
-  private void editCut()
-    {
-    try
-    {
-    JTextArea selectedTextArea = getSelectedTextArea();
-    if( selectedTextArea == null )
-      return;
-
-    selectedTextArea.cut();
-    }
-    catch( Exception e )
-      {
-      showStatusAsync( "Exception in editCut()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-*/
-
-
-  /*
-private void editPaste()
-    {
-    try
-    {
-    JTextArea selectedTextArea = getSelectedTextArea();
-    if( selectedTextArea == null )
-      return;
-
-    selectedTextArea.paste();
-    }
-    catch( Exception e )
-      {
-      showStatusAsync( "Exception in editPaste()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-*/
 
 
 
@@ -875,198 +536,6 @@ private void editPaste()
     int getVal = 0x252F;
     showStatusAsync( "Character: " + (char)getVal );
     }
-
-
-
-
-/*
-  private void showBuildLog()
-    {
-    clearStatus();
-
-    String fileName = mApp.projectConfigFile.getString( "ProjectDirectory" );
-    fileName += "\\Build.log";
-
-    showStatus( "Log file: " + fileName );
-    // BuildLog Log = new BuildLog( FileName, this );
-    // Log.ReadFromTextFile();
-
-    String fileS = FileUtility.readAsciiFileToString(
-                                         mApp,
-                                         fileName,
-                                         false );
-
-    if( fileS == "" )
-      {
-      showStatus( "Nothing in the log file." );
-      return;
-      }
-
-    fileS = fileS.trim();
-    fileS = fileS + "\n";
-
-    StringBuilder sBuilder = new StringBuilder();
-    String[] lines = fileS.split( "\n" );
-    for( int count = 0; count < lines.length; count++ )
-      {
-      showStatus( lines[count] );
-      }
-    }
-*/
-
-
-
-  private void testFiles()
-    {
-    try
-    {
-    // This test code will be replaced with a 
-    // PreprocessProject.java object, which would 
-    // preprocess a whole project and it would have
-    // configuration files and header file lists
-    // as part of the project.
-
- 
-    String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
-    // String mainDir = "C:\\gccmaster\\gcc\\";
-    String outDir = "C:\\PreprocessOut\\";
-
-    // This list of files would be different for 
-    // different projects.  Like if it's a Linux
-    // or Windows project.
-
-    String projectFileListName = 
-           "\\Eric\\CodeAnalysisJava\\FileList.txt";
-
-    String headerFileName = 
-           "\\Eric\\CodeAnalysisJava\\HeaderFiles.txt";
-
-    HeaderFileDictionary headerDictionary = new
-                        HeaderFileDictionary( mApp );
-
-    headerDictionary.readFile( headerFileName );
-    headerDictionary.readFileList( projectFileListName );
-
-    String[] fileArray = { "codeBlob.cpp",
-                           "codeBlob.hpp",
-                           "codeCache.cpp",
-                           "codeCache.hpp",
-/*
-                           "compiledIC.cpp",
-                           "compiledIC.hpp",
-                           "compressedStream.cpp",
-                           "compressedStream.hpp",
-                           "debugInfo.cpp",
-                           "debugInfo.hpp",
-                           "debugInfoRec.cpp",
-                           "debugInfoRec.hpp",
-                           "dependencies.cpp",
-                           "dependencies.hpp",
-                           "exceptionHandlerTable.cpp",
-                           "exceptionHandlerTable.hpp",
-                           "icBuffer.cpp",
-                           "icBuffer.hpp",
-                           "jvmticmlr.h",
-                           "location.cpp",
-                           "location.hpp",
-                           "nmethod.cpp",
-                           "nmethod.hpp",
-                           "oopRecorder.cpp",
-                           "oopRecorder.hpp",
-                           "pcDesc.cpp",
-                           "pcDesc.hpp",
-                           "relocInfo.cpp",
-                           "relocInfo.hpp",
-                           "scopeDesc.cpp",
-                           "scopeDesc.hpp",
-                           "stubs.cpp",
-                           "stubs.hpp",
-                           "vmreg.cpp",
-                           "vmreg.hpp",
-                           "vtableStubs.cpp",
-*/
-                           "vtableStubs.hpp" };
-
-
-    int max = fileArray.length;
-    for( int count = 0; count < max; count++ )
-      {
-      String fileName = mainDir + fileArray[count];
-      String outFileName = outDir + fileArray[count];
-      MacroDictionary macroDictionary = new
-                           MacroDictionary( mApp );
-
-      // Make a configuration file for these.
-
-      // Target Architechture.
-      // "Zero-Assembler Project: Zero is a port of
-      // OpenJDK that uses no assembler and therefore
-      // can trivially be built on any system."
-
-      // TARGET_ARCH_zero, TARGET_ARCH_arm,
-      Macro macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
-      macroDictionary.setMacro( "TARGET_ARCH_x86",
-                                macro );
-
-      // __cplusplus
-     
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "__x86_64__" );
-      macroDictionary.setMacro( "__x86_64__",
-                                macro );
-
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "__STRICT_ANSI__" );
-      macroDictionary.setMacro( "__STRICT_ANSI__",
-                                macro );
-
-      // JIT compilers.    
-      // C1 compiler.  Bytecode compiler.
-      // C2 compiler.  Called opto?  Higher
-      // optimization.
-
-      macro = new Macro( mApp );
-      macro.setMacroWithEmptyParams( "COMPILER1" );
-      macroDictionary.setMacro( "COMPILER1", macro );
-
-      // .pch is Precompiled header.
-      // or  .gch for Gnu.  Gnu compiled header.
-
-      String test = Preprocessor.PreprocessFile(
-                                    mApp,
-                                    fileName,
-                                    macroDictionary,
-                                    headerDictionary );
-
-      if( test.length() == 0 )
-        {
-        showStatusAsync( " " );
-        showStatusAsync( "The file had an error." );
-        showStatusAsync( fileName );
-        return;
-        }
-
-      FileUtility.writeStringToFile( mApp,
-                                     outFileName,
-                                     test,
-                                     false );
-
-      }
-
-    headerDictionary.writeFile( headerFileName );
-
-    showStatusAsync( " " );
-    showStatusAsync( "Finished processing files." );
-    showStatusAsync( " " );
-    }
-    catch( Exception e )
-      {
-      showStatusAsync( "Exception in testFiles()." );
-      showStatusAsync( e.getMessage() );
-      }
-    }
-
 
 
 
