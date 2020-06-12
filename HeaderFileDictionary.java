@@ -30,28 +30,33 @@ public class HeaderFileDictionary
 
   public void readFileList( String fileName )
     {
-    // false is Keep Tabs.
     String fileS = FileUtility.readFileToString(
                                         mApp,
                                         fileName,
                                         false );
 
     if( fileS.length() == 0 )
+      {
+      fileListArray = new String[1];
+      fileListArray[0] = "";
       return;
+      }
 
     fileListArray = fileS.split( "\n" );
     }
 
 
-
-  public String getFileFromList( String key,
-                                 String pathDelim )
+  // This should be commented out.
+  private String getFileFromList( String key )
     {
+    if( fileListArray == null )
+      return "";
+
     String result = "";
 
     key = key.trim().toLowerCase();
-    if( !key.startsWith( pathDelim ))
-      key = pathDelim + key;
+    // if( !key.startsWith( pathDelim ))
+      // key = pathDelim + key;
 
     int last = fileListArray.length;
     int matches = 0;
@@ -185,11 +190,11 @@ public class HeaderFileDictionary
 
     int index = getIndex( key );
     if( lineArray[index] == null )
-      return getFileFromList( key, "\\" );
+      return getFileFromList( key );
 
     String result = lineArray[index].getValue( key );
     if( result.length() == 0 )
-      return getFileFromList( key, "\\" );
+      return getFileFromList( key );
 
     return result;
     }
