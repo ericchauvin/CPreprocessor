@@ -1,6 +1,7 @@
 // Copyright Eric Chauvin 2020.
 
 
+
 public class HeaderFileDictionaryLine
   {
   private String[] keyArray;
@@ -40,7 +41,7 @@ public class HeaderFileDictionaryLine
     String[] tempKeyArray = new String[max + toAdd];
     String[] tempValueArray = new String[max + toAdd];
 
-    for( int count = 0; count < max; count++ )
+    for( int count = 0; count < arrayLast; count++ )
       {
       tempKeyArray[count] = keyArray[count];
       tempValueArray[count] = valueArray[count];
@@ -112,7 +113,8 @@ public class HeaderFileDictionaryLine
     int index = getIndexOfKey( key );
     if( index >= 0 )
       {
-      valueArray[index] += ";" + value;
+      // valueArray[index] += ";" + value;
+      valueArray[arrayLast] = value;
       }
     else
       {
