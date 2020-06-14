@@ -1,4 +1,4 @@
-// Copyright Eric Chauvin 2019 - 2020.
+// Copyright Eric Chauvin 2020.
 
 
 
@@ -49,16 +49,16 @@ public class PreprocessProject
     {
     try
     {
-    String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
+    // String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
     // String mainDir = "C:\\gccmaster\\gcc\\";
-    String outDir = "C:\\PreprocessOut\\";
+    // String outDir = "C:\\PreprocessOut\\";
 
     // This list of files would be different for 
     // different projects.  Like if it's a Linux
     // or Windows project.
 
-    String projectFileListName = 
-           "\\Eric\\CPreprocessor\\FileList.txt";
+    String projectFileName = 
+            "\\Eric\\CPreprocessor\\ProjectFiles.txt";
 
     String headerFileName = 
            "\\Eric\\CPreprocessor\\HeaderFiles.txt";
@@ -67,54 +67,43 @@ public class PreprocessProject
                         HeaderFileDictionary( mApp );
 
     headerDictionary.readFile( headerFileName );
-    headerDictionary.readFileList( projectFileListName );
-
-    String[] fileArray = { "codeBlob.cpp",
-                           "codeBlob.hpp",
-                           "codeCache.cpp",
-                           "codeCache.hpp",
-/*
-                           "compiledIC.cpp",
-                           "compiledIC.hpp",
-                           "compressedStream.cpp",
-                           "compressedStream.hpp",
-                           "debugInfo.cpp",
-                           "debugInfo.hpp",
-                           "debugInfoRec.cpp",
-                           "debugInfoRec.hpp",
-                           "dependencies.cpp",
-                           "dependencies.hpp",
-                           "exceptionHandlerTable.cpp",
-                           "exceptionHandlerTable.hpp",
-                           "icBuffer.cpp",
-                           "icBuffer.hpp",
-                           "jvmticmlr.h",
-                           "location.cpp",
-                           "location.hpp",
-                           "nmethod.cpp",
-                           "nmethod.hpp",
-                           "oopRecorder.cpp",
-                           "oopRecorder.hpp",
-                           "pcDesc.cpp",
-                           "pcDesc.hpp",
-                           "relocInfo.cpp",
-                           "relocInfo.hpp",
-                           "scopeDesc.cpp",
-                           "scopeDesc.hpp",
-                           "stubs.cpp",
-                           "stubs.hpp",
-                           "vmreg.cpp",
-                           "vmreg.hpp",
-                           "vtableStubs.cpp",
-*/
-                           "vtableStubs.hpp" };
 
 
+    String fileStr = FileUtility.readFileToString(
+                                      mApp,
+                                      projectFileName,
+                                      false );
+
+    if( fileStr.length() == 0 )
+      {
+      mApp.showStatusAsync( "Nothing in the project file." );
+      return;
+      }
+
+
+    // .rc extension
+    // Resource files for Windows.  Like bitmaps,
+    // menus, icons, etc.
+
+    String[] fileArray = fileStr.split( "\n" );
     int max = fileArray.length;
     for( int count = 0; count < max; count++ )
       {
-      String fileName = mainDir + fileArray[count];
-      String outFileName = outDir + fileArray[count];
+      // For testing:
+      if( count > 2 )
+        break;
+
+      String fileName = fileArray[count];
+      fileName = fileName.trim();
+      if( fileName.length() < 1 )
+        continue;
+
+      if( fileName.startsWith( "//" ))
+        continue;
+
+      // Split the file path by the path delimiter to
+      // get the file name by itself.
+      // String outFileName = outDir + fileArray[count];
       MacroDictionary macroDictionary = new
                            MacroDictionary( mApp );
 
@@ -135,11 +124,12 @@ public class PreprocessProject
         return;
         }
 
+      /*
       FileUtility.writeStringToFile( mApp,
                                      outFileName,
                                      test,
                                      false );
-
+      */
       }
 
     headerDictionary.writeFile( headerFileName );
@@ -174,11 +164,18 @@ public class PreprocessProject
                                 macro );
 
 
-// __IEEE_BIG_ENDIAN
-// __IEEE_LITTLE_ENDIAN
+    // Intel x86 is Little Endian.
+    // __IEEE_BIG_ENDIAN
+    macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "__IEEE_LITTLE_ENDIAN" );
+    macroDictionary.setMacro( "__IEEE_LITTLE_ENDIAN",
+                                macro );
 
 
+    // Gamma is Hotspot internal test code.
+    // Leave GAMMA undefined.
 
+ 
     // __cplusplus
      
     macro = new Macro( mApp );
