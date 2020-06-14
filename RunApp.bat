@@ -9,8 +9,8 @@ rem SET JRE_HOME="C:\Javajdk\jre"
 rem SET CLASSPATH=".;%JAVA_HOME%\lib;%JAVA_HOME%\jre\lib
 rem SET PATH=%PATH%;%JAVA_HOME%\bin;
 
-cd \Eric\CodeAnalysisJava
+cd \Eric\CPreprocessor
 
-Java MainApp "\Eric\CodeAnalysisJava\\"
+Java MainApp "\Eric\CPreprocessor\\"
 
 rem pause
