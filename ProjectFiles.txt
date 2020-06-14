@@ -44,8 +44,8 @@
 \jdk7hotspotmaster\src\cpu\x86\vm\stubGenerator_x86_64.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\stubRoutines_x86_32.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\stubRoutines_x86_64.cpp
-\templateInterpreter_x86_32.cpp
-\templateInterpreter_x86_64.cpp
+\jdk7hotspotmaster\src\cpu\x86\vm\templateInterpreter_x86_32.cpp
+\jdk7hotspotmaster\src\cpu\x86\vm\templateInterpreter_x86_64.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\templateTable_x86_32.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\templateTable_x86_64.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\vmreg_x86.cpp
@@ -53,7 +53,7 @@
 \jdk7hotspotmaster\src\cpu\x86\vm\vtableStubs_x86_32.cpp
 \jdk7hotspotmaster\src\cpu\x86\vm\vtableStubs_x86_64.cpp
 \jdk7hotspotmaster\src\os\windows\launcher\java_md.c
-\attachListener_windows.cpp
+\jdk7hotspotmaster\src\os\windows\launcher\attachListener_windows.cpp
 \jdk7hotspotmaster\src\os\windows\vm\chaitin_windows.cpp
 \jdk7hotspotmaster\src\os\windows\vm\decoder_windows.cpp
 \jdk7hotspotmaster\src\os\windows\vm\dtraceJSDT_windows.cpp
@@ -292,7 +292,9 @@
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecode.cpp
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecodeHistogram.cpp
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecodeInterpreter.cpp
+
 // \jdk7hotspotmaster\src\share\vm\interpreter\bytecodeInterpreterWithChecks.xml
+
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecodes.cpp
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecodeStream.cpp
 \jdk7hotspotmaster\src\share\vm\interpreter\bytecodeTracer.cpp
@@ -615,4 +617,3 @@
 
 
 // \jdk7hotspotmaster\src\share\vm\Xusage.txt
-
