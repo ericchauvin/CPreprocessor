@@ -28,7 +28,9 @@ public class HeaderFileDictionary
 
 
 
-  public void readFileList( String fileName )
+  // This is temporary.
+  // This should be commented out.
+  private void readFileList( String fileName )
     {
     String fileS = FileUtility.readFileToString(
                                         mApp,
@@ -46,6 +48,7 @@ public class HeaderFileDictionary
     }
 
 
+  // This is temporary.
   // This should be commented out.
   private String getFileFromList( String key )
     {
@@ -259,6 +262,14 @@ public class HeaderFileDictionary
 
   public void readFile( String fileName )
     {
+    ////////
+    String tempFileList = 
+              "\\Eric\\CPreprocessor\\FileList.txt";
+
+    readFileList( tempFileList );
+    //////
+
+
     String fileStr = FileUtility.readFileToString(
                                         mApp,
                                         fileName,
@@ -272,7 +283,7 @@ public class HeaderFileDictionary
     for( int count = 0; count < last; count++ )
       {
       String line = fileLines[count];
-      mApp.showStatusAsync( line );
+      // mApp.showStatusAsync( line );
       String[] parts = line.split( ";" );
       if( parts.length < 2 )
         {
