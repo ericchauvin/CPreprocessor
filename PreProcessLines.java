@@ -496,14 +496,6 @@ public class PreProcessLines
 
   private String processIf( String directiveBody ) 
     {
-// #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
-//   #if !defined(_POSIX_SOURCE) && 
-//       !defined(_POSIX_C_SOURCE) &&
-//       ((!defined(__STRICT_ANSI__) &&
-//       !defined(_ANSI_SOURCE)) ||
-//       (_XOPEN_SOURCE - 0) >= 500)
-
-
     String result = "// if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
@@ -532,6 +524,15 @@ public class PreProcessLines
 
   private boolean evaluateExpression( String expr )
     {
+    // #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
+    //   #if !defined(_POSIX_SOURCE) && 
+    //       !defined(_POSIX_C_SOURCE) &&
+    //       ((!defined(__STRICT_ANSI__) &&
+    //       !defined(_ANSI_SOURCE)) ||
+    //       (_XOPEN_SOURCE - 0) >= 500)
+
+
+
     String originalExpr = expr;
     // Remove line number markers.
     expr = StringsUtility.removeSections( expr,
@@ -539,6 +540,9 @@ public class PreProcessLines
                                         Markers.End );
 
     expr = expr.trim();
+    if( expr.length() == 0 )
+      return false;
+
     if( expr.equals( "1" ))
       return true;
 
@@ -548,12 +552,21 @@ public class PreProcessLines
     String markedUp = MarkupString.MarkItUp( 
                                          mApp, expr );
 
-    mApp.showStatusAsync( "\nExpression: " + markedUp );
-    // expr = setDefineStatemlents( expr );
+    String[] exprParts = markedUp.split( "" + 
+                                     Markers.Begin );
+
+    mApp.showStatusAsync( " " );
+    int last = exprParts.length;
+    for( int count = 0; count < last; count++ )
+      {
+      mApp.showStatusAsync( exprParts[count] );
+      }
+
 
 
     return false;
     }
+
 
 
   private String setDefineStatements( String expr )
