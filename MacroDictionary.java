@@ -149,12 +149,10 @@ public class MacroDictionary
       }
 
     int index = getIndex( key );
-
     if( lineArray[index] == null )
-      lineArray[index] = new MacroDictionaryLine();
+      lineArray[index] = new MacroDictionaryLine( mApp );
 
     lineArray[index].setMacro( key, value );
-
     }
     catch( Exception e )
       {
