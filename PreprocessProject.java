@@ -51,7 +51,7 @@ public class PreprocessProject
     {
     // String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
     // String mainDir = "C:\\gccmaster\\gcc\\";
-    // String outDir = "C:\\PreprocessOut\\";
+    String outDir = "C:\\PreprocessOut\\";
 
     // This list of files would be different for 
     // different projects.  Like if it's a Linux
@@ -101,9 +101,12 @@ public class PreprocessProject
       if( fileName.startsWith( "//" ))
         continue;
 
-      // Split the file path by the path delimiter to
-      // get the file name by itself.
-      // String outFileName = outDir + fileArray[count];
+      String outFileName = outDir + 
+                          StringsUtility.getFileName(
+                          fileArray[count], '\\' );
+
+      mApp.showStatusAsync( "Out file: " + outFileName );
+    
       MacroDictionary macroDictionary = new
                            MacroDictionary( mApp );
 
@@ -124,12 +127,11 @@ public class PreprocessProject
         return;
         }
 
-      /*
       FileUtility.writeStringToFile( mApp,
                                      outFileName,
                                      test,
                                      false );
-      */
+
       }
 
     headerDictionary.writeFile( headerFileName );
@@ -209,13 +211,14 @@ public class PreprocessProject
     // String dir = "\\cygwin64\\usr\\include";
     // String dir = "\\cygwin64\\usr\\include\\sys";
     // String dir = "\\cygwin64\\usr\\include\\machine";
-    String dir = "\\cygwin64\\usr\\include\\bits";
+    // String dir = "\\cygwin64\\usr\\include\\bits";
+    String dir = "\\cygwin64\\usr\\include\\c++";
 
 
 
     // Add it to the semicolon delimited dictionary file.
     // endsWith( fileToFind )
-    String fileToFind = ""; // this/that.h";
+    String fileToFind = "stddef.h";
     listFiles( dir, fileToFind );
     }
 
@@ -243,7 +246,9 @@ public class PreprocessProject
 // fileToFind
     FileSearchRunnable fileSearch = new 
                        FileSearchRunnable( mApp,
-                       dir );
+                       dir,
+                       true,
+                       "stddef.h" );
 
     fileThread = new Thread( fileSearch );
     fileThread.start();
