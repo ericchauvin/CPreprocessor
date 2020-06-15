@@ -4,6 +4,11 @@
 
 // https://gcc.gnu.org/onlinedocs/gcc-4.8.5/cpp/Stringification.html
 
+// Notice the two starting brackets here, with the
+// end brackets defined later.
+// #define _BEGIN_STD_C namespace std { extern "C" {
+// #define _END_STD_C  } }
+
 
 public class Macro
   {
@@ -112,7 +117,8 @@ public class Macro
 
 
   public boolean markUpFromString( String in,
-                     MacroDictionary macroDictionary )
+                     MacroDictionary macroDictionary,
+                     boolean doStrict )
     {
     try
     {
@@ -181,7 +187,8 @@ What if a macro has the same name as a variable name?
 
       }
 
-    return setNewMacroInDictionary( macroDictionary );
+    return setNewMacroInDictionary( macroDictionary,
+                                    doStrict );
     }
     catch( Exception e )
       {
@@ -195,16 +202,20 @@ What if a macro has the same name as a variable name?
 
   private boolean setNewMacroInDictionary( 
                                   MacroDictionary
-                                  macroDictionary )
+                                  macroDictionary,
+                                  boolean dostrict )
     {
-    if( macroDictionary.keyExists( key ))
+    if( dostrict )
       {
-      mApp.showStatusAsync( "Macro key already exists: " + key );
-      mApp.showStatusAsync( "markedUpString: " + markedUpString );
-      Macro showMac = macroDictionary.getMacro( key );
-      mApp.showStatusAsync( "Original markedUpString: " +
+      if( macroDictionary.keyExists( key ))
+        {
+        mApp.showStatusAsync( "Macro key already exists: " + key );
+        mApp.showStatusAsync( "markedUpString: " + markedUpString );
+        Macro showMac = macroDictionary.getMacro( key );
+        mApp.showStatusAsync( "Original markedUpString: " +
                             showMac.getMarkedUpString());
-      return false;
+        return false;
+        }
       }
 
     macroDictionary.setMacro( key, this );
