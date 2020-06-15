@@ -8,15 +8,22 @@
 
 public class MacroDictionaryLine
   {
+  private MainApp mApp;
   private String[] keyArray;
   private Macro[] valueArray;
   private int[] sortIndexArray;
   private int arrayLast = 0;
 
 
-
-  public MacroDictionaryLine()
+  private MacroDictionaryLine()
     {
+    }
+
+
+
+  public MacroDictionaryLine( MainApp appToUse )
+    {
+    mApp = appToUse;
     keyArray = new String[8];
     valueArray = new Macro[8];
     sortIndexArray = new int[8];
@@ -120,6 +127,7 @@ public class MacroDictionaryLine
     int index = getIndexOfKey( key );
     if( index >= 0 )
       {
+      // mApp.showStatusAsync( "Existing macro: " + key );
       valueArray[index] = value;
       }
     else
@@ -127,6 +135,7 @@ public class MacroDictionaryLine
       if( arrayLast >= sortIndexArray.length )
         resizeArrays( 1024 * 4 );
 
+      // mApp.showStatusAsync( "New macro: " + key );
       keyArray[arrayLast] = key;
       valueArray[arrayLast] = value;
       arrayLast++;
