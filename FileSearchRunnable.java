@@ -11,6 +11,8 @@ public class FileSearchRunnable  implements Runnable
   {
   private MainApp mApp;
   private String directory = "";
+  private boolean recursive = true;
+  private String fileToFind = "";
 
 
 
@@ -21,10 +23,14 @@ public class FileSearchRunnable  implements Runnable
 
 
   public FileSearchRunnable( MainApp appToUse,
-                             String dirToUse )
+                             String dirToUse,
+                             boolean useRecursive,
+                             String useFile )
     {
     mApp = appToUse;
     directory = dirToUse;
+    recursive = useRecursive;
+    fileToFind = useFile;
     }
 
 
@@ -36,8 +42,8 @@ public class FileSearchRunnable  implements Runnable
     // It has to be showStatusAsync().
     // mApp.showStatus( "Test async." );
 
-    listFiles( directory, false );
-
+    listFiles( directory );
+    mApp.showStatusAsync( "\nFinished listing files." );
     }
     catch( Exception e )
       {
@@ -48,10 +54,9 @@ public class FileSearchRunnable  implements Runnable
 
 
 
-  private void listFiles( String dir,
-                          boolean recursive )
+  private void listFiles( String dir )
     {
-    String d = "\\jdk7hotspotmaster\\src\\";
+    // String d = "\\jdk7hotspotmaster\\src\\";
     // mApp.showStatusAsync( " " );
     // mApp.showStatusAsync( "// Listing: " + dir );
     // mApp.showStatusAsync( " " );
@@ -79,12 +84,13 @@ public class FileSearchRunnable  implements Runnable
 
         if( recursive )
           {
-          listFiles( fileName, recursive );
+          listFiles( fileName );
           }
 
         continue;
         }
 
+/*
       if( fileName.startsWith( 
                                d + "cpu\\sparc\\" ))
         continue;
@@ -136,9 +142,11 @@ public class FileSearchRunnable  implements Runnable
       if( fileName.startsWith( 
                        d + "os_cpu\\solaris_x86\\" ))
         continue;
+*/
 
+      // if( fileName.contains( fileToFind ))
+        mApp.showStatusAsync( fileName );
 
-      mApp.showStatusAsync( fileName );
       }
     }
 
