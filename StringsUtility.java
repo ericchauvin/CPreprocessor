@@ -137,6 +137,36 @@
 
 
 
+  public static String getFileName( String path,
+                                    char delimit )
+    {
+    if( path == null )
+      return "";
+
+    path = path.trim();
+
+    if( path.length() == 0 )
+      return "";
+
+    StringArray parts = new StringArray();
+    int last = parts.
+                makeFieldsFromString( path, delimit );
+
+    if( last == 0 )
+      return "";
+
+    for( int count = last - 1; count >= 0; count-- )
+      {
+      String fileName = parts.getStringAt( count );
+      if( fileName.length() != 0 )
+        return fileName;
+
+      }
+
+    return "";
+    }
+
+
 
   /*
   // This is a Cyclic Redundancy Check (CRC) function.
