@@ -299,6 +299,11 @@ public class PreProcessLines
       return result;
       }
 
+    directiveBody = StringsUtility.removeSections(
+                                        directiveBody,
+                                        Markers.Begin,
+                                        Markers.End );
+
     boolean isDefined = macroDictionary.
                            keyExists( directiveBody );
 
@@ -324,15 +329,17 @@ public class PreProcessLines
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
-    // mApp.showStatusAsync( result );
-
     if( !boolLevArray.getCurrentValue())
       {
       // mApp.showStatusAsync( "CurrentValue is false." );
-
       boolLevArray.addNewLevel( false );
       return result;
       }
+
+    directiveBody = StringsUtility.removeSections(
+                                        directiveBody,
+                                        Markers.Begin,
+                                        Markers.End );
 
     // mApp.showStatusAsync( "ifndef " + directiveBody );
 
@@ -368,13 +375,15 @@ public class PreProcessLines
 
   private String processPragma( String directiveBody ) 
     {
-    String result = "// #pragma " + directiveBody;
+    // pragma GCC system_header  15;stddef.h 
+
+    String result = "// #pragma " + directiveBody + "\n";
 
     if( !boolLevArray.getCurrentValue())
       return result;
 
     mApp.showStatusAsync( "#pragma needs to be done: " + directiveBody );
-    return ""; // result;
+    return result;
     }
 
 
@@ -396,8 +405,10 @@ public class PreProcessLines
       }
     else
       {
-      mApp.showStatusAsync( "Trying to undef something that doesn't exist." );
-      mApp.showStatusAsync( directiveBody );
+      // Things get routinely undefined before they
+      // get defined.
+      // mApp.showStatusAsync( "Trying to undef something that doesn't exist." );
+      // mApp.showStatusAsync( directiveBody );
       }
 
     return result;
@@ -485,8 +496,10 @@ public class PreProcessLines
     // mApp.showStatusAsync( "Key: " + showKey );
 
     // This adds it to the macroDictionary. 
+    boolean doStrict = false;
     if( !macro.markUpFromString( directiveBody,
-                                 macroDictionary ))
+                                 macroDictionary,
+                                 doStrict ))
       return "";
 
     return "// #define " + directiveBody + "\n";
@@ -531,8 +544,6 @@ public class PreProcessLines
     //       !defined(_ANSI_SOURCE)) ||
     //       (_XOPEN_SOURCE - 0) >= 500)
 
-
-
     String originalExpr = expr;
     // Remove line number markers.
     expr = StringsUtility.removeSections( expr,
@@ -552,19 +563,124 @@ public class PreProcessLines
     String markedUp = MarkupString.MarkItUp( 
                                          mApp, expr );
 
+    if( markedUp.contains( "defined" ))
+      {
+      markedUp = setDefineValues( markedUp );
+      if( markedUp.length() == 0 )
+        return false;
+
+      }
+
+// float a = Float.parseFloat( SomeString );
+    mApp.showStatusAsync( markedUp );
+
+    return false;
+    }
+
+
+
+  private String setDefineValues( String markedUp )
+    {
+    mApp.showStatusAsync( " " );
+    mApp.showStatusAsync( markedUp );
+
     String[] exprParts = markedUp.split( "" + 
                                      Markers.Begin );
 
-    mApp.showStatusAsync( " " );
     int last = exprParts.length;
+    boolean isInside = false;
+    StringBuilder sBuilder = new StringBuilder();
     for( int count = 0; count < last; count++ )
       {
-      mApp.showStatusAsync( exprParts[count] );
+      String part = exprParts[count];
+      if( isInside )
+        {
+        if( part.startsWith( "" + 
+                             Markers.TypeOperator +
+                             ")" ))
+          {
+          // mApp.showStatusAsync( "Found closed" );
+          sBuilder.append( "" + Markers.Begin + part );
+          isInside = false;
+          continue;
+          }
+        }
+
+      if( part.startsWith( "" + 
+                           Markers.TypeIdentifier +
+                           "defined" ))
+        {
+        sBuilder.append( "" + Markers.Begin + part );
+        // mApp.showStatusAsync( "Found defined" );
+        isInside = true;
+        continue;
+        }
+
+      if( isInside )
+        {
+        if( part.startsWith( "" + 
+                             Markers.TypeIdentifier ))
+          {
+          String macroName = part.replace( "" +
+                        Markers.TypeIdentifier, "" );
+
+          macroName = macroName.replace( "" +
+                                   Markers.End, "" );
+
+          if( macroDictionary.keyExists( macroName ))
+            {
+            // mApp.showStatusAsync( "Is defined: " + macroName );
+            sBuilder.append( "1" );
+            }
+          else
+            {
+            // mApp.showStatusAsync( "Not defined: " + macroName );
+            sBuilder.append( "0" );
+            }
+
+          continue;
+          }
+        }
+
+      sBuilder.append( "" + Markers.Begin + part );
       }
+    
+    String result = sBuilder.toString();
+    String trueIn = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" + Markers.End +
+                         Markers.Begin +
+                         Markers.TypeOperator + "(" +
+                         Markers.End +
+                         "1" +
+                         Markers.Begin +
+                         Markers.TypeOperator + ")" +
+                         Markers.End;
+                         
+    String falseIn = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" + Markers.End +
+                         Markers.Begin +
+                         Markers.TypeOperator + "(" +
+                         Markers.End +
+                         "0" +
+                         Markers.Begin +
+                         Markers.TypeOperator + ")" +
+                         Markers.End;
 
+    String trueOut = "" + Markers.Begin +
+                     Markers.TypeBoolean +
+                     "1" + 
+                     Markers.End;
 
+    String falseOut = "" + Markers.Begin +
+                     Markers.TypeBoolean +
+                     "0" + 
+                     Markers.End;
 
-    return false;
+    result = result.replace( trueIn, trueOut ); 
+    result = result.replace( falseIn, falseOut ); 
+    return result;
     }
 
 
