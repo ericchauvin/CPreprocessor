@@ -1,6 +1,7 @@
 // Copyright Eric Chauvin 2018 - 2020.
 
 
+
       // Basic Multilingual Plane
       // C0 Controls and Basic Latin (Basic Latin)
       //                                 (0000 007F)
@@ -47,12 +48,7 @@
   public static final char EscapedSlash = (char)0x270E;
   public static final char QuoteAsSingleCharacter =
                                          (char)0x270F;
-  public static final char TypePreprocessor =
-                                         (char)0x2710;
-  // public static final char TypeBeginPreproc =
-  //                                       (char)0x2711;
-  // public static final char TypeEndPreproc =
-  //                                       (char)0x2712;
+  public static final char TypeBoolean = (char)0x2710;
 
 
 
