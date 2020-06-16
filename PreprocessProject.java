@@ -112,13 +112,13 @@ public class PreprocessProject
 
       addMacros( macroDictionary );
 
-      String test = Preprocessor.PreprocessFile(
+      String result = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
                                     macroDictionary,
                                     headerDictionary );
 
-      if( test.length() == 0 )
+      if( result.length() == 0 )
         {
         mApp.showStatusAsync( " " );
         mApp.showStatusAsync( "The file had an error." );
@@ -129,7 +129,7 @@ public class PreprocessProject
 
       FileUtility.writeStringToFile( mApp,
                                      outFileName,
-                                     test,
+                                     result,
                                      false );
 
       }
@@ -171,6 +171,13 @@ public class PreprocessProject
     macro = new Macro( mApp );
     macro.setMacroWithEmptyParams( "__IEEE_LITTLE_ENDIAN" );
     macroDictionary.setMacro( "__IEEE_LITTLE_ENDIAN",
+                                macro );
+
+    // I want to use the Cygwin compiler to compile
+    // this after it is preprocessed here.
+    macro = new Macro( mApp );
+    macro.setMacroWithEmptyParams( "__CYGWIN__" );
+    macroDictionary.setMacro( "__CYGWIN__",
                                 macro );
 
 
