@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "6/14/2020";
+  public static final String versionDate = "6/16/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
@@ -51,7 +51,7 @@ public class MainApp implements Runnable
     // checkSingleInstance()
  
     /*
-    String programDirectory = "\\Eric\\CodeAnalysisJava\\";
+    String programDirectory = "\\Eric\\CPreprocessor\\";
     int length = argsArray.length;
     if( length > 0 )
       programDirectory = argsArray[0];
@@ -63,7 +63,7 @@ public class MainApp implements Runnable
                                 mainConfigFileName );
     */
 
-    mainWin = new MainWindow( this, "Code Analysis" );
+    mainWin = new MainWindow( this, "C Preprocessor" );
     mainWin.initialize();
 
     /*
