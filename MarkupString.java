@@ -95,11 +95,6 @@ public class MarkupString
     // Don't use those quote characters that are
     // defined as characters.
     String singleQuoteCharStr = "\'\"\'";
-    if( singleQuoteCharStr.length() != 3 )
-      {
-      mApp.showStatusAsync( "SingleQuoteCharStr.length() != 3" );
-      return Character.toString( Markers.ErrorPoint );
-      }
 
     in = in.replace( singleQuoteCharStr,
                    Character.toString(
@@ -169,6 +164,8 @@ public class MarkupString
     result = result.replace( Character.toString(
                                Markers.EscapedSlash ),
                                "\\\\" );
+    if( isInsideString )
+      return result + "\nNever found the end quote." + Markers.ErrorPoint;
 
     return result;
     }
@@ -355,6 +352,10 @@ public class MarkupString
       sBuilder.append( testChar );
       }
 
+    // If the ID went to the end of the line.
+    if( isInsideID )
+      sBuilder.append( Markers.End );
+
     String result = sBuilder.toString();
     return result;
     }
@@ -489,6 +490,10 @@ public class MarkupString
       // It is continuing inside a number.
       sBuilder.append( testChar );
       }
+
+    // If the number went to the end of the line.
+    if( isInsideNumber )
+      sBuilder.append( Markers.End );
    
     return sBuilder.toString();
     }
