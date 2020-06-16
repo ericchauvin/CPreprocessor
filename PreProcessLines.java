@@ -34,6 +34,8 @@ public class PreProcessLines
     {
     // #line
 
+    // #warning
+
     if( in.equals( "error" ))
       return true;
 
@@ -43,6 +45,10 @@ public class PreProcessLines
     if( in.equals( "undef" ))
       return true;
 
+    // #include_next is a GNU extension.
+    // It means to include the next file with
+    // the same name.  Next in the search path for
+    // include files.
     if( in.equals( "include" ))
       return true;
 
@@ -216,6 +222,7 @@ public class PreProcessLines
       {
       result = processUndef( directiveBody );
       }
+
 
     if( directive.equals( "include" ))
       {
@@ -518,211 +525,21 @@ public class PreProcessLines
       return result;
       }
 
-    boolean exprValue = evaluateExpression( 
-                                      directiveBody );
+    String exprValue = IfExpression.
+                                  evaluateExpression(
+                                        mApp,
+                                        directiveBody,
+                                     macroDictionary );
 
+    if( exprValue.length() == 0 )
+      return "";
 
-    // Once I evaluate the expression...
-    boolLevArray.addNewLevel( exprValue );
-
-      
-    //  if( !boolLevArray.setCurrentValue( false ))
-    //    return "";
-
+    if( exprValue.equals( "true" ))
+      boolLevArray.addNewLevel( true );
+    else
+      boolLevArray.addNewLevel( false );
 
     return result;
-    }
-
-
-
-  private boolean evaluateExpression( String expr )
-    {
-    // #if !(defined(_BEGIN_STD_C) && defined(_END_STD_C))
-    //   #if !defined(_POSIX_SOURCE) && 
-    //       !defined(_POSIX_C_SOURCE) &&
-    //       ((!defined(__STRICT_ANSI__) &&
-    //       !defined(_ANSI_SOURCE)) ||
-    //       (_XOPEN_SOURCE - 0) >= 500)
-
-    String originalExpr = expr;
-    // Remove line number markers.
-    expr = StringsUtility.removeSections( expr,
-                                        Markers.Begin,
-                                        Markers.End );
-
-    expr = expr.trim();
-    if( expr.length() == 0 )
-      return false;
-
-    if( expr.equals( "1" ))
-      return true;
-
-    if( expr.equals( "0" ))
-      return false;
-
-    String markedUp = MarkupString.MarkItUp( 
-                                         mApp, expr );
-
-    if( markedUp.contains( "defined" ))
-      {
-      markedUp = setDefineValues( markedUp );
-      if( markedUp.length() == 0 )
-        return false;
-
-      }
-
-// float a = Float.parseFloat( SomeString );
-    mApp.showStatusAsync( markedUp );
-
-    return false;
-    }
-
-
-
-  private String setDefineValues( String markedUp )
-    {
-    mApp.showStatusAsync( " " );
-    mApp.showStatusAsync( markedUp );
-
-    String[] exprParts = markedUp.split( "" + 
-                                     Markers.Begin );
-
-    int last = exprParts.length;
-    boolean isInside = false;
-    StringBuilder sBuilder = new StringBuilder();
-    for( int count = 0; count < last; count++ )
-      {
-      String part = exprParts[count];
-      if( isInside )
-        {
-        if( part.startsWith( "" + 
-                             Markers.TypeOperator +
-                             ")" ))
-          {
-          // mApp.showStatusAsync( "Found closed" );
-          sBuilder.append( "" + Markers.Begin + part );
-          isInside = false;
-          continue;
-          }
-        }
-
-      if( part.startsWith( "" + 
-                           Markers.TypeIdentifier +
-                           "defined" ))
-        {
-        sBuilder.append( "" + Markers.Begin + part );
-        // mApp.showStatusAsync( "Found defined" );
-        isInside = true;
-        continue;
-        }
-
-      if( isInside )
-        {
-        if( part.startsWith( "" + 
-                             Markers.TypeIdentifier ))
-          {
-          String macroName = part.replace( "" +
-                        Markers.TypeIdentifier, "" );
-
-          macroName = macroName.replace( "" +
-                                   Markers.End, "" );
-
-          if( macroDictionary.keyExists( macroName ))
-            {
-            // mApp.showStatusAsync( "Is defined: " + macroName );
-            sBuilder.append( "1" );
-            }
-          else
-            {
-            // mApp.showStatusAsync( "Not defined: " + macroName );
-            sBuilder.append( "0" );
-            }
-
-          continue;
-          }
-        }
-
-      sBuilder.append( "" + Markers.Begin + part );
-      }
-    
-    String result = sBuilder.toString();
-    String trueIn = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
-                         Markers.End +
-                         "1" +
-                         Markers.Begin +
-                         Markers.TypeOperator + ")" +
-                         Markers.End;
-                         
-    String falseIn = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
-                         Markers.End +
-                         "0" +
-                         Markers.Begin +
-                         Markers.TypeOperator + ")" +
-                         Markers.End;
-
-    String trueOut = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "1" + 
-                     Markers.End;
-
-    String falseOut = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "0" + 
-                     Markers.End;
-
-    result = result.replace( trueIn, trueOut ); 
-    result = result.replace( falseIn, falseOut ); 
-    return result;
-    }
-
-
-
-  private String setDefineStatements( String expr )
-    {
-    return "";
-
-/*
-    String[] splitS = markedUpString.split(
-                                 Character.toString(
-                                 Markers.Begin ));
-
-    int last = splitS.length;
-    if( last < 2 )
-      {
-      mApp.showStatusAsync( "This macro has no key marked up." );
-      return false;
-      }
-      
-    // The string at zero is what's before the first
-    // Begin marker, which is nothing.
-
-    String testKey = splitS[1];
-    char firstChar = testKey.charAt( 0 ); 
-    if( firstChar != Markers.TypeIdentifier )
-      {
-      mApp.showStatusAsync( "The key is not an identifier." );
-      mApp.showStatusAsync( markedUpString );
-      return false;
-      }
-
-    testKey = Markers.removeAllMarkers( testKey );
-    if( !key.equals( testKey ))
-      {
-      mApp.showStatusAsync( "The key is not equal to the first token." );
-      mApp.showStatusAsync( "Key: >" + key + "<" );
-      mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
-      mApp.showStatusAsync( markedUpString );
-      return false;
-      }
-*/
     }
 
 
