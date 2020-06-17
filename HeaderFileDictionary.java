@@ -87,7 +87,7 @@ public class HeaderFileDictionary
                           key + "\n";
                           
       mApp.showStatusAsync( showS );
-      // return "";
+      return "";
       }
 
     return result;
