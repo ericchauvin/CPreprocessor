@@ -14,9 +14,13 @@ public class MacroDictionary
   {
   private MainApp mApp;
   private MacroDictionaryLine lineArray[];
-  private final int maxIndexLetter = 'z' - 'a';
-  private final int keySize = ((maxIndexLetter << 6) |
-                                  maxIndexLetter) + 1;
+  //             See: letterToIndexNumber()
+  // Shifting left 6 bits means 5 bits are left
+  // below the top bits.  5 bits set to all ones
+  // is 0b11111 = 16 + 8 + 4 + 2 + 1 = 31
+  private static final int maxIndexLetter = 'z' - 'a' + 2;
+  private static final int keySize = ((maxIndexLetter << 6) |
+                                maxIndexLetter);
 
 
 
@@ -30,6 +34,14 @@ public class MacroDictionary
   public MacroDictionary( MainApp useApp )
     {
     mApp = useApp;
+
+    // maxIndexLetter for macros: 27
+    // Index for z is: 26
+    // mApp.showStatusAsync( "maxIndexLetter for macros: " + maxIndexLetter );
+    // int index = ('z' + 1) - 'a';
+    // mApp.showStatusAsync( "Index for z is: " + index );
+    // Underscore is decimal 137 or 0x5F.
+    // mApp.showStatusAsync( "Underscore: " + (char)0x5F );
 
     lineArray = new MacroDictionaryLine[keySize];
     }
@@ -48,19 +60,27 @@ public class MacroDictionary
   private int letterToIndexNumber( char letter )
     {
     // This is case-insensitive so that it sorts
-    // names in a case-insensitive way.
+    // names in' a case-insensitive way.
 
     letter = Character.toLowerCase( letter );
-    int index = letter - 'a';
+
+    // The underscore is used in a lot of macros
+    // and it is sorted before the letter A.  So
+    // it will be at index 0, and with the plus
+    // one, the letter A is at index 1.
+
+    if( letter == '_' )
+      return 0;
+
+    int index = (letter + 1) - 'a';
     if( index < 0 )
       index = 0;
 
     // A letter that's way up there in Unicode, like
     // a Chinese character, would be given the value
-    // maxindexletter.  In other words anything higher
-    // than the letter z is lumped together with z.
-    if( index > maxIndexLetter )
-      index = maxIndexLetter;
+    // maxindexletter - 1.
+    if( index >= maxIndexLetter )
+      index = maxIndexLetter - 1;
 
     return index;
     }
