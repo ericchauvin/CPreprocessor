@@ -36,9 +36,6 @@ public class PreprocessProject
 
   public void doProject()
     {
-    // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
-    // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
-
     testFiles();
     // listHeaderFiles();
     }
@@ -49,6 +46,9 @@ public class PreprocessProject
     {
     try
     {
+    // String fileName = "\\jdk7hotspotmaster\\src\\share\\tools\\launcher\\java.c";
+    // String fileName = "\\Eric\\CodeAnalysisCpp\\main.cpp";
+
     // String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
     // String mainDir = "C:\\gccmaster\\gcc\\";
     String outDir = "C:\\PreprocessOut\\";
@@ -149,6 +149,7 @@ public class PreprocessProject
 
 
 
+
   private void addMacros( MacroDictionary
                           macroDictionary )
     {
@@ -219,13 +220,18 @@ public class PreprocessProject
     // String dir = "\\cygwin64\\usr\\include\\sys";
     // String dir = "\\cygwin64\\usr\\include\\machine";
     // String dir = "\\cygwin64\\usr\\include\\bits";
-    String dir = "\\cygwin64\\usr\\include\\c++";
+    // String dir = "\\cygwin64\\usr\\include\\c++";
+    // String dir = "\\cygwin64\\usr\\include\\cygwin";
+    // String dir = "\\cygwin-master\\winsup\\cygwin";
 
+    // String dir = "\\EricFiles\\WindowsSdk10\\ucrt";
+    // String dir = "\\EricFiles\\WindowsSdk10\\um";
+    String dir = "\\EricFiles\\WindowsSdk10\\shared";
 
 
     // Add it to the semicolon delimited dictionary file.
     // endsWith( fileToFind )
-    String fileToFind = "stddef.h";
+    String fileToFind = ""; // stddef.h";
     listFiles( dir, fileToFind );
     }
 
@@ -255,7 +261,7 @@ public class PreprocessProject
                        FileSearchRunnable( mApp,
                        dir,
                        true,
-                       "stddef.h" );
+                       "" );
 
     fileThread = new Thread( fileSearch );
     fileThread.start();
