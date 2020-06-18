@@ -1,8 +1,10 @@
 // Copyright Eric Chauvin 2020.
 
 
-
+// Stringification:
 // https://gcc.gnu.org/onlinedocs/gcc-4.8.5/cpp/Stringification.html
+
+
 
 // Notice the two starting brackets here, with the
 // end brackets defined later.
@@ -10,11 +12,12 @@
 // #define _END_STD_C  } }
 
 
+
 public class Macro
   {
   private MainApp mApp;
   private String key = "";
-  private String markedUpString = "";
+  private String markedUpS = "";
   private boolean isFunctionType = false;  
   private boolean enabled = true; // For undef.
 
@@ -37,13 +40,7 @@ public class Macro
                                      String keyToUse )
     {
     key = keyToUse;
-    markedUpString = "";
-    // markedUpString = paramBody;
-    // if( markedUpString.length() > 0 )
-      // {
-      // markedUpString = MarkupString.MarkItUp( mApp,
-      //                               markUpString );
-      // }
+    markedUpS = "";
     }
 
 
@@ -122,12 +119,19 @@ public class Macro
     {
     try
     {
-    markedUpString = MarkupString.MarkItUp( mApp,
-                                            in );
+    String originalStr = in;
+    markedUpS = in;
+      // Remove the line number markers.
+    markedUpS = StringsUtility.removeSections(
+                                        markedUpS,
+                                        Markers.Begin,
+                                        Markers.End );
 
-    String[] splitS = markedUpString.split(
-                                 Character.toString(
-                                 Markers.Begin ));
+    markedUpS = MarkupString.MarkItUp( mApp,
+                                          markedUpS );
+
+    String[] splitS = markedUpS.split( "" +
+                                   Markers.Begin );
 
     int last = splitS.length;
     if( last < 2 )
@@ -144,7 +148,7 @@ public class Macro
     if( firstChar != Markers.TypeIdentifier )
       {
       mApp.showStatusAsync( "The key is not an identifier." );
-      mApp.showStatusAsync( markedUpString );
+      mApp.showStatusAsync( markedUpS );
       return false;
       }
 
@@ -154,7 +158,7 @@ public class Macro
       mApp.showStatusAsync( "The key is not equal to the first token." );
       mApp.showStatusAsync( "Key: >" + key + "<" );
       mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
-      mApp.showStatusAsync( markedUpString );
+      mApp.showStatusAsync( markedUpS );
       return false;
       }
 
@@ -171,13 +175,12 @@ What if a macro has the same name as a variable name?
     StringBuilder sBuilder = new StringBuilder();
     for( int count = 2; count < last; count++ )
       {
-      sBuilder.append( Character.toString( 
-                                  Markers.Begin ) +
+      sBuilder.append( "" + Markers.Begin  +
                                   splitS[count] );
       }
 
     // Put the paramters back, but leave the key out.
-    markedUpString = sBuilder.toString();
+    markedUpS = sBuilder.toString();
 
     // How many loops would be abnormal?
     for( int count = 0; count < 100; count++ )
@@ -186,6 +189,14 @@ What if a macro has the same name as a variable name?
         break;
 
       }
+
+// #define WINAPI_FAMILY_PARTITION(Partitions)     (Partitions)
+
+// =========
+// #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+    if( originalStr.contains( "Partitions" ))
+      mApp.showStatusAsync( "\nKey: " + key + "\n" + originalStr );
 
     return setNewMacroInDictionary( macroDictionary,
                                     doStrict );
@@ -210,9 +221,9 @@ What if a macro has the same name as a variable name?
       if( macroDictionary.keyExists( key ))
         {
         mApp.showStatusAsync( "Macro key already exists: " + key );
-        mApp.showStatusAsync( "markedUpString: " + markedUpString );
+        mApp.showStatusAsync( "markedUpS: " + markedUpS );
         Macro showMac = macroDictionary.getMacro( key );
-        mApp.showStatusAsync( "Original markedUpString: " +
+        mApp.showStatusAsync( "Original markedUpS: " +
                             showMac.getMarkedUpString());
         return false;
         }
@@ -231,13 +242,15 @@ What if a macro has the same name as a variable name?
   private boolean replaceMacros( MacroDictionary
                                  macroDictionary )
     {
+// ==== See IfExpression.java for how it's done.
+// Don't use the word token.
+
     boolean replacedIdentifier = false;
 
     StringBuilder sBuilder = new StringBuilder();
 
-    String[] splitS = markedUpString.split(
-                                 Character.toString(
-                                 Markers.Begin ));
+    String[] splitS = markedUpS.split( "" + 
+                                    Markers.Begin );
 
     int last = splitS.length;
       
@@ -250,8 +263,7 @@ What if a macro has the same name as a variable name?
       char firstChar = token.charAt( 0 ); 
       if( firstChar == Markers.TypeLineNumber )
         {
-        sBuilder.append( Character.toString( 
-                                   Markers.Begin ) +
+        sBuilder.append( "" + Markers.Begin +
                                    splitS[count] );
         continue;
         }
@@ -267,8 +279,7 @@ What if a macro has the same name as a variable name?
 
       if( firstChar != Markers.TypeIdentifier )
         {
-        sBuilder.append( Character.toString( 
-                                   Markers.Begin ) +
+        sBuilder.append( "" + Markers.Begin  +
                                    splitS[count] );
         continue;
         }
@@ -278,7 +289,7 @@ What if a macro has the same name as a variable name?
         {
         mApp.showStatusAsync( "This macro has a self referential key." );
         mApp.showStatusAsync( "Key: " + key );
-        mApp.showStatusAsync( markedUpString );
+        mApp.showStatusAsync( markedUpS );
         return false;
         }
 
@@ -293,14 +304,14 @@ What if a macro has the same name as a variable name?
         continue;
         }
 
-      sBuilder.append( Character.toString( 
-                       Markers.Begin ) + splitS[count] );
+      sBuilder.append( "" + Markers.Begin +
+                                       splitS[count] );
 
       }
 
-    markedUpString = sBuilder.toString();
+    markedUpS = sBuilder.toString();
 
-    if( !MarkupString.testMarkers( markedUpString, 
+    if( !MarkupString.testMarkers( markedUpS, 
                                    "replaceMacros().",
                                    mApp ))
       {
@@ -308,7 +319,7 @@ What if a macro has the same name as a variable name?
       }
 
     // if( replacedIdentifier )
-      // mApp.showStatusAsync( "markedUpString: " + markedUpString );
+      // mApp.showStatusAsync( "markedUpS: " + markedUpS );
 
     return replacedIdentifier; 
     }
@@ -317,7 +328,7 @@ What if a macro has the same name as a variable name?
 
   public String getMarkedUpString()
     {
-    return markedUpString;
+    return markedUpS;
     }
 
 
