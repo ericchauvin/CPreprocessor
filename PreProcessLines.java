@@ -135,6 +135,29 @@ public class PreProcessLines
         }
 
       String directive = lineSplitter.getStringAt( 0 );
+
+      // if(WINVER
+      String directiveExtra = "";
+      if( directive.contains( "(" ))
+        {
+        StringArray dirSplitter = new StringArray();
+        int dirPart = dirSplitter.
+                     makeFieldsFromString( directive,
+                                             '(' );
+
+        directive = dirSplitter.getStringAt( 0 );
+
+        StringBuilder extraBuilder = new StringBuilder();
+        for( int countD = 1; countD < dirPart; countD++ )
+          {
+          extraBuilder.append( 
+                    dirSplitter.getStringAt( countD ));
+ 
+          }
+
+        directiveExtra = extraBuilder.toString();
+        }
+
       // Remove the line number markers if they are
       // there.  Like endif with nothing following it.
       directive = StringsUtility.removeSections(
@@ -142,9 +165,6 @@ public class PreProcessLines
                                         Markers.Begin,
                                         Markers.End );
 
-      // If it's not already lower case then that's
-      // a problem.
-      // directive = directive.toLowerCase();
       if( !isValidDirective( directive ))
         {
         mApp.showStatusAsync( directive + " is not a valid directive." );
@@ -160,8 +180,10 @@ public class PreProcessLines
         paramBuilder.append( field + " " );
         }
 
-      String directiveBody = paramBuilder.toString().
-                                               trim();
+      String directiveBody = directiveExtra + " " +
+                             paramBuilder.toString();
+
+      directiveBody = directiveBody.trim();
 
       // mApp.showStatusAsync( directive + " " + directiveBody );
 
@@ -516,13 +538,13 @@ public class PreProcessLines
 
   private String processIf( String directiveBody ) 
     {
-    String result = "// if " + directiveBody + "\n";
+    String result = "if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
       // If what's above it is false, then this
       // has to be false.
       boolLevArray.addNewLevel( false );
-      return result;
+      return "// false  " + result;
       }
 
     String exprValue = IfExpression.
@@ -535,12 +557,20 @@ public class PreProcessLines
       return "";
 
     if( exprValue.equals( "true" ))
+      {
       boolLevArray.addNewLevel( true );
-    else
-      boolLevArray.addNewLevel( false );
+      return "// true  " + result;
+      }
 
-    return result;
+    if( exprValue.equals( "false" ))
+      {
+      boolLevArray.addNewLevel( false );
+      return "// false  " + result;
+      }
+
+    return "// unknown if value returned.";
     }
+
 
 
 
