@@ -7,7 +7,7 @@
 
 
 // Notice the two starting brackets here, with the
-// end brackets defined later.
+// end brackets defined later in a different macro.
 // #define _BEGIN_STD_C namespace std { extern "C" {
 // #define _END_STD_C  } }
 
@@ -20,6 +20,7 @@ public class Macro
   private String markedUpS = "";
   private boolean isFunctionType = false;  
   private boolean enabled = true; // For undef.
+  private StringArray paramArray = null;
 
 
 
@@ -34,6 +35,7 @@ public class Macro
     mApp = useApp;
     enabled = true;
     }
+
 
 
   public void setMacroWithEmptyParams(
@@ -130,6 +132,8 @@ public class Macro
     markedUpS = MarkupString.MarkItUp( mApp,
                                           markedUpS );
 
+    // mApp.showStatusAsync( "markedUpS before split. " + markedUpS );
+
     String[] splitS = markedUpS.split( "" +
                                    Markers.Begin );
 
@@ -144,6 +148,13 @@ public class Macro
     // Begin marker, which is nothing.
 
     String testKey = splitS[1];
+    if( testKey.length() < 2 )
+      {
+      mApp.showStatusAsync( "The key is missing." );
+      mApp.showStatusAsync( markedUpS );
+      return false;
+      }
+
     char firstChar = testKey.charAt( 0 ); 
     if( firstChar != Markers.TypeIdentifier )
       {
@@ -181,25 +192,51 @@ What if a macro has the same name as a variable name?
 
     // Put the paramters back, but leave the key out.
     markedUpS = sBuilder.toString();
+    // If there are no parameters then markedUpS
+    // would have zero length.
+    // mApp.showStatusAsync( "markedUpS after toString: " + markedUpS );
 
-    // How many loops would be abnormal?
-    for( int count = 0; count < 100; count++ )
+    if( isFunctionType )
       {
-      if( !replaceMacros( macroDictionary ))
-        break;
-
+      markedUpS = putFParametersInArray( markedUpS );
+      if( markedUpS.length() == 0 )
+        {
+        mApp.showStatusAsync( "putFPameters had an error." );
+        return false;
+        }
       }
 
-// #define WINAPI_FAMILY_PARTITION(Partitions)     (Partitions)
+    // If there are any parameters.
+    if( markedUpS.length() > 0 )
+      {
+      for( int count = 0; count < 100; count++ )
+        {
+        if( count > 10 )
+          mApp.showStatusAsync( "count > 10 to replace macros.\nKey: " + key + "\n" + originalStr );
 
-// =========
-// #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-    if( originalStr.contains( "Partitions" ))
-      mApp.showStatusAsync( "\nKey: " + key + "\n" + originalStr );
+        String testS = markedUpS;
+        // mApp.showStatusAsync( "Before replace: " + markedUpS );
+        markedUpS = replaceMacros( mApp, markedUpS,
+                                    macroDictionary );
 
-    return setNewMacroInDictionary( macroDictionary,
-                                    doStrict );
+        if( markedUpS.length() == 0 )
+          {
+          mApp.showStatusAsync( "replaceMacros returned nothing." );
+          return false;
+          }
+
+        // If it hasn't replaced anything.
+        if( testS.equals( markedUpS ))
+          break;
+
+        }
+      }
+
+    // if( originalStr.contains( "Partitions" ))
+      // mApp.showStatusAsync( "\nKey: " + key + "\n" + originalStr );
+
+    return true;
     }
     catch( Exception e )
       {
@@ -211,118 +248,145 @@ What if a macro has the same name as a variable name?
 
 
 
-  private boolean setNewMacroInDictionary( 
-                                  MacroDictionary
-                                  macroDictionary,
-                                  boolean dostrict )
+  private String putFParametersInArray( String in )
     {
-    if( dostrict )
+    mApp.showStatusAsync( "putFParam: " + in );
+
+    paramArray = new StringArray();
+
+    // #define WINAPI_FAMILY_PARTITION(Partitions)
+    //        (Partitions)
+
+    // #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+    //    && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+    StringBuilder sBuilder = new StringBuilder();
+    String[] splitS = in.split( "" + Markers.Begin );
+    int last = splitS.length;
+    int inside = 0;
+    for( int count = 1; count < last; count++ )
       {
-      if( macroDictionary.keyExists( key ))
+      String partS = splitS[count];
+      if( partS.length() < 2 )
+        continue;
+
+      if( inside >= 2 )
         {
-        mApp.showStatusAsync( "Macro key already exists: " + key );
-        mApp.showStatusAsync( "markedUpS: " + markedUpS );
-        Macro showMac = macroDictionary.getMacro( key );
-        mApp.showStatusAsync( "Original markedUpS: " +
-                            showMac.getMarkedUpString());
-        return false;
+        sBuilder.append( partS );
+        continue;
         }
+
+      char firstChar = partS.charAt( 0 );
+
+      if( firstChar == Markers.TypeOperator )
+        {
+        char secondChar = partS.charAt( 1 );
+        if( secondChar == '(' )
+          {
+          inside++;
+          continue;
+          }
+
+        if( secondChar == ')' )
+          {
+          inside++;
+          continue;
+          }
+        }
+
+      if( inside != 1 )
+        {
+        mApp.showStatusAsync( "Macro params isInside != 1.\n" + in );
+        return "";
+        }
+
+      if( firstChar == Markers.TypeIdentifier )
+        {
+        String param = Markers.removeAllMarkers( 
+                                              partS );
+
+        mApp.showStatusAsync( "Adding param: " + param );
+        paramArray.appendString( param );
+        continue;
+        }
+
+      // Ignoring comma that delimits the parameters.
+      // if( firstChar == Markers.TypeOperator )
+      mApp.showStatusAsync( "Comma: " + partS );
       }
 
-    macroDictionary.setMacro( key, this );
-    // mApp.showStatusAsync( " " );
-    // mApp.showStatusAsync( "Setting new key: " + key );
-    // mApp.showStatusAsync( "markedUpString: " + markedUpString );
-    // mApp.showStatusAsync( " " );
-    return true;
+    return sBuilder.toString();   
     }
 
 
 
-  private boolean replaceMacros( MacroDictionary
-                                 macroDictionary )
+  public static String replaceMacros( MainApp mApp,
+                                String in,
+                                MacroDictionary
+                                macroDictionary )
     {
-// ==== See IfExpression.java for how it's done.
-// Don't use the word token.
-
-    boolean replacedIdentifier = false;
+    // mApp.showStatusAsync( "Input to replaceMacros: " + in );
 
     StringBuilder sBuilder = new StringBuilder();
 
-    String[] splitS = markedUpS.split( "" + 
-                                    Markers.Begin );
-
+    String[] splitS = in.split( "" + Markers.Begin );
     int last = splitS.length;
       
     // The string at zero is what's before the first
     // Begin marker, which is nothing.
-
     for( int count = 1; count < last; count++ )
       {
-      String token = splitS[count];
-      char firstChar = token.charAt( 0 ); 
+      String partS = splitS[count];
+      // It would have at least two markers.
+      if( partS.length() < 2 )
+        continue;
+
+      String originalPartS = partS;
+
+      char firstChar = partS.charAt( 0 ); 
       if( firstChar == Markers.TypeLineNumber )
         {
-        sBuilder.append( "" + Markers.Begin +
-                                   splitS[count] );
+        sBuilder.append( "" + Markers.Begin  + 
+                                      originalPartS );
         continue;
         }
-
-
-// ====== Fix stringification.
-// Do a search and replace for begin marker
-// the operator then # character and see if it's
-// two in a row.  Put them together as one operator.
-// Do things like >= and operators like that too.
-// Make a SetOperators object?
-
 
       if( firstChar != Markers.TypeIdentifier )
         {
-        sBuilder.append( "" + Markers.Begin  +
-                                   splitS[count] );
+        sBuilder.append( "" + Markers.Begin +
+                                     originalPartS );
         continue;
         }
 
-      token = Markers.removeAllMarkers( token );
-      if( token.equals( key ))
-        {
-        mApp.showStatusAsync( "This macro has a self referential key." );
-        mApp.showStatusAsync( "Key: " + key );
-        mApp.showStatusAsync( markedUpS );
-        return false;
-        }
-
-      if( macroDictionary.keyExists( token ))
+      partS = Markers.removeAllMarkers( partS );
+      if( macroDictionary.keyExists( partS ))
         {
         Macro replaceMacro = macroDictionary.
-                                   getMacro( token );
+                                   getMacro( partS );
 
-        replacedIdentifier = true;
         sBuilder.append( replaceMacro.
                                 getMarkedUpString());
         continue;
         }
 
       sBuilder.append( "" + Markers.Begin +
-                                       splitS[count] );
+                                    originalPartS );
 
       }
 
-    markedUpS = sBuilder.toString();
-
-    if( !MarkupString.testMarkers( markedUpS, 
+    String result = sBuilder.toString();
+    // mApp.showStatusAsync( "Result: " + result );
+    if( !MarkupString.testMarkers( result, 
                                    "replaceMacros().",
                                    mApp ))
       {
-      return false;
+      mApp.showStatusAsync( "testMarkers() returned false." );
+      return "";
       }
 
-    // if( replacedIdentifier )
-      // mApp.showStatusAsync( "markedUpS: " + markedUpS );
-
-    return replacedIdentifier; 
+    return result; 
     }
+
 
 
 
