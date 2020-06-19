@@ -45,7 +45,10 @@ public class MarkupString
                                      MainApp mApp )
     {
     if( testS.length() == 0 )
+      {
+      mApp.showStatusAsync( "Testmarkers() had a zero length input string.\n" + errorS );
       return false;
+      }
 
     if( testS.contains( Character.toString(
                       Markers.ErrorPoint )))
