@@ -314,4 +314,30 @@ public class MacroDictionary
 
 
 
+  public boolean setNewMacro( boolean dostrict,
+                              String key,
+                              Macro macro )
+    {
+    if( dostrict )
+      {
+      if( keyExists( key ))
+        {
+        mApp.showStatusAsync( "Macro key already exists: " + key );
+        mApp.showStatusAsync( "markedUpS: " + macro.getMarkedUpString() );
+        Macro showMac = getMacro( key );
+        mApp.showStatusAsync( "Original markedUpS: " +
+                            showMac.getMarkedUpString());
+        return false;
+        }
+      }
+
+    setMacro( key, macro );
+    // mApp.showStatusAsync( " " );
+    // mApp.showStatusAsync( "Setting new key: " + key );
+    // mApp.showStatusAsync( "markedUpString: " + markedUpString );
+    // mApp.showStatusAsync( " " );
+    return true;
+    }
+
+
   }
