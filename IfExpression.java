@@ -161,9 +161,11 @@ public class IfExpression
       // {
  // This could change the string without changing 
 // the length of the string.
-      markedUp = replaceMacros( mApp,
-                                markedUp,
-                                macroDictionary );
+
+      // mApp.showStatusAsync( "Before replaceMacros." );
+      // markedUp = Macro.replaceMacros( mApp,
+         //                       markedUp,
+           //                     macroDictionary );
 
 
       // }
@@ -191,71 +193,6 @@ public class IfExpression
     // mApp.showStatusAsync( markedUp );
 
     return "false";
-    }
-
-
-
-
-  private static String replaceMacros( MainApp mApp,
-                                String markedUp,
-                                MacroDictionary
-                                macroDictionary )
-    {
-    StringBuilder sBuilder = new StringBuilder();
-
-    String[] splitS = markedUp.split( "" +
-                                     Markers.Begin );
-
-    int last = splitS.length;
-      
-    // The string at zero is what's before the first
-    // Begin marker, which is nothing.
-    for( int count = 1; count < last; count++ )
-      {
-      String partS = splitS[count];
-      String originalPartS = partS;
-      char firstChar = partS.charAt( 0 ); 
-      if( firstChar == Markers.TypeLineNumber )
-        {
-        sBuilder.append( "" + Markers.Begin  + 
-                                      originalPartS );
-        continue;
-        }
-
-      if( firstChar != Markers.TypeIdentifier )
-        {
-        sBuilder.append( "" + Markers.Begin +
-                                     originalPartS );
-        continue;
-        }
-
-      partS = Markers.removeAllMarkers( partS );
-      if( macroDictionary.keyExists( partS ))
-        {
-        Macro replaceMacro = macroDictionary.
-                                   getMacro( partS );
-
-        // replacedIdentifier = true;
-        sBuilder.append( replaceMacro.
-                                getMarkedUpString());
-        continue;
-        }
-
-      sBuilder.append( "" + Markers.Begin +
-                                    originalPartS );
-
-      }
-
-    markedUp = sBuilder.toString();
-
-    if( !MarkupString.testMarkers( markedUp, 
-                                   "replaceMacros().",
-                                   mApp ))
-      {
-      return "";
-      }
-
-    return markedUp; 
     }
 
 
