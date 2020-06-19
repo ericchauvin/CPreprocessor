@@ -524,12 +524,18 @@ public class PreProcessLines
     // String showKey = macro.getKey();
     // mApp.showStatusAsync( "Key: " + showKey );
 
-    // This adds it to the macroDictionary. 
     boolean doStrict = false;
     if( !macro.markUpFromString( directiveBody,
                                  macroDictionary,
                                  doStrict ))
+      {
+      mApp.showStatusAsync( "markUpFromString had an error." );
       return "";
+      }
+
+    macroDictionary.setNewMacro( doStrict,
+                                 macro.getKey(),
+                                 macro );
 
     return "// #define " + directiveBody + "\n";
     }
