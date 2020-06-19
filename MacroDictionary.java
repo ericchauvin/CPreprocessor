@@ -14,13 +14,16 @@ public class MacroDictionary
   {
   private MainApp mApp;
   private MacroDictionaryLine lineArray[];
+
   //             See: letterToIndexNumber()
   // Shifting left 6 bits means 5 bits are left
   // below the top bits.  5 bits set to all ones
-  // is 0b11111 = 16 + 8 + 4 + 2 + 1 = 31
-  private static final int maxIndexLetter = 'z' - 'a' + 2;
-  private static final int keySize = ((maxIndexLetter << 6) |
-                                maxIndexLetter);
+  // is 0b11111 = 31.  26 letters plus extras.
+  private static final int maxIndexLetter =
+                                        'z' - 'a' + 2;
+  private static final int keySize =
+                             ((maxIndexLetter << 6) |
+                              maxIndexLetter);
 
 
 
@@ -35,8 +38,6 @@ public class MacroDictionary
     {
     mApp = useApp;
 
-    // maxIndexLetter for macros: 27
-    // Index for z is: 26
     // mApp.showStatusAsync( "maxIndexLetter for macros: " + maxIndexLetter );
     // int index = ('z' + 1) - 'a';
     // mApp.showStatusAsync( "Index for z is: " + index );
