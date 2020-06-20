@@ -404,14 +404,19 @@ public class PreProcessLines
 
   private String processPragma( String directiveBody ) 
     {
+    // === Use the ProcessPragma.java file.
+
     // pragma GCC system_header  15;stddef.h 
+
+    // mApp.showStatusAsync( "#pragma: " + directiveBody );
 
     String result = "// #pragma " + directiveBody + "\n";
 
     if( !boolLevArray.getCurrentValue())
       return result;
 
-    mApp.showStatusAsync( "#pragma needs to be done: " + directiveBody );
+    // Do something with it.
+
     return result;
     }
 
@@ -609,7 +614,7 @@ public class PreProcessLines
     if( !oneUp )
       return result;
 
-    mApp.showStatusAsync( "elif body: " + directiveBody );
+    // mApp.showStatusAsync( "elif body: " + directiveBody );
       
     if( currentVal )
       {
