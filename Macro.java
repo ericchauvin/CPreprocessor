@@ -1,6 +1,7 @@
 // Copyright Eric Chauvin 2020.
 
 
+
 // Stringification:
 // https://gcc.gnu.org/onlinedocs/gcc-4.8.5/cpp/Stringification.html
 
@@ -88,9 +89,7 @@ public class Macro
 
     key = splitS[0];
 
-    // The undef, ifdef and ifndef statements all
-    // use a key without the parentheses.  The
-    // parentheses is not part of the key.
+    // The parentheses is not part of the key.
     if( key.contains( "(" ))
       {
       // This is a function-like macro because there
@@ -157,6 +156,7 @@ public class Macro
       }
 
     String testKey = splitS[1];
+    // It would have at least 2 marker characters.
     if( testKey.length() < 2 )
       {
       mApp.showStatusAsync( "The key is missing." );
@@ -203,13 +203,14 @@ public class Macro
         mApp.showStatusAsync( "putFPameters had an error." );
         return false;
         }
+
+      // mApp.showStatusAsync( "\n\nMaking function type body: " + key );
+      // mApp.showStatusAsync( markedUpS + "\n\n" );
       }
 
     // If there are any parameters.
     if( markedUpS.length() > 0 )
       {
-      // It can replace a macro with an empty string,
-      // so it could be length zero.
       markedUpS = replaceMacros( mApp,
                                  key,
                                  markedUpS,
@@ -235,26 +236,41 @@ public class Macro
                                       MacroDictionary
                                       macroDictionary )
     {
+    if( in == null )
+      return "";
+
     String result = in;
+    FunctionMacro functionMacro = new 
+                               FunctionMacro( mApp,
+                                   macroDictionary );
 
     for( int count = 0; count < 100; count++ )
       {
+      if( result.length() == 0 )
+        {
+        // It can replace something with nothing.
+        // mApp.showStatusAsync( "\nreplaceMacros returned nothing." );
+        // mApp.showStatusAsync( "Original: " + in );
+        return result;
+        }
+
       if( count > 10 )
         mApp.showStatusAsync( "count > 10 to replace macros.\nKey: " + key + "\n" + in );
 
       String testS = result;
-      // mApp.showStatusAsync( "Before replace: " + markedUpS );
+
+      if( key.length() == 0 )
+        {
+        result = functionMacro.replaceMacrosOnce(
+                                    result,
+                                    macroDictionary );
+        }
+ 
       result = replaceMacrosOnce( mApp,
                                   key,
                                   result,
                                   macroDictionary );
 
-      if( result.length() == 0 )
-        {
-        mApp.showStatusAsync( "\nreplaceMacros returned nothing." );
-        mApp.showStatusAsync( "Original: " + in );
-        return "";
-        }
 
       // If it hasn't replaced anything.
       if( testS.equals( result ))
@@ -266,18 +282,6 @@ public class Macro
     }
 
 
-/*
-  private static String replaceFunctionMacrosOnce(
-                                    MainApp mApp,
-                                    String key,
-                                    String in,
-                                    MacroDictionary
-                                    macroDictionary )
-    {
-
-    return in;
-    }
-*/
 
 
   private static String replaceMacrosOnce(
@@ -287,9 +291,12 @@ public class Macro
                                     MacroDictionary
                                     macroDictionary )
     {
+    if( in.length() == 0 )
+      return "";
+
     if( !in.contains( "" + Markers.Begin ))
       {
-      mApp.showStatusAsync( "\n\nNo begin marker: " + in );
+      mApp.showStatusAsync( "\n\nNo begin marker in replaceMacrosOnce(): " + in );
       return in;
       }
 
@@ -334,6 +341,10 @@ public class Macro
         Macro replaceMacro = macroDictionary.
                                    getMacro( partS );
 
+        // This static function can be called with an
+        // empty key.  Which means it is probably 
+        // being called from somewhere else like
+        // IfExpression.
         if( key.length() > 0 )
           {
           if( key.equals( replaceMacro.getKey()))
@@ -345,13 +356,14 @@ public class Macro
 
         if( replaceMacro.getIsFunctionType())
           {
-          mApp.showStatusAsync( "\n\nFunction type macro is not being replaced here." );
-          mApp.showStatusAsync( in );
+          // Ignore it here, since it's done
+          // somewhere else.
           sBuilder.append( "" + Markers.Begin +
-                                      originalPartS );
+                                       originalPartS );
           continue;
           }
 
+        // The whole string can include many markers.
         sBuilder.append( replaceMacro.
                                 getMarkedUpString());
 
@@ -391,13 +403,6 @@ public class Macro
     // mApp.showStatusAsync( "\nputFParam: " + in );
 
     paramArray = new StringArray();
-
-    // #define WINAPI_FAMILY_PARTITION(Partitions)
-    //        (Partitions)
-
-    // #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-    //    && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
     StringBuilder sBuilder = new StringBuilder();
     String[] splitS = in.split( "" + Markers.Begin );
     int last = splitS.length;
@@ -474,6 +479,26 @@ public class Macro
     {
     return key;
     }
+
+
+  public int getParamArrayLength()
+    {
+    if( paramArray == null )
+      return 0;
+
+    return paramArray.length();
+    }
+
+
+
+  public String getParamArrayValue( int where )
+    {
+    if( paramArray == null )
+      return "";
+
+    return paramArray.getStringAt( where );
+    }
+
 
 
   }
