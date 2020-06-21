@@ -156,19 +156,11 @@ public class IfExpression
     if( markedUp.equals( falseStr ))
       return "false";
 
-
-    // for( int count = 0; count < 100; count++ )
-      // {
- // This could change the string without changing 
-// the length of the string.
-
-      // mApp.showStatusAsync( "Before replaceMacros." );
-      // markedUp = Macro.replaceMacros( mApp,
-         //                       markedUp,
-           //                     macroDictionary );
-
-
-      // }
+    // mApp.showStatusAsync( "Before replaceMacros." );
+    markedUp = Macro.replaceMacros( mApp,
+                                    "", // no key
+                                    markedUp,
+                                    macroDictionary );
 
     if( markedUp.equals( trueStr ))
       return "true";
