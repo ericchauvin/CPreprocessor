@@ -147,8 +147,11 @@ public class StringArray
 
   public String getStringAt( int where )
     {
+    if( where < 0 )
+      return "";
+
     if( where >= arrayLast )
-      return null;
+      return "";
 
     return valueArray[where];
     }
