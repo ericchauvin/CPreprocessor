@@ -1,39 +1,18 @@
 // Copyright Eric Chauvin 2020.
 
 
+
 public class FunctionMacro
   {
-  private MainApp mApp;
-  private String[] splitParts = null;
-  private MacroDictionary macroDictionary;
 
 
-
-  private FunctionMacro()
-    {
-    }
-
-
-  public FunctionMacro( MainApp useApp,
-                      MacroDictionary useDictionary )
-    {
-    mApp = useApp;
-    macroDictionary = useDictionary;
-    }
-
-
-
-  public String replaceMacrosOnce( String in,
+  public static String replaceMacrosOnce( MainApp mApp,
+                                   String in,
                                    MacroDictionary
                                    macroDictionary )
     {
-    // #define WINAPI_FAMILY_PARTITION(Partitions)
-    //        (Partitions)
-
-    // A function-like macro can be replaced in the
-    // expression for an #if statement.
-    // #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-    //    && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)7
+    if( in.length() == 0 )
+      return "";
 
     if( !in.contains( "" + Markers.Begin ))
       {
@@ -41,7 +20,8 @@ public class FunctionMacro
       return "";
       }
 
-    splitParts = in.split( "" + Markers.Begin );
+    String[] splitParts = in.split( "" +
+                                      Markers.Begin );
     int last = splitParts.length;
     if( last == 0 )
       {
@@ -55,9 +35,15 @@ public class FunctionMacro
       mApp.showStatusAsync( "testNothing in FunctionMacro.replaceMacrosOnce(): " + testNothing );
       return "";
       }
-    
-    boolean foundFMacro = false;
-    boolean foundIdentifier = false;
+
+    // mApp.showStatusAsync( "\n\n" + in );
+
+    StringBuilder lineBuilder = new StringBuilder();
+    StringBuilder functionBuilder = new StringBuilder();
+
+    Macro replaceMacro = null;
+    boolean isInFunction = false;    
+    int inside = 0;
     for( int count = 1; count < last; count++ )
       {
       String partS = splitParts[count];
@@ -65,73 +51,32 @@ public class FunctionMacro
       if( partS.length() < 2 )
         continue;
 
+      // #define mult( x, y )(x * y)
+      // mult( 5, 7 ) is replaced by (5 * 7)
+      // mult( (5 + 2), 7 );
       char firstChar = partS.charAt( 0 );
-      if( firstChar == Markers.TypeIdentifier )
+      char secondChar = partS.charAt( 1 );
+      String linePart = "" + Markers.Begin + partS;
+
+      if( !isInFunction )
         {
-        foundIdentifier = true;
-        partS = Markers.removeAllMarkers( partS );
-        if( !macroDictionary.keyExists( partS ))
-          continue;
-
-        Macro testMacro = macroDictionary.
-                                   getMacro( partS );
-
-        if( testMacro == null )
+        if( firstChar != Markers.TypeIdentifier )
           {
-          mApp.showStatusAsync( "This should not return null since the key exists." );
-          return "";
+          lineBuilder.append( linePart );
+          continue;
           }
 
-        if( testMacro.getIsFunctionType())
-          foundFMacro = true;
+        String macName = Markers.removeAllMarkers(
+                                              partS );
 
-        }
-      }
-
-    if( !foundFMacro )
-      return in;
-
-    if( !foundIdentifier )
-      return in;
-
-    String result = replaceFunctionMacros();
-
-
-    return result;
-    }
-
-
-
-
-  private String replaceFunctionMacros()
-    {
-    if( splitParts == null )
-      {
-      mApp.showStatusAsync( "splitParts is null in replaceFunctionMacros()." );
-      return "";
-      }
-
-    mApp.showStatusAsync( "\n\n" );
-
-    StringBuilder sBuilder = new StringBuilder();
-    int last = splitParts.length;
-    for( int count = 1; count < last; count++ )
-      {
-      String partS = splitParts[count];
-      // It would have at least two markers.
-      if( partS.length() < 2 )
-        continue;
-
-      char firstChar = partS.charAt( 0 );
-      if( firstChar == Markers.TypeIdentifier )
-        {
-        partS = Markers.removeAllMarkers( partS );
-        mApp.showStatusAsync( "PartS: " + partS );
-        if( !macroDictionary.keyExists( partS ))
+        if( !macroDictionary.keyExists( macName ))
+          {
+          lineBuilder.append( linePart );
           continue;
-
-        Macro replaceMacro = macroDictionary.
-                                   getMacro( partS );
+          }
+        
+        replaceMacro = macroDictionary.
+                                  getMacro( macName );
 
         if( replaceMacro == null )
           {
@@ -140,31 +85,197 @@ public class FunctionMacro
           }
 
         if( !replaceMacro.getIsFunctionType())
-          continue;
-
-        String replaceMarked = replaceMacro.getMarkedUpString();
-
-
-        mApp.showStatusAsync( "replaceMarked: " + replaceMarked );
-     
-        int lastParam = replaceMacro.
-                                getParamArrayLength();
-
-        for( int countP = 0; countP < lastParam; countP++ )
           {
-          String toShow = replaceMacro.
-                        getParamArrayValue( countP );
+          lineBuilder.append( linePart );
+          continue;
+          }
 
-          mApp.showStatusAsync( "Param: " + toShow );
+        isInFunction = true;
+        functionBuilder.setLength( 0 );
+        functionBuilder.append( linePart );
+        continue;
+        }
+
+      // Test:
+      if( !isInFunction )
+        {
+        mApp.showStatusAsync( "!isInFunction" );
+        return "";
+        }
+
+      if( replaceMacro == null )
+        {
+        mApp.showStatusAsync( "replaceMacro can't be null here." );
+        return "";
+        }
+
+      if( firstChar == Markers.TypeOperator )
+        {
+        if( secondChar == '(' )
+          {
+          inside++;
+          functionBuilder.append( linePart );
+          continue;
+          }
+
+        if( secondChar == ')' )
+          {
+          inside--;
+          if( inside < 0 )
+            {
+            mApp.showStatusAsync( "inside < 0 ) in replaceMacrosOnce()." );
+            return "";
+            }
+
+          if( inside > 0 )
+            {
+            functionBuilder.append( linePart );
+            continue;
+            }
+
+          // inside is zero.
+          isInFunction = false;
+          functionBuilder.append( linePart );
+          String fLine = functionBuilder.toString();
+          String fReturned = replaceOneFunctionString(
+                                  mApp,
+                                  fLine,
+                                  replaceMacro );
+      
+          functionBuilder.setLength( 0 );
+          lineBuilder.append( fReturned );
+          continue;
           }
         }
+
+      functionBuilder.append( linePart );
+      continue;
       }
 
-    // String result = sBuilder.toString();
-    return ""; // result;
+    String result = lineBuilder.toString();
+    return result;
+    }
+
+
+
+
+  private static String replaceOneFunctionString(
+                              MainApp mApp,
+                              String in,
+                              Macro replaceMacro )
+    {
+    if( in.length() == 0 )
+      return "";
+
+    mApp.showStatusAsync( "\n\nReplacing one function: " +
+                                          in );
+    if( !in.contains( "" + Markers.Begin ))
+      {
+      mApp.showStatusAsync( "\n\nNo begin marker in FunctionMacro.replaceOneFunctionString(): " + in );
+      return "";
+      }
+
+    String[] splitParts = in.split( "" +
+                                      Markers.Begin );
+    int last = splitParts.length;
+    if( last == 0 )
+      {
+      mApp.showStatusAsync( "Last is zero in FunctionMacro.replaceOneFunctionString()." );
+      return "";
+      } 
+      
+    String testNothing = splitParts[0];
+    if( testNothing.length() != 0 )
+      {
+      mApp.showStatusAsync( "testNothing in FunctionMacro.replaceOneFunctionString(): " + testNothing );
+      return "";
+      }
+
+    StringBuilder paramBuilder = new StringBuilder();
+    StringArray paramArray = new StringArray();
+    int inside = 0;
+    for( int count = 1; count < last; count++ )
+      {
+      String partS = splitParts[count];
+      // It would have at least two markers.
+      if( partS.length() < 2 )
+        continue;
+
+      // #define mult( x, y )(x * y)
+      // mult( 5, 7 ) is replaced by (5 * 7)
+      // mult( (5 + 2), 7 );
+      char firstChar = partS.charAt( 0 );
+      char secondChar = partS.charAt( 1 );
+      String linePart = "" + Markers.Begin + partS;
+
+      if( firstChar == Markers.TypeIdentifier )
+        {
+        if( inside == 0 )
+          continue;
+
+        paramBuilder.append( linePart );
+        continue;
+        }
+
+      if( firstChar == Markers.TypeOperator )
+        {
+        if( secondChar == '(' )
+          {
+          inside++;
+          if( inside > 1 )
+            paramBuilder.append( linePart );
+
+          continue;
+          }
+
+        if( secondChar == ')' )
+          {
+          inside--;
+          if( inside == 0 )
+            {
+            if( paramBuilder.length() > 0 )
+              {
+              paramArray.appendString( paramBuilder.
+                                        toString());
+              }
+
+            break;
+            }
+
+          paramBuilder.append( linePart );
+          continue;
+          }
+
+        if( secondChar == ',' )
+          {
+          paramArray.appendString( paramBuilder.
+                                        toString());
+          paramBuilder.setLength( 0 );
+          continue;
+          }
+
+        }
+
+      paramBuilder.append( linePart );
+      }
+
+    int lastP = paramArray.length();
+    if( lastP == 0 )
+      {
+      mApp.showStatusAsync( "\n\nFunction has no parameters. " + in );
+      return "";
+      } 
+
+    for( int count = 0; count < lastP; count++ )
+      {
+      mApp.showStatusAsync( "param: " + paramArray.
+                          getStringAt( count ));
+
+      }
+
+    return in;
     }
 
 
 
   }
-
