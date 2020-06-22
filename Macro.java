@@ -240,30 +240,28 @@ public class Macro
       return "";
 
     String result = in;
-    FunctionMacro functionMacro = new 
-                               FunctionMacro( mApp,
-                                   macroDictionary );
-
     for( int count = 0; count < 100; count++ )
       {
-      if( result.length() == 0 )
-        {
-        // It can replace something with nothing.
-        // mApp.showStatusAsync( "\nreplaceMacros returned nothing." );
-        // mApp.showStatusAsync( "Original: " + in );
-        return result;
-        }
-
       if( count > 10 )
         mApp.showStatusAsync( "count > 10 to replace macros.\nKey: " + key + "\n" + in );
 
+      if( result.length() == 0 )
+        {
+        // It can replace something with nothing.
+        return result;
+        }
+
       String testS = result;
 
+      // If this is being called from outside,
+      // when a macro is not being created.
       if( key.length() == 0 )
         {
-        result = functionMacro.replaceMacrosOnce(
+        result = FunctionMacro.replaceMacrosOnce(
+                                    mApp,
                                     result,
                                     macroDictionary );
+
         }
  
       result = replaceMacrosOnce( mApp,
