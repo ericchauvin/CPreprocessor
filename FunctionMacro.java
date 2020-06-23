@@ -142,8 +142,8 @@ public class FunctionMacro
                                   fLine,
                                   replaceMacro );
       
-          functionBuilder.setLength( 0 );
           lineBuilder.append( fReturned );
+          functionBuilder.setLength( 0 );
           continue;
           }
         }
@@ -167,8 +167,8 @@ public class FunctionMacro
     if( in.length() == 0 )
       return "";
 
-    mApp.showStatusAsync( "\n\nReplacing one function: " +
-                                          in );
+    // mApp.showStatusAsync( "\n\nReplacing one function: " +
+    //                                      in );
     if( !in.contains( "" + Markers.Begin ))
       {
       mApp.showStatusAsync( "\n\nNo begin marker in FunctionMacro.replaceOneFunctionString(): " + in );
@@ -201,7 +201,7 @@ public class FunctionMacro
       if( partS.length() < 2 )
         continue;
 
-      // #define mult( x, y )(x * y)
+      // #define mult( x, y ) (x * y)
       // mult( 5, 7 ) is replaced by (5 * 7)
       // mult( (5 + 2), 7 );
       char firstChar = partS.charAt( 0 );
@@ -253,27 +253,57 @@ public class FunctionMacro
           paramBuilder.setLength( 0 );
           continue;
           }
-
         }
 
       paramBuilder.append( linePart );
       }
 
+    int replaceLength = replaceMacro.getParamArrayLength();
     int lastP = paramArray.length();
+    if( lastP != replaceLength )
+      {
+      mApp.showStatusAsync( "\n\nThe two parameter arrays don't have the same length." );
+      return "";
+      }
+
     if( lastP == 0 )
       {
       mApp.showStatusAsync( "\n\nFunction has no parameters. " + in );
       return "";
       } 
 
+    String openParenth = "" + Markers.Begin +
+                            Markers.TypeOperator +
+                            '(' +
+                            Markers.End;
+
+    String closeParenth = "" + Markers.Begin +
+                            Markers.TypeOperator +
+                            ')' +
+                            Markers.End;
+
+    String macBody = replaceMacro.getMarkedUpString();
+    // mApp.showStatusAsync( "macBody: " + macBody );
+
     for( int count = 0; count < lastP; count++ )
       {
-      mApp.showStatusAsync( "param: " + paramArray.
-                          getStringAt( count ));
+      String bodyParam = paramArray.
+                               getStringAt( count );
 
+      String macParam = replaceMacro.
+                         getParamArrayValue( count );
+
+      // mApp.showStatusAsync( "macParam: " + macParam );
+      // mApp.showStatusAsync( "bodyParam: " + bodyParam );
+      // Just make sure, with the parentheses.
+      bodyParam = openParenth + bodyParam +
+                                        closeParenth;
+      macBody = macBody.replace( macParam, bodyParam );
       }
 
-    return in;
+    // mApp.showStatusAsync( "Replaced macBody: " + macBody );
+
+    return macBody;
     }
 
 
