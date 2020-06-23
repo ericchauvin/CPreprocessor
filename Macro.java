@@ -449,11 +449,11 @@ public class Macro
 
       if( firstChar == Markers.TypeIdentifier )
         {
-        String param = Markers.removeAllMarkers( 
-                                              partS );
-
-        // mApp.showStatusAsync( "Adding param: " + param );
-        paramArray.appendString( param );
+        // mApp.showStatusAsync( "Adding param: " + partS );
+ 
+        paramArray.appendString( "" + Markers.Begin +
+                                 partS );
+ 
         continue;
         }
       }
