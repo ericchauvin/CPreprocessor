@@ -29,19 +29,17 @@ public class IfExpression
                      "=" +
                      Markers.End;
 
-  public static final String notEqualOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "!=" +
-                     Markers.End;
-
-/*
   public static final String equalOp2Str = "" +
                      Markers.Begin +
                      Markers.TypeOperator +
                      "==" +
                      Markers.End;
-*/
+
+  public static final String notEqualOpStr = "" +
+                     Markers.Begin +
+                     Markers.TypeOperator +
+                     "!=" +
+                     Markers.End;
 
   public static final String greaterThanOpStr = "" +
                      Markers.Begin +
@@ -176,8 +174,8 @@ public class IfExpression
 
 
 
-    // mApp.showStatusAsync( "\n\nIfExpression isn't done:\n" + markedUp );
-    // mApp.showStatusAsync( "originalExpr: " + originalExpr );
+    mApp.showStatusAsync( "\n\nIfExpression isn't done:\n" + markedUp );
+    mApp.showStatusAsync( "originalExpr: " + originalExpr );
 
 
 // float a = Float.parseFloat( SomeString );
@@ -324,6 +322,9 @@ public class IfExpression
 
       result = result.replace( andOp1 + andOp1, andOp2 );
       result = result.replace( orOp1 + orOp1, orOp2 );
+      result = result.replace( equalOp1Str + 
+                               equalOp1Str,
+                               equalOp2Str );
       result = result.replace( notStr + equalOp1Str,
                                       notEqualOpStr );
       result = result.replace( greaterThanOpStr + 
