@@ -226,11 +226,12 @@ public class IfExpression
                              Markers.TypeIdentifier ))
           {
           isInside = false;
-          String macroName = part.replace( "" +
-                        Markers.TypeIdentifier, "" );
+          String macroName = StringA.replace( part,
+                        "" + Markers.TypeIdentifier,
+                        "" );
 
-          macroName = macroName.replace( "" +
-                                   Markers.End, "" );
+          macroName = StringA.replace( macroName,
+                               "" + Markers.End, "" );
 
           if( macroDictionary.keyExists( macroName ))
             {
@@ -295,11 +296,11 @@ public class IfExpression
                      "false" + 
                      Markers.End;
 
-    result = result.replace( trueIn1, trueOut );
-    result = result.replace( trueIn2, trueOut );
+    result = StringA.replace( result, trueIn1, trueOut );
+    result = StringA.replace( result, trueIn2, trueOut );
  
-    result = result.replace( falseIn1, falseOut ); 
-    result = result.replace( falseIn2, falseOut ); 
+    result = StringA.replace( result, falseIn1, falseOut ); 
+    result = StringA.replace( result, falseIn2, falseOut ); 
     // mApp.showStatusAsync( result );
     return result;
     }
@@ -320,18 +321,22 @@ public class IfExpression
       if( startLength < 1 )
         return "";
 
-      result = result.replace( andOp1 + andOp1, andOp2 );
-      result = result.replace( orOp1 + orOp1, orOp2 );
-      result = result.replace( equalOp1Str + 
-                               equalOp1Str,
-                               equalOp2Str );
-      result = result.replace( notStr + equalOp1Str,
-                                      notEqualOpStr );
-      result = result.replace( greaterThanOpStr + 
+      result = StringA.replace( result,
+                           andOp1 + andOp1, andOp2 );
+      result = StringA.replace( result,
+                           orOp1 + orOp1, orOp2 );
+      result = StringA.replace( result,
+                          equalOp1Str + equalOp1Str,
+                          equalOp2Str );
+      result = StringA.replace( result,
+                                 notStr + equalOp1Str,
+                                 notEqualOpStr );
+      result = StringA.replace( result,
+                               greaterThanOpStr + 
                                equalOp1Str,
                                greaterThanOrEqOpStr );
 
-     result = result.replace( lessThanOpStr + 
+     result = StringA.replace( result, lessThanOpStr + 
                                equalOp1Str,
                                lessThanOrEqOpStr );
 
@@ -355,11 +360,13 @@ public class IfExpression
 
       // This won't replace !(trueStr... with the
       // parentheses.
-      result = result.replace( notStr + trueStr,
-                                         falseStr );
+      result = StringA.replace( result,
+                                    notStr + trueStr,
+                                    falseStr );
 
-      result = result.replace( notStr + falseStr,
-                                         trueStr );
+      result = StringA.replace( result,
+                                    notStr + falseStr,
+                                    trueStr );
 
       newLength = result.length();
       if( newLength == startLength )
@@ -381,36 +388,36 @@ public class IfExpression
         return "";
 
       // Combine AND markers.
-      result = result.replace( 
-                          trueStr + andOp2 + trueStr,
+      result = StringA.replace( result,
+                         trueStr + andOp2 + trueStr,
                                          trueStr );
 
-      result = result.replace( 
-                         falseStr + andOp2 + falseStr,
+      result = StringA.replace( result,
+                          falseStr + andOp2 + falseStr,
                                          falseStr );
 
-      result = result.replace( 
+      result = StringA.replace( result,  
                           trueStr + andOp2 + falseStr,
                                          falseStr );
 
-      result = result.replace( 
+      result = StringA.replace( result,  
                           falseStr + andOp2 + trueStr,
                                          falseStr );
 
       // Combine OR markers.
-      result = result.replace( 
+      result = StringA.replace( result,  
                           trueStr + orOp2 + trueStr,
                                          trueStr );
 
-      result = result.replace( 
+      result = StringA.replace( result,  
                           falseStr + orOp2 + falseStr,
                                          falseStr );
 
-      result = result.replace( 
+      result = StringA.replace( result,  
                           trueStr + orOp2 + falseStr,
                                          trueStr );
 
-      result = result.replace( 
+      result = StringA.replace( result,  
                           falseStr + orOp2 + trueStr,
                                          trueStr );
 
