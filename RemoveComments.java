@@ -183,12 +183,12 @@ public class RemoveComments
 
 
   private static String removeStarComments( MainApp mApp,
-                                    String inString )
+                                    String in )
     {
     // This ignores Markers.Begin, Markers.End
     // and any other markers.
 
-    if( inString.trim().length() == 0 )
+    if( in.trim().length() == 0 )
       return "";
 
     StringBuilder sBuilder = new StringBuilder();
@@ -196,8 +196,8 @@ public class RemoveComments
     // There is a form of comment like this:
     String strangeComment = "/" + "/" + "*" + "*";
     String twoSlashes = "/" + "/";
-    inString = inString.replace( strangeComment,
-                                 twoSlashes );
+    in = StringA.replace( in, strangeComment,
+                                       twoSlashes );
 
     String slashStar = "/" + "*";
     String starSlash = "*" + "/";
@@ -205,14 +205,18 @@ public class RemoveComments
     // This replaces the comment marker strings
     // anywhere and everywhere in the file.  Whether
     // they are inside quotes or not.
-    inString = inString.replace( slashStar, Character.toString( Markers.SlashStar ));
-    inString = inString.replace( starSlash, Character.toString( Markers.StarSlash ));
+    in = StringA.replace( in, slashStar,
+                            "" + Markers.SlashStar );
+
+    in = StringA.replace( in, starSlash,
+                            "" + Markers.StarSlash );
+
 
     boolean isInsideComment = false;
-    int last = inString.length();
+    int last = in.length();
     for( int count = 0; count < last; count++ )
       {
-      char testChar = inString.charAt( count );
+      char testChar = in.charAt( count );
 
       if( testChar == Markers.SlashStar )
         {
@@ -220,8 +224,7 @@ public class RemoveComments
           {
           // It shouldn't find this start marker
           // if it's already inside a comment.
-          sBuilder.append( Character.toString(
-                                Markers.ErrorPoint ));
+          sBuilder.append( "" + Markers.ErrorPoint );
 
           mApp.showStatusAsync( " " );
           mApp.showStatusAsync( "Error with nested comment at: " + count );
@@ -248,14 +251,14 @@ public class RemoveComments
           {
           // It shouldn't find this end marker
           // if it's not already inside a comment.
-          sBuilder.append( Character.toString( Markers.ErrorPoint ));
+          sBuilder.append( "" + Markers.ErrorPoint );
 
           mApp.showStatusAsync( " " );
           mApp.showStatusAsync( "Error with star-slash outside of a comment at: " + count );
           return sBuilder.toString();
           }
 
-        sBuilder.append( Character.toString( testChar ));
+        sBuilder.append( "" + testChar );
         }
       }
 
@@ -347,17 +350,16 @@ public class RemoveComments
 
     StringBuilder sBuilder = new StringBuilder();
 
-    line = line.replace( "\\\\",
-         Character.toString( Markers.EscapedSlash ));
+    line = StringA.replace( line, "\\\\",
+                         "" + Markers.EscapedSlash );
 
     // Notice the escaped forward slash in front of
     // the quote character here at the end of the
     // string:
     // "c:\\BrowserECFiles\\PageFiles\\";
 
-    line = line.replace( "\\\"",
-                        Character.toString( 
-                        Markers.EscapedDoubleQuote ));
+    line = StringA.replace( line, "\\\"",
+                    "" + Markers.EscapedDoubleQuote );
 
     // This double quote inside single quotes can't
     // be inside of a normal string literal.
@@ -368,13 +370,12 @@ public class RemoveComments
       return Character.toString( Markers.ErrorPoint );
       }
 
-    line = line.replace( singleQuoteCharStr,
-                    Character.toString(
-                    Markers.QuoteAsSingleCharacter ));
+    line = StringA.replace( line, singleQuoteCharStr,
+                "" + Markers.QuoteAsSingleCharacter );
 
     String doubleSlash = "/" + "/";
-    line = line.replace( doubleSlash,
-           Character.toString( Markers.DoubleSlash ));
+    line = StringA.replace( line, doubleSlash,
+                           "" + Markers.DoubleSlash );
 
     int lineLength = line.length();
     boolean isInside = true;
@@ -417,22 +418,21 @@ public class RemoveComments
 
     String result = sBuilder.toString();
 
-    result = result.replace( 
-            Character.toString( Markers.DoubleSlash ),
-                                doubleSlash );
+    result = StringA.replace( result,  
+                              "" + Markers.DoubleSlash,
+                              doubleSlash );
 
-    result = result.replace(
-                          Character.toString(
-                     Markers.QuoteAsSingleCharacter ),
-                     singleQuoteCharStr );
+    result = StringA.replace( result, 
+                  "" + Markers.QuoteAsSingleCharacter,
+                  singleQuoteCharStr );
 
-    result = result.replace( Character.toString(
-                         Markers.EscapedDoubleQuote ),
-                         "\\\"" );
+    result = StringA.replace( result,
+                     "" + Markers.EscapedDoubleQuote,
+                     "\\\"" );
 
-    result = result.replace( Character.toString(
-                             Markers.EscapedSlash ),
-                             "\\\\" );
+    result = StringA.replace( result,
+                           "" + Markers.EscapedSlash,
+                           "\\\\" );
 
     return result;
     }
