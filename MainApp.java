@@ -7,18 +7,11 @@
 
 import javax.swing.SwingUtilities;
 
-// Where is this?
-// import javax.net.ssl;
-
-// Class SSLSocket
-// javax.net.ssl.SSLSocket
-// https://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLSocket.html
-
 
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "6/23/2020";
+  public static final String versionDate = "6/25/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
