@@ -196,8 +196,7 @@ public class RemoveComments
     // There is a form of comment like this:
     String strangeComment = "/" + "/" + "*" + "*";
     String twoSlashes = "/" + "/";
-    in = StringA.replace( in, strangeComment,
-                                       twoSlashes );
+    in = in.replace( strangeComment, twoSlashes );
 
     String slashStar = "/" + "*";
     String starSlash = "*" + "/";
@@ -205,10 +204,10 @@ public class RemoveComments
     // This replaces the comment marker strings
     // anywhere and everywhere in the file.  Whether
     // they are inside quotes or not.
-    in = StringA.replace( in, slashStar,
+    in = in.replace( slashStar,
                             "" + Markers.SlashStar );
 
-    in = StringA.replace( in, starSlash,
+    in = in.replace( starSlash,
                             "" + Markers.StarSlash );
 
 
@@ -350,7 +349,7 @@ public class RemoveComments
 
     StringBuilder sBuilder = new StringBuilder();
 
-    line = StringA.replace( line, "\\\\",
+    line = line.replace( "\\\\",
                          "" + Markers.EscapedSlash );
 
     // Notice the escaped forward slash in front of
@@ -358,7 +357,7 @@ public class RemoveComments
     // string:
     // "c:\\BrowserECFiles\\PageFiles\\";
 
-    line = StringA.replace( line, "\\\"",
+    line = line.replace( "\\\"",
                     "" + Markers.EscapedDoubleQuote );
 
     // This double quote inside single quotes can't
@@ -370,11 +369,11 @@ public class RemoveComments
       return Character.toString( Markers.ErrorPoint );
       }
 
-    line = StringA.replace( line, singleQuoteCharStr,
+    line = line.replace( singleQuoteCharStr,
                 "" + Markers.QuoteAsSingleCharacter );
 
     String doubleSlash = "/" + "/";
-    line = StringA.replace( line, doubleSlash,
+    line = line.replace( doubleSlash,
                            "" + Markers.DoubleSlash );
 
     int lineLength = line.length();
@@ -418,20 +417,16 @@ public class RemoveComments
 
     String result = sBuilder.toString();
 
-    result = StringA.replace( result,  
-                              "" + Markers.DoubleSlash,
+    result = result.replace( "" + Markers.DoubleSlash,
                               doubleSlash );
 
-    result = StringA.replace( result, 
-                  "" + Markers.QuoteAsSingleCharacter,
+    result = result.replace( "" + Markers.QuoteAsSingleCharacter,
                   singleQuoteCharStr );
 
-    result = StringA.replace( result,
-                     "" + Markers.EscapedDoubleQuote,
+    result = result.replace( "" + Markers.EscapedDoubleQuote,
                      "\\\"" );
 
-    result = StringA.replace( result,
-                           "" + Markers.EscapedSlash,
+    result = result.replace( "" + Markers.EscapedSlash,
                            "\\\\" );
 
     return result;
