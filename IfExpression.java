@@ -192,6 +192,59 @@ public class IfExpression
                       MacroDictionary macroDictionary,
                                      String markedUp )
     {
+    String trueIn1Str = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" + 
+                         Markers.End +
+                         trueStr;
+
+
+    String trueIn2Str = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" + Markers.End +
+                         Markers.Begin +
+                         Markers.TypeOperator + "(" +
+                         Markers.End +
+                         trueStr +
+                         Markers.Begin +
+                         Markers.TypeOperator + ")" +
+                         Markers.End;
+
+    String falseIn1Str = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" +
+                         Markers.End +
+                         falseStr;
+      
+    String falseIn2Str = "" + Markers.Begin + 
+                         Markers.TypeIdentifier +
+                         "defined" + Markers.End +
+                         Markers.Begin +
+                         Markers.TypeOperator + "(" +
+                         Markers.End +
+                         falseStr +
+                         Markers.Begin +
+                         Markers.TypeOperator + ")" +
+                         Markers.End;
+
+    String trueOutStr = "" + Markers.Begin +
+                     Markers.TypeBoolean +
+                     "true" + 
+                     Markers.End;
+
+    String falseOutStr = "" + Markers.Begin +
+                     Markers.TypeBoolean +
+                     "false" + 
+                     Markers.End;
+
+    StrA trueIn1 = new StrA( trueIn1Str );
+    StrA trueIn2 = new StrA( trueIn2Str );
+    StrA falseIn1 = new StrA( falseIn1Str );
+    StrA falseIn2 = new StrA( falseIn2Str );
+    StrA trueOut = new StrA( trueOutStr );
+    StrA falseOut = new StrA( falseOutStr );
+
+
     // There might be no parentheses after 'defined'
     // like this:
     // # if defined __GNUC__ && defined __GNUC_MINOR__
@@ -226,12 +279,8 @@ public class IfExpression
                              Markers.TypeIdentifier ))
           {
           isInside = false;
-          String macroName = StringA.replace( part,
-                        "" + Markers.TypeIdentifier,
-                        "" );
-
-          macroName = StringA.replace( macroName,
-                               "" + Markers.End, "" );
+          String macroName = Markers.removeAllMarkers( 
+                                              part );
 
           if( macroDictionary.keyExists( macroName ))
             {
@@ -248,61 +297,15 @@ public class IfExpression
 
       sBuilder.append( "" + Markers.Begin + part );
       }
-    
-    String result = sBuilder.toString();
 
-    String trueIn1 = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" + 
-                         Markers.End +
-                         trueStr;
+    StrA result = new StrA( sBuilder.toString());
 
-
-    String trueIn2 = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
-                         Markers.End +
-                         trueStr +
-                         Markers.Begin +
-                         Markers.TypeOperator + ")" +
-                         Markers.End;
-
-    String falseIn1 = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" +
-                         Markers.End +
-                         falseStr;
-      
-    String falseIn2 = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
-                         Markers.End +
-                         falseStr +
-                         Markers.Begin +
-                         Markers.TypeOperator + ")" +
-                         Markers.End;
-
-    String trueOut = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "true" + 
-                     Markers.End;
-
-    String falseOut = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "false" + 
-                     Markers.End;
-
-    result = StringA.replace( result, trueIn1, trueOut );
-    result = StringA.replace( result, trueIn2, trueOut );
- 
-    result = StringA.replace( result, falseIn1, falseOut ); 
-    result = StringA.replace( result, falseIn2, falseOut ); 
+    result = result.replace( trueIn1, trueOut );
+    result = result.replace( trueIn2, trueOut );
+    result = result.replace( falseIn1, falseOut ); 
+    result = result.replace( falseIn2, falseOut ); 
     // mApp.showStatusAsync( result );
-    return result;
+    return result.toString();
     }
 
 
@@ -321,22 +324,17 @@ public class IfExpression
       if( startLength < 1 )
         return "";
 
-      result = StringA.replace( result,
-                           andOp1 + andOp1, andOp2 );
-      result = StringA.replace( result,
-                           orOp1 + orOp1, orOp2 );
-      result = StringA.replace( result,
-                          equalOp1Str + equalOp1Str,
+      result = result.replace( andOp1 + andOp1, andOp2 );
+      result = result.replace( orOp1 + orOp1, orOp2 );
+      result = result.replace( equalOp1Str + equalOp1Str,
                           equalOp2Str );
-      result = StringA.replace( result,
-                                 notStr + equalOp1Str,
+      result = result.replace( notStr + equalOp1Str,
                                  notEqualOpStr );
-      result = StringA.replace( result,
-                               greaterThanOpStr + 
+      result = result.replace( greaterThanOpStr + 
                                equalOp1Str,
                                greaterThanOrEqOpStr );
 
-     result = StringA.replace( result, lessThanOpStr + 
+     result = result.replace( lessThanOpStr + 
                                equalOp1Str,
                                lessThanOrEqOpStr );
 
@@ -360,12 +358,10 @@ public class IfExpression
 
       // This won't replace !(trueStr... with the
       // parentheses.
-      result = StringA.replace( result,
-                                    notStr + trueStr,
+      result = result.replace( notStr + trueStr,
                                     falseStr );
 
-      result = StringA.replace( result,
-                                    notStr + falseStr,
+      result = result.replace( notStr + falseStr,
                                     trueStr );
 
       newLength = result.length();
@@ -388,37 +384,29 @@ public class IfExpression
         return "";
 
       // Combine AND markers.
-      result = StringA.replace( result,
-                         trueStr + andOp2 + trueStr,
+      result = result.replace( trueStr + andOp2 + trueStr,
                                          trueStr );
 
-      result = StringA.replace( result,
-                          falseStr + andOp2 + falseStr,
+      result = result.replace( falseStr + andOp2 + falseStr,
                                          falseStr );
 
-      result = StringA.replace( result,  
-                          trueStr + andOp2 + falseStr,
+      result = result.replace( trueStr + andOp2 + falseStr,
                                          falseStr );
 
-      result = StringA.replace( result,  
-                          falseStr + andOp2 + trueStr,
+      result = result.replace( falseStr + andOp2 + trueStr,
                                          falseStr );
 
       // Combine OR markers.
-      result = StringA.replace( result,  
-                          trueStr + orOp2 + trueStr,
+      result = result.replace( trueStr + orOp2 + trueStr,
                                          trueStr );
 
-      result = StringA.replace( result,  
-                          falseStr + orOp2 + falseStr,
+      result = result.replace( falseStr + orOp2 + falseStr,
                                          falseStr );
 
-      result = StringA.replace( result,  
-                          trueStr + orOp2 + falseStr,
+      result = result.replace( trueStr + orOp2 + falseStr,
                                          trueStr );
 
-      result = StringA.replace( result,  
-                          falseStr + orOp2 + trueStr,
+      result = result.replace( falseStr + orOp2 + trueStr,
                                          trueStr );
 
       newLength = result.length();
