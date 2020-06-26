@@ -28,19 +28,14 @@ public class RemoveComments
     {
     String showError = "";
     String result = in;
-    
-    // This fixes line splices too.  (Lines with 
-    // an escaped newline character at the end.)
-    // But the lines are spliced after it marks
-    // the original line numbers so that the
-    // programmer can see which line has an error
-    // in it.
 
     File file = new File( fileName );
     fileName = file.getName();
     // String pathName = file.getPath();
     // showStatus( "Path name picked is: " + pathName );
 
+    // This fixes line splices too.  (Lines with 
+    // a newline character at the end.)
     result = markLineNumbers( mApp, result, fileName );
     if( result.contains( Character.toString(
                       Markers.ErrorPoint )))
@@ -56,8 +51,7 @@ public class RemoveComments
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "TestBeginEnd returned false" +
+      showError = "\n\nTestBeginEnd returned false" +
                        " after markLineNumbers.";
 
       mApp.showStatusAsync( showError );
@@ -119,6 +113,9 @@ public class RemoveComments
                                      String in,
                                      String fileName )
     {
+    if( in.length() == 0 )
+      return "";
+
     StringBuilder sBuilder = new StringBuilder();
 
     String[] splitS = in.split( "\n" );
@@ -144,14 +141,14 @@ public class RemoveComments
       if( line.endsWith( "\\" ))
         {
         // This would be a bad idea, but somebody
-        // could split a word right at the end
+        // could split an identifier right at the end
         // of a line and it should (according to
         // the specs) join the word
-        // together with no space.  That _should_
-        // be an error, but it's a very old thing.
+        // together with no space.
         int lineLength = line.length();
         if( lineLength == 1 )
           {
+          // The line contains only the slash character.
           line = "";
           }
         else
@@ -165,7 +162,7 @@ public class RemoveComments
         }
 
       int lineNumber = count + 1;
-      line = line +
+      line = "" + line +
          Markers.Begin +
          Markers.TypeLineNumber +
          lineNumber +
