@@ -93,4 +93,27 @@
 
 
 
+  public static int countMarkers( String in )
+    {
+    if( in == null )
+      return 0;
+
+    int max = in.length();
+    if( max == 0 )
+      return 0;
+
+    int howMany = 0;
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = in.charAt( count );
+      if( isMarker( testChar ))
+        howMany++;
+
+      }
+
+    return howMany;
+    }
+
+
+
   }
