@@ -10,7 +10,7 @@ public class MarkupString
 
     {
     result = markStrings( mApp, result );
-    if( !testMarkers( result, "markStrings().", mApp ))
+    if( !testMarkers( result, "markStrings() at top.", mApp ))
       return "";
 
     result = markCharacters( mApp, result );
@@ -50,8 +50,7 @@ public class MarkupString
       return false;
       }
 
-    if( testS.contains( Character.toString(
-                      Markers.ErrorPoint )))
+    if( testS.contains( "" + Markers.ErrorPoint ))
       {
       mApp.showStatusAsync( " " );
       mApp.showStatusAsync( "There was an error after: " + errorS );
@@ -737,32 +736,40 @@ public class MarkupString
 
 
   public static boolean testBeginEnd( MainApp mApp,
-                                      String inString )
+                                      String in )
     {
+    if( in.length() == 0 )
+      return true;
+
+    // If it is not marked up at all.
+    if( 0 == Markers.countMarkers( in ))
+      return true;
+
     StringBuilder sBuilder = new StringBuilder();
 
-    String[] splitS = inString.split(
-                  Character.toString( Markers.Begin ));
+    String[] splitS = in.split(
+                  "" + Markers.Begin );
 
-
-    // This contains the string before the first
-    // marker.
-    sBuilder.append( splitS[0] + "\n" );
+    // This can be a partially marked up line.
+    // Like if only the line numbers have been added.
+    String testEmpty = splitS[0];
+    if( testEmpty.length() != 0 )
+      {
+      sBuilder.append( testEmpty + "\n" );
+      }
 
     int last = splitS.length;
-    // This starts at 1, after the first
+    // This starts at 1, at the first
     // Markers.Begin.
     for( int count = 1; count < last; count++ )
       {
       String line = splitS[count];
       sBuilder.append( line + "\n" );
-
-      if( !line.contains( Character.toString(
-                                       Markers.End )))
+      int howMany = countEndMarkers( line );
+      if( 1 != howMany )
         {
-        mApp.showStatusAsync( sBuilder.toString() );
-        mApp.showStatusAsync( " " );
-        mApp.showStatusAsync( "The line has no end marker." );
+        // mApp.showStatusAsync( sBuilder.toString() );
+        mApp.showStatusAsync( "\n\n(" + howMany + ") The line should have one end marker." );
         mApp.showStatusAsync( "Line: " + line );
         return false;
         }
@@ -771,6 +778,22 @@ public class MarkupString
     return true;
     }
 
+
+
+  public static int countEndMarkers( String in )
+    {
+    int howMany = 0;
+
+    int last = in.length();
+    for( int count = 0; count < last; count++ )
+      {
+      if( Markers.End == in.charAt( count ))
+        howMany++;
+
+      }
+
+    return howMany;
+    }
 
 
 
