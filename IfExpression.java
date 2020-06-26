@@ -5,90 +5,6 @@
 
 public class IfExpression
   {
-  public static final String trueStr = "" +
-                     Markers.Begin +
-                     Markers.TypeBoolean +
-                     "true" + 
-                     Markers.End;
-
-    public static final String falseStr = "" +
-                     Markers.Begin +
-                     Markers.TypeBoolean +
-                     "false" + 
-                     Markers.End;
-
-  public static final String notStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "!" +
-                     Markers.End;
-
-  public static final String equalOp1Str = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "=" +
-                     Markers.End;
-
-  public static final String equalOp2Str = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "==" +
-                     Markers.End;
-
-  public static final String notEqualOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "!=" +
-                     Markers.End;
-
-  public static final String greaterThanOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     ">" +
-                     Markers.End;
-
-  public static final String greaterThanOrEqOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     ">=" +
-                     Markers.End;
-
-  public static final String lessThanOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "<" +
-                     Markers.End;
-
-  public static final String lessThanOrEqOpStr = "" +
-                     Markers.Begin +
-                     Markers.TypeOperator +
-                     "<=" +
-                     Markers.End;
-
-    public static final String andOp1 = "" +
-                               Markers.Begin +
-                               Markers.TypeOperator +
-                               "&" +
-                               Markers.End;
-
-    public static final String andOp2 = "" +
-                                 Markers.Begin +
-                                 Markers.TypeOperator +
-                                 "&&" +
-                                 Markers.End;
-
-    public static final String orOp1 = "" +
-                                 Markers.Begin +
-                                 Markers.TypeOperator +
-                                 "|" +
-                                 Markers.End;
-
-    public static final String orOp2 = "" +
-                                 Markers.Begin +
-                                 Markers.TypeOperator +
-                                 "||" +
-                                 Markers.End;
-
 
 
 
@@ -136,34 +52,40 @@ public class IfExpression
       if( markedUp.length() == 0 )
         return "";
 
+      if( !MarkupString.testMarkers( markedUp, "After setDefineValues().", mApp ))
+        return "";
+
       }
 
     // mApp.showStatusAsync( markedUp );
 
-    if( markedUp.equals( trueStr ))
-      return "true";
+    if( markedUp.equals( BoolExp.TrueA ))
+      return BoolExp.TrueA.toString();
 
-    if( markedUp.equals( falseStr ))
-      return "false";
+    if( markedUp.equals( BoolExp.FalseA ))
+      return BoolExp.FalseA.toString();
 
-    markedUp = combineBoolean( mApp, markedUp );
+// ======
+    // markedUp = BoolExp.evaluate( mApp, markedUp );
 
-    if( markedUp.equals( trueStr ))
-      return "true";
+    if( markedUp.equals( BoolExp.TrueA ))
+      return BoolExp.TrueA.toString();
 
-    if( markedUp.equals( falseStr ))
-      return "false";
+    if( markedUp.equals( BoolExp.FalseA ))
+      return BoolExp.FalseA.toString();
 
+
+/*
     // mApp.showStatusAsync( "Before replaceMacros." );
     markedUp = Macro.replaceMacros( mApp,
                                     "", // no key
                                     markedUp,
                                     macroDictionary );
 
-    if( markedUp.equals( trueStr ))
+    if( markedUp.equals( BoolExp.TrueA ))
       return "true";
 
-    if( markedUp.equals( falseStr ))
+    if( markedUp.equals( BoolExp.FalseA ))
       return "false";
 
 
@@ -171,7 +93,7 @@ public class IfExpression
     // 100 != 4 && 100 != 6 &&
     // 100 != 5
 
-
+*/
 
 
     mApp.showStatusAsync( "\n\nIfExpression isn't done:\n" + markedUp );
@@ -196,58 +118,74 @@ public class IfExpression
                          Markers.TypeIdentifier +
                          "defined" + 
                          Markers.End +
-                         trueStr;
+                         BoolExp.TrueA.toString();
 
 
     String trueIn2Str = "" + Markers.Begin + 
                          Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
+                         "defined" +
                          Markers.End +
-                         trueStr +
                          Markers.Begin +
-                         Markers.TypeOperator + ")" +
+                         Markers.TypeOperator +
+                         "(" +
+                         Markers.End +
+                         BoolExp.TrueA.toString() +
+                         Markers.Begin +
+                         Markers.TypeOperator +
+                         ")" +
                          Markers.End;
 
     String falseIn1Str = "" + Markers.Begin + 
                          Markers.TypeIdentifier +
                          "defined" +
                          Markers.End +
-                         falseStr;
+                         BoolExp.FalseA.toString();
       
     String falseIn2Str = "" + Markers.Begin + 
                          Markers.TypeIdentifier +
-                         "defined" + Markers.End +
-                         Markers.Begin +
-                         Markers.TypeOperator + "(" +
+                         "defined" +
                          Markers.End +
-                         falseStr +
                          Markers.Begin +
-                         Markers.TypeOperator + ")" +
+                         Markers.TypeOperator +
+                         "(" +
+                         Markers.End +
+                         BoolExp.FalseA.toString() +
+                         Markers.Begin +
+                         Markers.TypeOperator +
+                         ")" +
                          Markers.End;
-
-    String trueOutStr = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "true" + 
-                     Markers.End;
-
-    String falseOutStr = "" + Markers.Begin +
-                     Markers.TypeBoolean +
-                     "false" + 
-                     Markers.End;
 
     StrA trueIn1 = new StrA( trueIn1Str );
     StrA trueIn2 = new StrA( trueIn2Str );
     StrA falseIn1 = new StrA( falseIn1Str );
     StrA falseIn2 = new StrA( falseIn2Str );
-    StrA trueOut = new StrA( trueOutStr );
-    StrA falseOut = new StrA( falseOutStr );
 
 
-    // There might be no parentheses after 'defined'
-    // like this:
-    // # if defined __GNUC__ && defined __GNUC_MINOR__
+// ==== delete these if it tests right.
+    if( !MarkupString.testBeginEnd( mApp, trueIn1Str ))
+      {
+      mApp.showStatusAsync( "The string isn't right: " + trueIn1Str );
+      return "";
+      }
+
+    if( !MarkupString.testBeginEnd( mApp, trueIn2Str ))
+      {
+      mApp.showStatusAsync( "The string isn't right: " + trueIn2Str );
+      return "";
+      }
+
+    if( !MarkupString.testBeginEnd( mApp, falseIn1Str ))
+      {
+      mApp.showStatusAsync( "The string isn't right: " + falseIn1Str );
+      return "";
+      }
+
+    if( !MarkupString.testBeginEnd( mApp, falseIn2Str ))
+      {
+      mApp.showStatusAsync( "The string isn't right: " + falseIn2Str );
+      return "";
+      }
+
 
     String[] exprParts = markedUp.split( "" + 
                                      Markers.Begin );
@@ -284,11 +222,11 @@ public class IfExpression
 
           if( macroDictionary.keyExists( macroName ))
             {
-            sBuilder.append( trueStr );
+            sBuilder.append( BoolExp.TrueA.toString() );
             }
           else
             {
-            sBuilder.append( falseStr );
+            sBuilder.append( BoolExp.FalseA.toString() );
             }
 
           continue;
@@ -300,127 +238,26 @@ public class IfExpression
 
     StrA result = new StrA( sBuilder.toString());
 
-    result = result.replace( trueIn1, trueOut );
-    result = result.replace( trueIn2, trueOut );
-    result = result.replace( falseIn1, falseOut ); 
-    result = result.replace( falseIn2, falseOut ); 
-    // mApp.showStatusAsync( result );
+    mApp.showStatusAsync( "\n\n" + result.toString() );
+    result = result.replace( trueIn1, BoolExp.TrueA );
+
+    mApp.showStatusAsync( "\n\n" + result.toString() );
+    result = result.replace( trueIn2, BoolExp.TrueA );
+    mApp.showStatusAsync( "\n\n" + result.toString() );
+
+    result = result.replace( falseIn1, BoolExp.FalseA ); 
+    mApp.showStatusAsync( "\n\n" + result.toString() );
+
+    result = result.replace( falseIn2, BoolExp.FalseA ); 
+    if( !MarkupString.testBeginEnd( mApp, result.toString() ))
+      {
+      mApp.showStatusAsync( "5 The string isn't right: " + falseIn2Str );
+      return "";
+      }
+
+    mApp.showStatusAsync( "\n\n" + result.toString() );
+
     return result.toString();
-    }
-
-
-
-  private static String combineBoolean( MainApp mApp,
-                                         String in )
-    {
-    String result = in;
- 
-    int startLength = 0;
-    int newLength = 0;
-
-    for( int count = 0; count < 1000; count++ )
-      {
-      startLength = result.length(); 
-      if( startLength < 1 )
-        return "";
-
-      result = result.replace( andOp1 + andOp1, andOp2 );
-      result = result.replace( orOp1 + orOp1, orOp2 );
-      result = result.replace( equalOp1Str + equalOp1Str,
-                          equalOp2Str );
-      result = result.replace( notStr + equalOp1Str,
-                                 notEqualOpStr );
-      result = result.replace( greaterThanOpStr + 
-                               equalOp1Str,
-                               greaterThanOrEqOpStr );
-
-     result = result.replace( lessThanOpStr + 
-                               equalOp1Str,
-                               lessThanOrEqOpStr );
-
-      newLength = result.length();
-      if( newLength == startLength )
-        break;
-
-      if( count > 10 )
-        mApp.showStatusAsync( "Count over 10: " + count );
-
-      }
-
-    // mApp.showStatusAsync( "After operators: " + result );
-
-
-    for( int count = 0; count < 1000; count++ )
-      {
-      startLength = result.length(); 
-      if( startLength < 1 )
-        return "";
-
-      // This won't replace !(trueStr... with the
-      // parentheses.
-      result = result.replace( notStr + trueStr,
-                                    falseStr );
-
-      result = result.replace( notStr + falseStr,
-                                    trueStr );
-
-      newLength = result.length();
-      if( newLength == startLength )
-        break;
-
-      if( count > 10 )
-        mApp.showStatusAsync( "Count over 10: " + count );
-
-      }
-
-    // mApp.showStatusAsync( "After not changes: " + result );
-
-    // Do true or true
-    //   true and false and all that.
-    for( int count = 0; count < 1000; count++ )
-      {
-      startLength = result.length(); 
-      if( startLength < 1 )
-        return "";
-
-      // Combine AND markers.
-      result = result.replace( trueStr + andOp2 + trueStr,
-                                         trueStr );
-
-      result = result.replace( falseStr + andOp2 + falseStr,
-                                         falseStr );
-
-      result = result.replace( trueStr + andOp2 + falseStr,
-                                         falseStr );
-
-      result = result.replace( falseStr + andOp2 + trueStr,
-                                         falseStr );
-
-      // Combine OR markers.
-      result = result.replace( trueStr + orOp2 + trueStr,
-                                         trueStr );
-
-      result = result.replace( falseStr + orOp2 + falseStr,
-                                         falseStr );
-
-      result = result.replace( trueStr + orOp2 + falseStr,
-                                         trueStr );
-
-      result = result.replace( falseStr + orOp2 + trueStr,
-                                         trueStr );
-
-      newLength = result.length();
-      if( newLength == startLength )
-        break;
-
-      if( count > 10 )
-        mApp.showStatusAsync( "Count over 10: " + count );
-
-      }
-
-    // mApp.showStatusAsync( "After true && false changes: " + result );
-
-    return result;
     }
 
 
