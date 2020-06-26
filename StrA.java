@@ -1,21 +1,10 @@
 // Copyright Eric Chauvin 2020.
 
 
-/*
- This is the String constructor, in String.java,
- that doesn't work right.
-And what's with the char value[] rather than
-char[] value?
 
-    public String(char value[]) {
-        this.value = Arrays.copyOf(value, value.length);
-    }
-*/
-
-
-   // public String substring(int beginIndex,
-   //                         int endIndex)
-
+// split()
+// splitChar()
+// substring(int beginIndex, int endIndex)
 
 
 
@@ -28,23 +17,6 @@ public class StrA
     {
     values = new char[0];
     }
-
-
-
-  private char[] stringToCharArray( String in )
-    {
-    if( in == null )
-      return new char[0];
-
-    // last can be zero.
-    int last = in.length();
-    char[] result = new char[last];
-    for( int count = 0; count < last; count++ )
-      result[count] = in.charAt( count );
-
-    return result;
-    }
-
 
 
   public StrA( String in )
@@ -76,6 +48,62 @@ public class StrA
 
 
 
+  public StrA( StrA in )
+    {
+    // Make a copy of the character array in.
+
+    // The length might be zero.
+    int last = in.values.length;
+
+    values = new char[last];
+    for( int count = 0; count < last; count++ )
+      values[count] = in.values[count];
+
+    }
+
+
+
+  public StrA( StrA in1, StrA in2 )
+    {
+    int max = in1.values.length + in2.values.length;
+    char[] both = new char[max];
+
+    int where = 0;
+    int last = in1.values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      both[where] = in1.values[count];
+      where++;
+      }
+    
+    last = in2.values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      both[where] = in2.values[count];
+      where++;
+      }
+    
+    values = both;
+    }
+
+
+
+  private char[] stringToCharArray( String in )
+    {
+    if( in == null )
+      return new char[0];
+
+    // last can be zero.
+    int last = in.length();
+    char[] result = new char[last];
+    for( int count = 0; count < last; count++ )
+      result[count] = in.charAt( count );
+
+    return result;
+    }
+
+
+
   public int length()
     {
     return values.length;
@@ -92,6 +120,7 @@ public class StrA
 
     return values[where];
     }
+
 
 
   public char[] getCopyOfValues()
@@ -143,7 +172,8 @@ public class StrA
     // Don't use System.arraycopy() since it's going
     // to be translated in to C++.
 
-    // This has to have the ("" +) in it.
+    // This has to have the ("" +) in it so it works
+    // right with Marker characters.
     for( int count = 0; count < last; count++ )
       sBuilder.append( "" + values[count] );
 
@@ -267,6 +297,72 @@ public class StrA
     }
 
 
+  public StrA replaceChar( char toFind, char replace )
+    {
+    if( values.length == 0 )
+      return new StrA( "" );
+
+    int last = values.length;
+    char[] toArray = new char[last];
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = values[count];
+      if( testChar == toFind )
+        toArray[count] = replace;
+      else
+        toArray[count] = testChar;
+
+      }
+
+    StrA result = new StrA( toArray );
+    return result;
+    }
+
+
+  public StrA concat( StrA in )
+    {
+    if( in.length() == 0 )
+      return this; // new StrA( values );
+
+    int max = values.length + in.length();
+    char[] both = new char[max];
+
+    int where = 0;
+    int last = values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      both[where] = values[count];
+      where++;
+      }
+    
+    last = in.length();
+    for( int count = 0; count < last; count++ )
+      {
+      both[where] = in.charAt( count );
+      where++;
+      }
+
+    return new StrA( both );  
+    }
+
+
+
+  public boolean equals( StrA in )
+    {
+    int last = values.length;
+    if( last != in.values.length )
+      return false;
+
+    for( int count = 0; count < last; count++ )
+      {
+      if( values[count] != in.values[count] )
+        return false;
+
+      }
+
+    return true;
+    }
+
+
 
   }
-
