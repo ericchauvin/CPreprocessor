@@ -109,20 +109,49 @@ public class BoolExp
                         new StrA( Or1, Or1 );
 
     public static final StrA ConcatEqual =
-                        new StrA( Equal1,
-                                  Equal1 );
+                        new StrA( Equal1, Equal1 );
 
     public static final StrA ConcatNotEqual =
-                        new StrA( NotA,
-                                  Equal1 );
+                        new StrA( NotA, Equal1 );
 
     public static final StrA ConcatGreaterThanEq =
-                        new StrA( GreaterThan,
-                                  Equal1 );
+                      new StrA( GreaterThan, Equal1 );
 
     public static final StrA ConcatLessThanEq =
-                        new StrA( LessThan,
-                                  Equal1 );
+                        new StrA( LessThan, Equal1 );
+
+    public static final StrA ConcatNotTrue =
+                        new StrA( NotA, TrueA );
+
+    public static final StrA ConcatNotFalse =
+                        new StrA( NotA, FalseA );
+
+
+    public static final StrA ConcatTrueAndTrue =
+                   new StrA( TrueA, And2, TrueA );
+
+    public static final StrA ConcatFalseAndFalse =
+                   new StrA( FalseA, And2, FalseA );
+
+    public static final StrA ConcatTrueAndFalse =
+                   new StrA( TrueA, And2, FalseA );
+
+    public static final StrA ConcatFalseAndTrue =
+                   new StrA( FalseA, And2, TrueA );
+
+    public static final StrA ConcatTrueOrTrue =
+                   new StrA( TrueA, Or2, TrueA );
+
+    public static final StrA ConcatFalseOrFalse =
+                   new StrA( FalseA, Or2, FalseA );
+
+    public static final StrA ConcatTrueOrFalse =
+                   new StrA( TrueA, Or2, FalseA );
+
+    public static final StrA ConcatFalseOrTrue =
+                   new StrA( FalseA, Or2, TrueA );
+
+
 
 
   public static String evaluate( MainApp mApp,
@@ -135,6 +164,7 @@ public class BoolExp
     StrA result = new StrA( in );
 
     mApp.showStatusAsync( "\n\nEvaluate top: " + in );
+
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
@@ -165,25 +195,20 @@ public class BoolExp
     // mApp.showStatusAsync( "After operators: " + result );
 
 
-
-
-/*
     for( int count = 0; count < 1000; count++ )
       {
-      startLength = result.length(); 
-      if( startLength < 1 )
+      if( result.length() < 1 )
         return "";
 
-      // This won't replace !(trueStr... with the
-      // parentheses.
-      result = result.replace( notStr + trueStr,
-                                    falseStr );
+      StrA testA = new StrA( result );
 
-      result = result.replace( notStr + falseStr,
-                                    trueStr );
+      result = result.replace( ConcatNotTrue,
+                                    FalseA );
 
-      newLength = result.length();
-      if( newLength == startLength )
+      result = result.replace( ConcatNotFalse,
+                                    TrueA );
+
+      if( result.equals( testA ))
         break;
 
       if( count > 10 )
@@ -192,59 +217,57 @@ public class BoolExp
       }
 
     // mApp.showStatusAsync( "After not changes: " + result );
-*/
 
-
-
-/*
-    // Do true or true
-    //   true and false and all that.
     for( int count = 0; count < 1000; count++ )
       {
-      startLength = result.length(); 
-      if( startLength < 1 )
+      if( result.length() < 1 )
         return "";
 
-      // Combine AND markers.
-      result = result.replace( trueStr + andOp2 + trueStr,
-                                         trueStr );
+      StrA testA = new StrA( result );
 
-      result = result.replace( falseStr + andOp2 + falseStr,
-                                         falseStr );
+      result = result.replace( ConcatTrueAndTrue,
+                                         TrueA );
 
-      result = result.replace( trueStr + andOp2 + falseStr,
-                                         falseStr );
+      result = result.replace( ConcatFalseAndFalse,
+                                         FalseA );
 
-      result = result.replace( falseStr + andOp2 + trueStr,
-                                         falseStr );
+      result = result.replace( ConcatTrueAndFalse,
+                                         FalseA );
+
+      result = result.replace( ConcatFalseAndTrue,
+                                         FalseA );
 
       // Combine OR markers.
-      result = result.replace( trueStr + orOp2 + trueStr,
-                                         trueStr );
+      result = result.replace( ConcatTrueOrTrue,
+                                         TrueA );
 
-      result = result.replace( falseStr + orOp2 + falseStr,
-                                         falseStr );
+      result = result.replace( ConcatFalseOrFalse,
+                                         FalseA );
 
-      result = result.replace( trueStr + orOp2 + falseStr,
-                                         trueStr );
+      result = result.replace( ConcatTrueOrFalse,
+                                         TrueA );
 
-      result = result.replace( falseStr + orOp2 + trueStr,
-                                         trueStr );
+      result = result.replace( ConcatFalseOrTrue,
+                                         TrueA );
 
-      newLength = result.length();
-      if( newLength == startLength )
+      if( result.equals( testA ))
         break;
 
       if( count > 10 )
         mApp.showStatusAsync( "Count over 10: " + count );
 
       }
-*/
+
+
+    if( !MarkupString.testBeginEnd( mApp, result.toString() ))
+      {
+      mApp.showStatusAsync( "BoolExp.evaluate() The string isn't right: " + result );
+      return "";
+      }
 
     // mApp.showStatusAsync( "After true && false changes: " + result );
 
-    mApp.showStatusAsync( "\n\nEvaluate bottom: " + in );
-
+    mApp.showStatusAsync( "\n\nEvaluate bottom: " + result );
 
     return result.toString();
     }
@@ -252,4 +275,3 @@ public class BoolExp
 
 
   }
-
