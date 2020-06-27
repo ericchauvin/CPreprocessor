@@ -25,8 +25,15 @@ public class StrABld
   public StrABld( int howLong )
     {
     // Test:
-    values = new char[2];
-    // values = new char[howLong];
+    // values = new char[2];
+    values = new char[howLong];
+    }
+
+
+
+  public void setLength( int in )
+    {
+    valuesLast = 0;
     }
 
 
@@ -45,12 +52,12 @@ public class StrABld
 
 
 
-  public void append( char c )
+  public void append( char in )
     {
     if( valuesLast >= values.length )
       resizeArray( 1024 * 4 );
 
-    values[valuesLast] = c;
+    values[valuesLast] = in;
     valuesLast++;
     }
 
