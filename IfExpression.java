@@ -60,19 +60,19 @@ public class IfExpression
     // mApp.showStatusAsync( markedUp );
 
     if( markedUp.equals( BoolExp.TrueA ))
-      return BoolExp.TrueA.toString();
+      return "true";
 
     if( markedUp.equals( BoolExp.FalseA ))
-      return BoolExp.FalseA.toString();
+      return "false";
 
-// ======
-    // markedUp = BoolExp.evaluate( mApp, markedUp );
+    markedUp = BoolExp.evaluate( mApp, markedUp );
 
-    if( markedUp.equals( BoolExp.TrueA ))
-      return BoolExp.TrueA.toString();
+    if( markedUp.equals( BoolExp.TrueA.toString() ))
+      return "true";
 
-    if( markedUp.equals( BoolExp.FalseA ))
-      return BoolExp.FalseA.toString();
+    if( markedUp.equals( BoolExp.FalseA.toString() ))
+      return "false";
+
 
 
 /*
@@ -114,17 +114,17 @@ public class IfExpression
                       MacroDictionary macroDictionary,
                                      String markedUp )
     {
-    String trueIn1Str = "" + Markers.Begin + 
+    final String DefinedPart = "" + 
+                         Markers.Begin + 
                          Markers.TypeIdentifier +
                          "defined" + 
-                         Markers.End +
+                         Markers.End;
+ 
+    final String TrueIn1Str = DefinedPart +
                          BoolExp.TrueA.toString();
 
 
-    String trueIn2Str = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" +
-                         Markers.End +
+    final String TrueIn2Str = DefinedPart +
                          Markers.Begin +
                          Markers.TypeOperator +
                          "(" +
@@ -135,16 +135,10 @@ public class IfExpression
                          ")" +
                          Markers.End;
 
-    String falseIn1Str = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" +
-                         Markers.End +
+    final String FalseIn1Str = DefinedPart +
                          BoolExp.FalseA.toString();
       
-    String falseIn2Str = "" + Markers.Begin + 
-                         Markers.TypeIdentifier +
-                         "defined" +
-                         Markers.End +
+    final String FalseIn2Str = DefinedPart +
                          Markers.Begin +
                          Markers.TypeOperator +
                          "(" +
@@ -155,36 +149,10 @@ public class IfExpression
                          ")" +
                          Markers.End;
 
-    StrA trueIn1 = new StrA( trueIn1Str );
-    StrA trueIn2 = new StrA( trueIn2Str );
-    StrA falseIn1 = new StrA( falseIn1Str );
-    StrA falseIn2 = new StrA( falseIn2Str );
-
-
-// ==== delete these if it tests right.
-    if( !MarkupString.testBeginEnd( mApp, trueIn1Str ))
-      {
-      mApp.showStatusAsync( "The string isn't right: " + trueIn1Str );
-      return "";
-      }
-
-    if( !MarkupString.testBeginEnd( mApp, trueIn2Str ))
-      {
-      mApp.showStatusAsync( "The string isn't right: " + trueIn2Str );
-      return "";
-      }
-
-    if( !MarkupString.testBeginEnd( mApp, falseIn1Str ))
-      {
-      mApp.showStatusAsync( "The string isn't right: " + falseIn1Str );
-      return "";
-      }
-
-    if( !MarkupString.testBeginEnd( mApp, falseIn2Str ))
-      {
-      mApp.showStatusAsync( "The string isn't right: " + falseIn2Str );
-      return "";
-      }
+    StrA trueIn1 = new StrA( TrueIn1Str );
+    StrA trueIn2 = new StrA( TrueIn2Str );
+    StrA falseIn1 = new StrA( FalseIn1Str );
+    StrA falseIn2 = new StrA( FalseIn2Str );
 
 
     String[] exprParts = markedUp.split( "" + 
@@ -238,24 +206,31 @@ public class IfExpression
 
     StrA result = new StrA( sBuilder.toString());
 
-    mApp.showStatusAsync( "\n\n" + result.toString() );
+    // mApp.showStatusAsync( "\n\nBefore replace:\n" + result.toString() );
+
+    // As a rule, replace bigger strings before
+    // replacing smaller strings.  In case the
+    // smaller string is a substring of the bigger
+    // string.
+    result = result.replace( trueIn2, BoolExp.TrueA );
     result = result.replace( trueIn1, BoolExp.TrueA );
 
-    mApp.showStatusAsync( "\n\n" + result.toString() );
-    result = result.replace( trueIn2, BoolExp.TrueA );
-    mApp.showStatusAsync( "\n\n" + result.toString() );
-
-    result = result.replace( falseIn1, BoolExp.FalseA ); 
-    mApp.showStatusAsync( "\n\n" + result.toString() );
+    // mApp.showStatusAsync( "\n\nBefore falsein2: " + result.toString() );
+    // mApp.showStatusAsync( "\n\nTo replace: " + falseIn2.toString() );
 
     result = result.replace( falseIn2, BoolExp.FalseA ); 
+    // mApp.showStatusAsync( "\n\nfalsein2: " + result.toString() );
+    result = result.replace( falseIn1, BoolExp.FalseA ); 
+    // mApp.showStatusAsync( "\n\nfalsein1: " + result.toString() );
+
+
     if( !MarkupString.testBeginEnd( mApp, result.toString() ))
       {
-      mApp.showStatusAsync( "5 The string isn't right: " + falseIn2Str );
+      mApp.showStatusAsync( "IfExpression. The string isn't right: " + result );
       return "";
       }
 
-    mApp.showStatusAsync( "\n\n" + result.toString() );
+    // mApp.showStatusAsync( "\n\n" + result.toString() );
 
     return result.toString();
     }
