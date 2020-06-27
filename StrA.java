@@ -1,6 +1,7 @@
 // Copyright Eric Chauvin 2020.
 
-
+// Need a contains() with no regular expression.
+// containsChar() too.
 
 // split()
 // splitChar()
@@ -84,6 +85,40 @@ public class StrA
       }
     
     values = both;
+    }
+
+
+
+  public StrA( StrA in1, StrA in2, StrA in3 )
+    {
+    int max = in1.values.length + in2.values.length +
+                                  in3.values.length;
+
+    char[] allIn = new char[max];
+
+    int where = 0;
+    int last = in1.values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      allIn[where] = in1.values[count];
+      where++;
+      }
+    
+    last = in2.values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      allIn[where] = in2.values[count];
+      where++;
+      }
+    
+    last = in3.values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      allIn[where] = in3.values[count];
+      where++;
+      }
+
+    values = allIn;
     }
 
 
@@ -241,16 +276,19 @@ public class StrA
 
 
   public StrA replace( StrA toFind,
-                       StrA replace )
+                       StrA replaceA )
     {
     if( values.length == 0 )
       return new StrA( "" );
 
     if( toFind.length() == 0 )
-      return new StrA( values );
+      return new StrA( values ); // this
+
+    String testS = toString().replace( 
+                              toFind.toString(),
+                              replaceA.toString() );
 
     // Replace might be an empty string.
-    // replace( in, "this", "" );
     // if( replace.length() == 0 )
 
     if( values.length < toFind.length() )
@@ -279,22 +317,31 @@ public class StrA
         }
 
       if( !searchTextMatches( count,
-                              values, // getCopyOfValues(),
+                              values,
                               toFind.values ))
         {
         resultBld.append( testChar );
         continue;
         }
 
-      skip = toFind.length() + 1;
-      if( replace.length() > 0 )
-        resultBld.appendArray( replace.values );
+      skip = toFind.length(); //  + 1;
+      if( replaceA.length() > 0 )
+        resultBld.appendArray( replaceA.values );
 
       }
 
     StrA result = resultBld.toStrA();
+
+    String testResult = result.toString();
+    if( !testResult.equals( testS ))
+      {
+      result = new StrA( "StrA Bad string: " + testResult + " and testS " + testS ); 
+      return result;
+      }
+
     return result;
     }
+
 
 
   public StrA replaceChar( char toFind, char replace )
