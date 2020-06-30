@@ -69,11 +69,13 @@ public class PreprocessProject
     headerDictionary.readFile( headerFileName );
 
 
-    String fileStr = FileUtility.readFileToString(
+    StrA fileStrA = FileUtility.readFileToStrA(
                                       mApp,
                                       projectFileName,
+                                      false,
                                       false );
 
+    String fileStr = fileStrA.toString();
     if( fileStr.length() == 0 )
       {
       mApp.showStatusAsync( "Nothing in the project file." );
@@ -102,8 +104,8 @@ public class PreprocessProject
         continue;
 
       String outFileName = outDir + 
-                          StringsUtility.getFileName(
-                          fileArray[count], '\\' );
+                          Utility.getFileNameOld(
+                          fileName, '\\' );
 
       mApp.showStatusAsync( "Out file: " + outFileName );
     
@@ -112,13 +114,13 @@ public class PreprocessProject
 
       addMacros( macroDictionary );
 
-      String result = Preprocessor.PreprocessFile(
+      String resultStr = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
                                     macroDictionary,
                                     headerDictionary );
 
-      if( result.length() == 0 )
+      if( resultStr.length() == 0 )
         {
         mApp.showStatusAsync( " " );
         mApp.showStatusAsync( "The file had an error." );
@@ -127,9 +129,11 @@ public class PreprocessProject
         return;
         }
 
-      FileUtility.writeStringToFile( mApp,
+      StrA result = new StrA( resultStr );
+      FileUtility.writeStrAToFile( mApp,
                                      outFileName,
                                      result,
+                                     false,
                                      false );
 
       }
@@ -246,7 +250,8 @@ Are these Cygwin predefined macros?
 
     // TARGET_ARCH_zero, TARGET_ARCH_arm,
     Macro macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "TARGET_ARCH_x86" );
+    macro.setMacroWithEmptyParams( new StrA( 
+                     "TARGET_ARCH_x86" ));
     macroDictionary.setMacro( "TARGET_ARCH_x86",
                                 macro );
 
@@ -254,14 +259,16 @@ Are these Cygwin predefined macros?
     // Intel x86 is Little Endian.
     // __IEEE_BIG_ENDIAN
     macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "__IEEE_LITTLE_ENDIAN" );
+    macro.setMacroWithEmptyParams( new StrA(
+                          "__IEEE_LITTLE_ENDIAN" ));
     macroDictionary.setMacro( "__IEEE_LITTLE_ENDIAN",
                                 macro );
 
     // I want to use the Cygwin compiler to compile
     // this after it is preprocessed here.
     macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "__CYGWIN__" );
+    macro.setMacroWithEmptyParams( new StrA(
+                                     "__CYGWIN__" ));
     macroDictionary.setMacro( "__CYGWIN__",
                                 macro );
 
@@ -273,12 +280,14 @@ Are these Cygwin predefined macros?
     // __cplusplus
      
     macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "__x86_64__" );
+    macro.setMacroWithEmptyParams( new StrA(
+                                   "__x86_64__" ));
     macroDictionary.setMacro( "__x86_64__",
                                 macro );
 
     macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "__STRICT_ANSI__" );
+    macro.setMacroWithEmptyParams( new StrA(
+                                "__STRICT_ANSI__" ));
     macroDictionary.setMacro( "__STRICT_ANSI__",
                                 macro );
 
@@ -288,7 +297,8 @@ Are these Cygwin predefined macros?
     // optimization.
 
     macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( "COMPILER1" );
+    macro.setMacroWithEmptyParams( new StrA(
+                                     "COMPILER1" ));
     macroDictionary.setMacro( "COMPILER1", macro );
 
     // .pch is Precompiled header.
