@@ -14,9 +14,10 @@ import java.nio.file.Paths;
   public class FileUtility
   {
 
-  public static String readFileToString( MainApp mApp,
-                                         String fileName,
-                                         boolean keepTabs )
+  public static StrA readFileToStrA( MainApp mApp,
+                                 String fileName,
+                                 boolean keepTabs,
+                                 boolean keepMarkers )
     {
     try
     {
@@ -24,20 +25,18 @@ import java.nio.file.Paths;
 
     if( !Files.exists( path, LinkOption.NOFOLLOW_LINKS ))
       {
-      return "";
+      return new StrA( "" );
       }
 
     byte[] fileBytes = Files.readAllBytes( path );
     if( fileBytes == null )
-      return "";
+      return new StrA( "" );
 
-    String fileS = UTF8Strings.bytesToString(
-                                          fileBytes,
+    StrA fileS = UTF8Strings.bytesToStrA( fileBytes,
                                           2000000000 );
 
 
-    StringBuilder sBuilder = new StringBuilder();
-
+    StrABld sBld = new StrABld( fileBytes.length + 1024 );
 
     // int nonAsciiCount = 0;
     char newline = '\n';
@@ -55,9 +54,12 @@ import java.nio.file.Paths;
 
         }
 
-      // Markers shouldn't be in this.
-      if( Markers.isMarker( sChar ))
-        sChar = ' ';
+      if( !keepMarkers )
+        {
+        if( Markers.isMarker( sChar ))
+          sChar = ' ';
+
+        }
 
       if( sChar < space )
         {
@@ -68,33 +70,34 @@ import java.nio.file.Paths;
 
         }
 
-      sBuilder.append( sChar );
+      sBld.appendChar( sChar );
       }
 
-    return sBuilder.toString();
+    return sBld.toStrA();
     }
     catch( Exception e )
       {
       mApp.showStatusAsync( "Could not read the file: \n" + fileName );
       mApp.showStatusAsync( e.getMessage() );
-      return "";
+      return new StrA( "" );
       }
     }
 
 
 
 
-  public static boolean writeStringToFile( MainApp mApp,
-                                        String fileName,
-                                        String textS,
-                                        boolean keepTabs )
+  public static boolean writeStrAToFile( MainApp mApp,
+                                 String fileName,
+                                 StrA textS,
+                                 boolean keepTabs,
+                                 boolean keepMarkers )
     {
     try
     {
     if( textS == null )
       return false;
 
-    if( textS.trim().length() < 1 )
+    if( textS.length() < 1 )
       return false;
 
     Path path = Paths.get( fileName );
@@ -102,18 +105,25 @@ import java.nio.file.Paths;
     char newline = '\n';
     char space = ' ';
     char tab = '\t';
-    StringBuilder sBuilder = new StringBuilder();
     int max = textS.length();
+    StrABld sBld = new StrABld( max );
     for( int count = 0; count < max; count++ )
       {
       char sChar = textS.charAt( count );
 
-      if( sChar > 0xD800 ) // High Surrogates
+      if( sChar >= 0xD800 ) // High Surrogates
         continue;
 
       if( !keepTabs )
         {
         if( sChar == tab )
+          sChar = space;
+
+        }
+
+      if( !keepMarkers )
+        {
+        if( Markers.isMarker( sChar ))
           sChar = space;
 
         }
@@ -126,17 +136,15 @@ import java.nio.file.Paths;
 
         }
 
-      sBuilder.append( sChar );
+      sBld.appendChar( sChar );
       }
 
-    String outString = sBuilder.toString();
-    if( outString == null )
+    StrA outS = sBld.toStrA();
+
+    if( outS.length() < 1 )
       return false;
 
-    if( outString.trim().length() < 1 )
-      return false;
-
-    byte[] outBuffer = UTF8Strings.stringToBytes( outString );
+    byte[] outBuffer = UTF8Strings.strAToBytes( outS );
     if( outBuffer == null )
       {
       mApp.showStatusAsync( "Could not write to the file: \n" + fileName );
