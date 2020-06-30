@@ -5,7 +5,7 @@
 public class HeaderFileDictionary
   {
   private MainApp mApp;
-  private String[] fileListArray;
+  private StrArray fileListArray;
   private HeaderFileDictionaryLine lineArray[];
   private final int maxIndexLetter = 'z' - 'a';
   private final int keySize = ((maxIndexLetter << 6) |
@@ -28,48 +28,41 @@ public class HeaderFileDictionary
 
 
 
-  // This is temporary.
-  // This should be commented out.
-  private void readFileList( String fileName )
+  private void readFileList( StrA fileName )
     {
-    StrA fileSA = FileUtility.readFileToStrA(
+    StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
                                         false,
                                         false );
 
-    // Fix this for all StrA. ====
-    String fileS = fileSA.toString();
-
     if( fileS.length() == 0 )
       {
-      fileListArray = new String[1];
-      fileListArray[0] = "";
+      fileListArray = new StrArray();
       return;
       }
 
-    fileListArray = fileS.split( "\n" );
+    fileListArray = fileS.splitChar( '\n' );
     }
 
 
-  // This is temporary.
-  // This should be commented out.
-  private String getFileFromList( String key )
+  private StrA getFileFromList( StrA key )
     {
     if( fileListArray == null )
-      return "";
+      return new StrA( "" );
 
-    String result = "";
+    StrA result = new StrA( "" );
 
     key = key.trim().toLowerCase();
     // if( !key.startsWith( pathDelim ))
       // key = pathDelim + key;
 
-    int last = fileListArray.length;
+    final int last = fileListArray.length();
     int matches = 0;
     for( int count = 0; count < last; count++ )
       {
-      String line = fileListArray[count].trim();
+      StrA line = fileListArray.getStrAt( count ).
+                                              trim();
       line = line.toLowerCase();
       // mApp.showStatusAsync( "Line: " + line );
       if( line.endsWith( key ))
@@ -131,7 +124,7 @@ public class HeaderFileDictionary
 
 
 
-  private int getIndex( String key )
+  private int getIndex( StrA key )
     {
     // This index needs to be in sorted order.
 
@@ -157,7 +150,7 @@ public class HeaderFileDictionary
 
 
 
-  public void setValue( String key, String value )
+  public void setValue( StrA key, StrA value )
     {
     try
     {
@@ -186,7 +179,7 @@ public class HeaderFileDictionary
 
 
 
-  public String getValue( String key )
+  public StrA getValue( StrA key )
     {
     if( key == null )
       return "";
@@ -223,7 +216,7 @@ public class HeaderFileDictionary
 
 
 
-  public String makeKeysValuesString()
+  public StrA makeKeysValuesStr()
     {
     try
     {
@@ -252,7 +245,7 @@ public class HeaderFileDictionary
     }
 
 
-  public void writeFile( String fileName )
+  public void writeFile( StrA fileName )
     {
     // Fix this for all StrA. ====
     StrA toWrite = new StrA( makeKeysValuesString());
@@ -266,7 +259,7 @@ public class HeaderFileDictionary
 
 
 
-  public void readFile( String fileName )
+  public void readFile( StrA fileName )
     {
     ////////
     String tempFileList = 
@@ -307,7 +300,7 @@ public class HeaderFileDictionary
 
 
 
-  public boolean keyExists( String key )
+  public boolean keyExists( StrA key )
     {
     if( key == null )
       return false;
