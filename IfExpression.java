@@ -10,16 +10,15 @@ public class IfExpression
 
   public static String evaluateExpression(
                                          MainApp mApp,
-                                         String expr,
+                                         StrA expr,
                      MacroDictionary macroDictionary )
     {
     if( expr == null )
       return "";
 
-    String originalExpr = expr;
+    String originalExpr = expr.toString();
     // Remove line number markers.
-    expr = StringsUtility.removeSections( expr,
-                                        Markers.Begin,
+    expr = expr.removeSections( Markers.Begin,
                                         Markers.End );
 
     expr = expr.trim();
@@ -36,7 +35,7 @@ public class IfExpression
       return "false";
 
     String markedUp = MarkupString.MarkItUp( 
-                                         mApp, expr );
+                              mApp, expr.toString() ).toString();
 
     if( markedUp.length() == 0 )
       return "";
