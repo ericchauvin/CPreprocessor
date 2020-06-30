@@ -16,9 +16,7 @@
   public class UTF8Strings
   {
 
-
-
-  public static byte[] stringToBytes( String in )
+  public static byte[] strAToBytes( StrA in )
     {
     if( in == null )
       return null;
@@ -29,8 +27,7 @@
     byte[] result;
     try
     {
-    // Times 3 is the worst-case scenario.
-    result = new byte[in.length() * 3];
+    result = new byte[in.length() + (1024 * 64)];
     }
     catch( Exception e )
       {
@@ -38,20 +35,27 @@
       }
 
     int where = 0;
-    int max = in.length();
+    final int max = in.length();
     for( int count = 0; count < max; count++ )
       {
       char fullChar = in.charAt( count );
+      if( fullChar >= 0xD800 ) // High Surrogates
+        fullChar = ' '; 
+
       if( fullChar <= 0x7F )
         {
         // Regular ASCII.
+        if( where >= result.length )
+          {
+          result = Utility.resizeByteArrayBigger(
+                                          result,
+                                          1024 * 64 );
+          }
+
         result[where] = (byte)fullChar;
         where++;
         continue;
         }
-
-      if( fullChar >= 0xD800 ) // High Surrogates
-        break; 
 
       //  7   U+007F   0xxxxxxx
       // 11   U+07FF   110xxxxx   10xxxxxx
@@ -68,6 +72,13 @@
 
         bigByte |= 0xC0; // Mark it as the beginning byte.
         smallByte |= 0x80; // Mark it as a continuing byte.
+
+        if( (where + 2) >= result.length )
+          {
+          result = Utility.resizeByteArrayBigger( result,
+                                          1024 * 64 );
+          }
+
         result[where] = bigByte;
         where++;
         result[where] = smallByte;
@@ -84,6 +95,13 @@
         bigByte |= 0xE0; // Mark it as the beginning byte.
         byte2 |= 0x80; // Mark it as a continuing byte.
         byte3 |= 0x80; // Mark it as a continuing byte.
+
+        if( (where + 3) >= result.length )
+          {
+          result = Utility.resizeByteArrayBigger( result,
+                                          1024 * 64 );
+          }
+
         result[where] = bigByte;
         where++;
         result[where] = byte2;
@@ -99,26 +117,26 @@
 
 
 
-  public static String bytesToString( byte[] in,
+  public static StrA bytesToStrA( byte[] in,
                                       int maxLen )
     {
     try
     {
     if( in == null )
-      return "";
+      return new StrA( "" );
 
     if( in.length == 0 )
-      return "";
+      return new StrA( "" );
 
     if( in[0] == 0 )
-      return "";
+      return new StrA( "" );
 
     if( maxLen > in.length )
       maxLen = in.length;
 
     int runOnBytes = 0;
     char fullChar = ' ';
-    StringBuilder sBuilder = new StringBuilder( maxLen );
+    StrABld sBld = new StrABld( maxLen );
     for( int count = 0; count < maxLen; count++ )
       {
       byte charPart = in[count];
@@ -129,7 +147,7 @@
         {
         runOnBytes = 0;
         // It's regular ASCII.
-        sBuilder.append( (char)charPart );
+        sBld.appendChar( (char)charPart );
         continue;
         }
 
@@ -137,7 +155,7 @@
         {
         runOnBytes++;
         if( runOnBytes > 3 )
-          return sBuilder.toString();
+          return sBld.toStrA();
 
         // It's a continuing byte that has already
         // been read below.
@@ -165,7 +183,7 @@
           fullChar |= (char)(byte2 << 6);
           fullChar |= byte3;
           if( fullChar < 0xD800 ) // High Surrogates
-            sBuilder.append( fullChar );
+            sBld.appendChar( fullChar );
 
           }
 
@@ -183,7 +201,7 @@
           fullChar |= byte2;
 
           if( fullChar < 0xD800 ) // High Surrogates
-            sBuilder.append( fullChar );
+            sBld.appendChar( fullChar );
 
           }
 
@@ -192,15 +210,12 @@
         }
       }
 
-    String result = sBuilder.toString();
-    if( result == null )
-      return "";
-
+    StrA result = sBld.toStrA();
     return result;
     }
     catch( Exception e )
       {
-      return "Error in UTF8Strings.bytesToString(): " + e.getMessage();
+      return new StrA( "Error in UTF8Strings.bytesToString(): " + e.getMessage() );
       // return "";
       }
     }
