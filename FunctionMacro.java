@@ -192,7 +192,7 @@ public class FunctionMacro
       }
 
     StringBuilder paramBuilder = new StringBuilder();
-    StringArray paramArray = new StringArray();
+    StrArray paramArray = new StrArray();
     int inside = 0;
     for( int count = 1; count < last; count++ )
       {
@@ -235,8 +235,8 @@ public class FunctionMacro
             {
             if( paramBuilder.length() > 0 )
               {
-              paramArray.appendString( paramBuilder.
-                                        toString());
+              paramArray.append( new StrA( paramBuilder.
+                                        toString()));
               }
 
             break;
@@ -248,8 +248,8 @@ public class FunctionMacro
 
         if( secondChar == ',' )
           {
-          paramArray.appendString( paramBuilder.
-                                        toString());
+          paramArray.append( new StrA( paramBuilder.
+                                        toString()));
           paramBuilder.setLength( 0 );
           continue;
           }
@@ -287,8 +287,8 @@ public class FunctionMacro
 
     for( int count = 0; count < lastP; count++ )
       {
-      String bodyParam = paramArray.
-                               getStringAt( count );
+      String bodyParam = new StrA( paramArray.
+                               getStrAt( count )).toString();
 
       String macParam = replaceMacro.
                          getParamArrayValue( count );
