@@ -1,15 +1,6 @@
 // Copyright Eric Chauvin 2020.
 
 
-/*
- This is the String constructor, in String.java,
- that doesn't work.
-    public String(char value[]) {
-        this.value = Arrays.copyOf(value, value.length);
-    }
-*/
-
-
 
 public class StrABld
   {
@@ -30,10 +21,15 @@ public class StrABld
     }
 
 
+  public int length()
+    {
+    return valuesLast;
+    }
+
 
   public void setLength( int in )
     {
-    valuesLast = 0;
+    valuesLast = in;
     }
 
 
@@ -52,7 +48,7 @@ public class StrABld
 
 
 
-  public void append( char in )
+  public void appendChar( char in )
     {
     if( valuesLast >= values.length )
       resizeArray( 1024 * 4 );
@@ -72,13 +68,30 @@ public class StrABld
       return;
 
     for( int count = 0; count < last; count++ )
-      append( in[count] );
+      appendChar( in[count] );
 
     }
 
 
 
 
+  public void appendStrA( StrA in )
+    {
+    if( in == null )
+      return;
+
+    int last = in.length();
+    if( last == 0 )
+      return;
+
+    for( int count = 0; count < last; count++ )
+      appendChar( in.charAt( count ));
+
+    }
+
+
+
+/*
   public String toString()
     {
     if( valuesLast == 0 )
@@ -93,6 +106,7 @@ public class StrABld
 
     return sBuilder.toString();
     }
+*/
 
 
   public StrA toStrA()
@@ -110,6 +124,15 @@ public class StrABld
     return new StrA( result );
     }
 
+
+  public StrA getReverse()
+    {
+    char[] result = new char[valuesLast];
+    for( int count = valuesLast - 1; count >= 0; count-- )
+      result[count] = values[count];
+
+    return new StrA( result );
+    }
 
 
   }
