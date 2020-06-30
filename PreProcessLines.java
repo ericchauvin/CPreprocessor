@@ -80,22 +80,27 @@ public class PreProcessLines
 
   public String mainFileLoop( String in, String fileName )
     {
+    return "";
+/*
     try
     {
+
+
     if( in.trim().length() == 0 )
       return "";
 
-    StringArray fileLines = new StringArray();
+    StrArray fileLines = new StrArray();
     StringBuilder sBuilder = new StringBuilder();
     StringBuilder paramBuilder = new StringBuilder();
-    StringArray lineSplitter = new StringArray();
+    StrA inA = new StrA( in );
 
-    int last = fileLines.makeFieldsFromString( in, '\n' );
+======    StrArray lineSplitter = inA.splitChar( '\n' );
+
+    final int last = lineSplitter.length();
     for( int count = 0; count < last; count++ )
       {
-      String line = fileLines.getStringAt( count );
-      if( '#' != StringsUtility.firstNonSpaceChar(
-                                             line ))
+      StrA line = fileLines.getStrAt( count );
+      if( '#' != line.firstNonSpaceChar())
         {
         if( boolLevArray.getCurrentValue())
           sBuilder.append( line + "\n" );
@@ -106,8 +111,7 @@ public class PreProcessLines
         }
      
       // String originalLine = line;
-      line = StringsUtility.replaceFirstChar( line,
-                                              '#',
+      line = line.replaceFirstChar( '#',
                                               ' ' );
 
       // This trim is needed to make sure the directive
@@ -123,6 +127,11 @@ public class PreProcessLines
       // create a zero-length string on the second
       // space because there was nothing after the
       // first space.
+====
+This can't be right to use LineSplitter again here.
+
+      lineSplitter = line.splitChar( ' ' );
+
       int lastPart = lineSplitter.
                     makeFieldsFromString( line, ' ' );
 
@@ -218,6 +227,7 @@ public class PreProcessLines
       mApp.showStatusAsync( e.getMessage() );
       return "";
       }
+*/
     }
 
 
@@ -317,6 +327,8 @@ public class PreProcessLines
   private String processIfDef( String directive,
                                String directiveBody )
     {
+    return "";
+/*
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -348,6 +360,7 @@ public class PreProcessLines
       boolLevArray.addNewLevel( false );
       return result;
       }
+*/
     }
 
 
@@ -355,6 +368,8 @@ public class PreProcessLines
   private String processIfNDef( String directive,
                                 String directiveBody )
     {
+    return "";
+/*
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -387,6 +402,7 @@ public class PreProcessLines
       boolLevArray.addNewLevel( false );
       return result;
       }
+*/
     }
 
 
@@ -453,6 +469,8 @@ public class PreProcessLines
 
   private String processInclude( String directiveBody )
     {
+    return "";
+/*
     if( !boolLevArray.getCurrentValue())
       return "// #include " + directiveBody + "\n";
       
@@ -513,12 +531,15 @@ public class PreProcessLines
            "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n";
 
     return inclFileStr;
+*/
     }
 
 
 
   private String processDefine( String directiveBody )
     {
+    return "";
+/*
     if( !boolLevArray.getCurrentValue())
       return "// #define " + directiveBody + "\n";
 
@@ -543,12 +564,15 @@ public class PreProcessLines
                                  macro );
 
     return "// #define " + directiveBody + "\n";
+*/
     }
 
 
 
   private String processIf( String directiveBody ) 
     {
+    return "";
+/*
     String result = "if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
@@ -580,6 +604,7 @@ public class PreProcessLines
       }
 
     return "// unknown if value returned.";
+*/
     }
 
 
