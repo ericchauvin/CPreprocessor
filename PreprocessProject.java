@@ -53,15 +53,11 @@ public class PreprocessProject
     // String mainDir = "C:\\gccmaster\\gcc\\";
     String outDir = "C:\\PreprocessOut\\";
 
-    // This list of files would be different for 
-    // different projects.  Like if it's a Linux
-    // or Windows project.
+    StrA projectFileName = new StrA( 
+          "\\Eric\\CPreprocessor\\ProjectFiles.txt" );
 
-    String projectFileName = 
-            "\\Eric\\CPreprocessor\\ProjectFiles.txt";
-
-    String headerFileName = 
-           "\\Eric\\CPreprocessor\\HeaderFiles.txt";
+    StrA headerFileName = new StrA(  
+           "\\Eric\\CPreprocessor\\HeaderFiles.txt" );
 
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
@@ -69,14 +65,13 @@ public class PreprocessProject
     headerDictionary.readFile( headerFileName );
 
 
-    StrA fileStrA = FileUtility.readFileToStrA(
+    StrA fileS = FileUtility.readFileToStrA(
                                       mApp,
                                       projectFileName,
                                       false,
                                       false );
 
-    String fileStr = fileStrA.toString();
-    if( fileStr.length() == 0 )
+    if( fileS.length() == 0 )
       {
       mApp.showStatusAsync( "Nothing in the project file." );
       return;
@@ -87,25 +82,25 @@ public class PreprocessProject
     // Resource files for Windows.  Like bitmaps,
     // menus, icons, etc.
 
-    String[] fileArray = fileStr.split( "\n" );
-    int max = fileArray.length;
+    StrArray fileArray = fileS.splitChar( '\n' );
+    final int max = fileArray.length();
     for( int count = 0; count < max; count++ )
       {
       // For testing:
-      if( count > 2 )
-        break;
+      // if( count > 2 )
+        // break;
 
-      String fileName = fileArray[count];
+      StrA fileName = fileArray.getStrAt( count );
       fileName = fileName.trim();
       if( fileName.length() < 1 )
         continue;
 
-      if( fileName.startsWith( "//" ))
+      if( fileName.startsWith( new StrA( "//" )))
         continue;
 
-      String outFileName = outDir + 
-                          Utility.getFileNameOld(
-                          fileName, '\\' );
+      StrA outFileName = new StrA( outDir );
+      outFileName.concat( Utility.getFileName(
+                          fileName, '\\' ));
 
       mApp.showStatusAsync( "Out file: " + outFileName );
     
@@ -114,27 +109,26 @@ public class PreprocessProject
 
       addMacros( macroDictionary );
 
-      String resultStr = Preprocessor.PreprocessFile(
-                                    mApp,
-                                    fileName,
-                                    macroDictionary,
-                                    headerDictionary );
+      StrA result = Preprocessor.PreprocessFile(
+                                 mApp,
+                                 fileName,
+                                 macroDictionary,
+                                 headerDictionary );
 
-      if( resultStr.length() == 0 )
+      if( result.length() == 0 )
         {
         mApp.showStatusAsync( " " );
         mApp.showStatusAsync( "The file had an error." );
-        mApp.showStatusAsync( fileName );
+        mApp.showStatusAsync( fileName.toString() );
         headerDictionary.writeFile( headerFileName );
         return;
         }
 
-      StrA result = new StrA( resultStr );
       FileUtility.writeStrAToFile( mApp,
-                                     outFileName,
-                                     result,
-                                     false,
-                                     false );
+                               outFileName,
+                               result,
+                               false,
+                               false );
 
       }
 
