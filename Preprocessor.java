@@ -19,11 +19,14 @@ public class Preprocessor
     // The first level of lexical analysis and
     // processing is inside FileUtility.java when
     // it reads the file to a string.
-    String result = FileUtility.readFileToString(
+    StrA resultA = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
+                                        false,
                                         false );
 
+    // Fix this for all StrA. ====
+    String result = resultA.toString();
     if( result.trim().length() == 0 )
       {
       mApp.showStatusAsync( "Nothing in Source File." );
