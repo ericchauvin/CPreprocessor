@@ -17,11 +17,11 @@
 public class Macro
   {
   private MainApp mApp;
-  private String key = "";
-  private String markedUpS = "";
+  private StrA key = new StrA( "" );
+  private StrA markedUpS = new StrA( "" );
   private boolean isFunctionType = false;  
   private boolean enabled = true; // For undef.
-  private StringArray paramArray = null;
+  private StrArray paramArray = null;
 
 
 
@@ -47,10 +47,10 @@ public class Macro
 
 
   public void setMacroWithEmptyParams(
-                                     String keyToUse )
+                                     StrA keyToUse )
     {
     key = keyToUse;
-    markedUpS = "";
+    markedUpS = new StrA( "" );
     }
 
 
@@ -68,39 +68,39 @@ public class Macro
 
 
 
-  public boolean setKeyFromString( String in )
+  public boolean setKeyFromStrA( StrA in )
     {
     try
     {
     isFunctionType = false;
 
-    String line = StringsUtility.removeSections( in,
-                                        Markers.Begin,
+    StrA line = in.removeSections( Markers.Begin,
                                         Markers.End );
 
     line = line.trim();
-    String[] splitS = line.split( " " );
-    int last = splitS.length;
+    StrArray splitS = line.splitChar( ' ' );
+    int last = splitS.length();
     if( last == 0 )
       {
       mApp.showStatusAsync( "There is no key in the directive." );
       return false;
       }
 
-    key = splitS[0];
+    key = splitS.getStrAt( 0 );
 
     // The parentheses is not part of the key.
-    if( key.contains( "(" ))
+    if( key.contains( new StrA( "(" )))
       {
       // This is a function-like macro because there
       // was no space before the first parentheses.
       isFunctionType = true;
 
-      StringArray lineSplitter = new StringArray();
-      int lastPart = lineSplitter.
-                      makeFieldsFromString( key, '(' );
+      StrArray lineSplitter = new StrArray();
 
-      key = lineSplitter.getStringAt( 0 );
+      int lastPart = lineSplitter.
+                      makeFieldsFromStrA( key, '(' );
+
+      key = lineSplitter.getStrAt( 0 );
       }
 
     if( key.length() == 0 )
@@ -128,39 +128,39 @@ public class Macro
     try
     {
     String originalStr = in;
-    markedUpS = in;
+    markedUpS = new StrA( in );
     // Remove the line number markers.
-    markedUpS = StringsUtility.removeSections(
-                                        markedUpS,
+    markedUpS = markedUpS.removeSections( 
                                         Markers.Begin,
                                         Markers.End );
 
-    markedUpS = MarkupString.MarkItUp( mApp,
-                                          markedUpS );
+    markedUpS = new StrA( MarkupString.MarkItUp( mApp,
+                               markedUpS.toString()));
 
-    String[] splitS = markedUpS.split( "" +
-                                   Markers.Begin );
+    StrArray splitS = markedUpS.splitChar( 
+                                     Markers.Begin );
 
-    int last = splitS.length;
+    int last = splitS.length();
     if( last < 2 )
       {
       mApp.showStatusAsync( "This macro has no key marked up." );
       return false;
       }
       
-    String testNothing = splitS[0];
+    String testNothing = splitS.getStrAt( 0 ).
+                                         toString();
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
       return false;
       }
 
-    String testKey = splitS[1];
+    String testKey = splitS.getStrAt( 1 ).toString();
     // It would have at least 2 marker characters.
     if( testKey.length() < 2 )
       {
       mApp.showStatusAsync( "The key is missing." );
-      mApp.showStatusAsync( markedUpS );
+      mApp.showStatusAsync( markedUpS.toString() );
       return false;
       }
 
@@ -168,7 +168,7 @@ public class Macro
     if( firstChar != Markers.TypeIdentifier )
       {
       mApp.showStatusAsync( "The key is not an identifier." );
-      mApp.showStatusAsync( markedUpS );
+      mApp.showStatusAsync( markedUpS.toString() );
       return false;
       }
 
@@ -178,7 +178,7 @@ public class Macro
       mApp.showStatusAsync( "The key is not equal to the first token." );
       mApp.showStatusAsync( "Key: >" + key + "<" );
       mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
-      mApp.showStatusAsync( markedUpS );
+      mApp.showStatusAsync( markedUpS.toString() );
       return false;
       }
 
@@ -186,18 +186,19 @@ public class Macro
     for( int count = 2; count < last; count++ )
       {
       sBuilder.append( "" + Markers.Begin  +
-                                  splitS[count] );
+                            splitS.getStrAt( count ));
       }
 
     // Put the paramters back, but leave the key out.
-    markedUpS = sBuilder.toString();
+    markedUpS = new StrA( sBuilder.toString());
     // If there are no parameters then markedUpS
     // would have zero length.
     // mApp.showStatusAsync( "markedUpS after toString: " + markedUpS );
 
     if( isFunctionType )
       {
-      markedUpS = putFParametersInArray( markedUpS );
+      markedUpS = putFParametersInArray(
+                             markedUpS );
       if( markedUpS.length() == 0 )
         {
         mApp.showStatusAsync( "putFPameters had an error." );
@@ -211,10 +212,10 @@ public class Macro
     // If there are any parameters.
     if( markedUpS.length() > 0 )
       {
-      markedUpS = replaceMacros( mApp,
-                                 key,
-                                 markedUpS,
-                                 macroDictionary );
+      markedUpS = new StrA( replaceMacros( mApp,
+                                 key.toString(),
+                                 markedUpS.toString(),
+                                 macroDictionary ));
 
       }
 
@@ -396,31 +397,31 @@ public class Macro
 
 
 
-  private String putFParametersInArray( String in )
+  private StrA putFParametersInArray( StrA in )
     {
     // mApp.showStatusAsync( "\nputFParam: " + in );
 
-    paramArray = new StringArray();
+    paramArray = new StrArray();
     StringBuilder sBuilder = new StringBuilder();
-    String[] splitS = in.split( "" + Markers.Begin );
-    int last = splitS.length;
+    StrArray splitS = in.splitChar( Markers.Begin );
+    int last = splitS.length();
     if( last == 0 )
       {
       mApp.showStatusAsync( "Last is zero in putFParametersInArray()." );
-      return "";
+      return new StrA( "" );
       } 
       
-    String testNothing = splitS[0];
+    String testNothing = splitS.getStrAt( 0 ).toString();
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
-      return "";
+      return new StrA( "" );
       }
 
     int inside = 0;
     for( int count = 1; count < last; count++ )
       {
-      String partS = splitS[count];
+      String partS = splitS.getStrAt( count ).toString();
       if( partS.length() < 2 )
         continue;
 
@@ -451,8 +452,8 @@ public class Macro
         {
         // mApp.showStatusAsync( "Adding param: " + partS );
  
-        paramArray.appendString( "" + Markers.Begin +
-                                 partS );
+        paramArray.append( new StrA( "" + Markers.Begin +
+                                 partS ));
  
         continue;
         }
@@ -460,7 +461,7 @@ public class Macro
 
     String result = sBuilder.toString();
     // mApp.showStatusAsync( "Result: " + result );
-    return result;   
+    return new StrA( result );   
     }
 
 
@@ -468,14 +469,14 @@ public class Macro
 
   public String getMarkedUpString()
     {
-    return markedUpS;
+    return markedUpS.toString();
     }
 
 
 
   public String getKey()
     {
-    return key;
+    return key.toString();
     }
 
 
@@ -494,7 +495,7 @@ public class Macro
     if( paramArray == null )
       return "";
 
-    return paramArray.getStringAt( where );
+    return paramArray.getStrAt( where ).toString();
     }
 
 
