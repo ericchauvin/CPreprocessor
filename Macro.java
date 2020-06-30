@@ -95,10 +95,8 @@ public class Macro
       // was no space before the first parentheses.
       isFunctionType = true;
 
-      StrArray lineSplitter = new StrArray();
-
-      int lastPart = lineSplitter.
-                      makeFieldsFromStrA( key, '(' );
+      StrArray lineSplitter = key.splitChar( '(' );
+      int lastPart = lineSplitter.length();
 
       key = lineSplitter.getStrAt( 0 );
       }
