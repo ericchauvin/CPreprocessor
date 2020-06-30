@@ -12,8 +12,8 @@
     if( path.length() == 0 )
       return new StrA( "" );
 
-    StrArray parts = new StrArray();
-    int last = parts.makeFieldsFromStrA( path, delimit );
+    StrArray parts = path.splitChar( delimit ); 
+    int last = parts.length();
     if( last == 0 )
       return new StrA( "" );
 
@@ -26,33 +26,6 @@
       }
 
     return new StrA( "" );
-    }
-
-
-
-  public static String getFileNameOld( String path,
-                                  char delimit )
-    {
-    path = path.trim();
-
-    if( path.length() == 0 )
-      return "";
-
-    StrArray parts = new StrArray();
-    int last = parts.makeFieldsFromStrA( new StrA( path ), delimit );
-    if( last == 0 )
-      return "";
-
-    for( int count = last - 1; count >= 0; count-- )
-      {
-      String fileName = parts.getStrAt( count ).
-                                          toString();
-      if( fileName.length() != 0 )
-        return fileName;
-
-      }
-
-    return "";
     }
 
 
