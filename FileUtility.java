@@ -15,13 +15,13 @@ import java.nio.file.Paths;
   {
 
   public static StrA readFileToStrA( MainApp mApp,
-                                 String fileName,
+                                 StrA fileName,
                                  boolean keepTabs,
                                  boolean keepMarkers )
     {
     try
     {
-    Path path = Paths.get( fileName );
+    Path path = Paths.get( fileName.toString() );
 
     if( !Files.exists( path, LinkOption.NOFOLLOW_LINKS ))
       {
@@ -38,11 +38,10 @@ import java.nio.file.Paths;
 
     StrABld sBld = new StrABld( fileBytes.length + 1024 );
 
-    // int nonAsciiCount = 0;
     char newline = '\n';
     char space = ' ';
     char tab = '\t';
-    int max = fileS.length();
+    final int max = fileS.length();
     for( int count = 0; count < max; count++ )
       {
       char sChar = fileS.charAt( count );
@@ -87,7 +86,7 @@ import java.nio.file.Paths;
 
 
   public static boolean writeStrAToFile( MainApp mApp,
-                                 String fileName,
+                                 StrA fileName,
                                  StrA textS,
                                  boolean keepTabs,
                                  boolean keepMarkers )
@@ -100,12 +99,12 @@ import java.nio.file.Paths;
     if( textS.length() < 1 )
       return false;
 
-    Path path = Paths.get( fileName );
+    Path path = Paths.get( fileName.toString() );
 
     char newline = '\n';
     char space = ' ';
     char tab = '\t';
-    int max = textS.length();
+    final int max = textS.length();
     StrABld sBld = new StrABld( max );
     for( int count = 0; count < max; count++ )
       {
