@@ -22,12 +22,12 @@ import java.io.File;
 public class RemoveComments
   {
 
-  public static String removeAllComments( MainApp mApp,
-                                     String in,
+  public static StrA removeAllComments( MainApp mApp,
+                                     StrA in,
                                      String fileName )
     {
     String showError = "";
-    String result = in;
+    StrA result = in;
 
     File file = new File( fileName );
     fileName = file.getName();
@@ -109,31 +109,36 @@ public class RemoveComments
 
 
 
-  private static String markLineNumbers( MainApp mApp,
-                                     String in,
-                                     String fileName )
+  private static StrA markLineNumbers( MainApp mApp,
+                                     StrA in,
+                                     StrA fileName )
     {
     if( in.length() == 0 )
-      return "";
+      return new StrA( "" );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld();
 
-    String[] splitS = in.split( "\n" );
-    int last = splitS.length;
+    StrArray splitS = in.splitChar( '\n' );
+    final int last = splitS.length();
     if( last == 0 )
-      return "";
+      return new StrA( "" );
+
+    StrA starSlash = new StrA( "*" + "/" );
+    StrA newline = new StrA( "\n" );
+    StrA starSlashNewline = starSlash.concat( newline );
+
 
     for( int count = 0; count < last; count++ )
       {
-      String line = splitS[count];
-      String tLine = line.trim();
+      StrA line = splitS.getStrAt( count );
+      StrA tLine = line.trim();
       if( tLine.length() == 0 )
         continue;
 
-      if( tLine.equals( "*" + "/" ))
+      if( tLine.equals( starSlash ))
         {
         // Don't mark this empty line with a number.
-        sBuilder.append( "*" + "/\n" );
+        sBuilder.appendStrA( starSlashNewline );
         continue;
         }
 
@@ -153,8 +158,8 @@ public class RemoveComments
           }
         else
           {
-          // substring( int beginIndex, int endIndex )
-          line = line.substring( 0, lineLength - 1 );
+          // substring( int begin, int end )
+          line = line.substring( 0, lineLength - 2 );
           }
 
         sBuilder.append( line );
