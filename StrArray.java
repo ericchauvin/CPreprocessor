@@ -109,42 +109,6 @@ public class StrArray
 
 
 
-  public int makeFieldsFromStrA( StrA in,
-                                   char delimit )
-    {
-    clear();
-    sBld.setLength( 0 );
-
-    if( in == null )
-      return 0;
-
-    int max = in.length();
-    if( max == 0 )
-      return 0;
-
-    for( int count = 0; count < max; count++ )
-      {
-      char testChar = in.charAt( count );
-      if( testChar == delimit )
-        {
-        append( sBld.toStrA());
-        sBld.setLength( 0 );
-        }
-      else
-        {
-        sBld.appendChar( testChar );
-        }
-      }
-
-    if( sBld.length() > 0 )
-      {
-      append( sBld.toStrA());
-      }
-
-    return arrayLast;
-    }
-
-
   public StrA getStrAt( int where )
     {
     if( where < 0 )
@@ -158,4 +122,3 @@ public class StrArray
 
 
   }
-
