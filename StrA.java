@@ -3,8 +3,6 @@
 // Need a contains() with no regular expression.
 // containsChar() too.
 
-// split()
-// splitChar()
 // substring(int beginIndex, int endIndex)
 
 
@@ -240,7 +238,7 @@ public class StrA
     }
 
 
-
+/*
   public String replace( String toFind,
                          String replaceS )
     {
@@ -272,6 +270,7 @@ public class StrA
 
     return result;
     }
+*/
 
 
 
@@ -312,7 +311,7 @@ public class StrA
       char testChar = values[count];
       if( testChar != firstChar )
         {
-        resultBld.append( testChar );
+        resultBld.appendChar( testChar );
         continue;
         }
 
@@ -320,7 +319,7 @@ public class StrA
                               values,
                               toFind.values ))
         {
-        resultBld.append( testChar );
+        resultBld.appendChar( testChar );
         continue;
         }
 
@@ -364,6 +363,103 @@ public class StrA
     StrA result = new StrA( toArray );
     return result;
     }
+
+
+
+
+  public StrArray splitChar( char delimit )
+    {
+    StrArray result = new StrArray();
+
+    if( values.length == 0 )
+      return result;
+
+    StrABld sBld = new StrABld( 1024 * 64 );
+
+    final int last = values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = values[count];
+      if( testChar == delimit )
+        {
+        result.append( sBld.toStrA());
+        sBld.setLength( 0 );
+        }
+      else
+        {
+        sBld.appendChar( testChar );
+        }
+      }
+
+    if( sBld.length() > 0 )
+      result.append( sBld.toStrA());
+
+    return result;
+    }
+
+
+
+  public StrArray splitStrA( StrA delimit )
+    {
+    StrArray result = new StrArray();
+
+    if( values.length == 0 )
+      return result;
+
+    if( delimit.length() == 0 )
+      {
+      result.append( new StrA( values )); // this
+      return result;
+      }
+
+    if( values.length < delimit.length() )
+      {
+      result.append( new StrA( values )); // this
+      return result;
+      }
+
+    StrABld sBld = new StrABld( values.length + 2048 );
+
+    char firstChar = delimit.charAt( 0 );    
+    final int last = values.length;
+    int skip = 0;
+    for( int count = 0; count < last; count++ )
+      {
+      if( skip > 0 )
+        {
+        skip--;
+        if( skip > 0 )
+          continue;
+
+        }
+
+      char testChar = values[count];
+      if( testChar != firstChar )
+        {
+        sBld.appendChar( testChar );
+        continue;
+        }
+
+      if( !searchTextMatches( count,
+                              values,
+                              delimit.values ))
+        {
+        sBld.appendChar( testChar );
+        continue;
+        }
+
+      skip = delimit.length();
+      result.append( sBld.toStrA() );
+      sBld.setLength( 0 );
+      }
+
+    if( sBld.length() > 0 )
+      result.append( sBld.toStrA() );
+   
+    return result;
+    }
+
+
 
 
   public StrA concat( StrA in )
@@ -410,6 +506,349 @@ public class StrA
     return true;
     }
 
+
+
+  public StrA trimLeft()
+    {
+    StrABld sBld = new StrABld( values.length + 1024 );
+    int last = values.length;
+    boolean foundFirst = false;
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = values[count];
+      if( foundFirst )
+        {
+        sBld.appendChar( testChar ); 
+        continue;
+        }
+
+      if( testChar > ' ' )
+        {
+        foundFirst = true;
+        sBld.appendChar( testChar );
+        }
+      }
+
+    return sBld.toStrA();
+    }
+
+
+
+  public StrA trimRight()
+    {
+    StrABld sBld = new StrABld( values.length + 1024 );
+    int last = values.length;
+    boolean foundFirst = false;
+    for( int count = last - 1; count >= 0; count-- )
+      {
+      char testChar = values[count];
+      if( foundFirst )
+        {
+        sBld.appendChar( testChar ); 
+        continue;
+        }
+
+      if( testChar > ' ' )
+        {
+        foundFirst = true;
+        sBld.appendChar( testChar );
+        }
+      }
+
+    return sBld.getReverse();
+    }
+
+
+  public StrA trim()
+    {
+    StrA result = trimRight();
+    result = result.trimLeft();
+    return result;
+    }
+
+
+  public StrA toLowerCase()
+    {
+    char[] lower = new char[values.length];
+    final int max = values.length;
+    for( int count = 0; count < max; count++ )
+      {
+      lower[count] = Character.toLowerCase(
+                                     values[count] );
+      }
+
+    return new StrA( lower );
+    }
+
+
+
+  public int compareToIgnoreCase( StrA in )
+    {
+    int thisLen = values.length;
+    int inLen = in.values.length;
+    int shorter = thisLen;
+    if( inLen < shorter )
+      shorter = inLen;
+
+    StrA thisLower = toLowerCase();
+    StrA inLower = in.toLowerCase();
+
+    for( int count = 0; count < shorter; count++ )
+      {
+      if( thisLower.values[count] == inLower.values[count] )
+        continue;
+
+      return (int)thisLower.values[count] -
+                (int)inLower.values[count];
+      }
+
+    if( thisLen == inLen )
+      return 0;
+
+    if( thisLen < inLen )
+      return -1;
+    else
+      return 1;
+
+    }
+
+
+
+  public char firstNonSpaceChar()
+    {
+    final int max = values.length;
+    if( max == 0 )
+      return ' ';
+
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = values[count];
+      if( testChar != ' ' )
+        return testChar;
+
+      }
+
+    return ' ';
+    }
+
+
+
+
+  public StrA replaceFirstChar( char toFind,
+                                char replaceC )
+    {
+    final int max = values.length;
+    if( max == 0 )
+      return new StrA( "" );
+
+    char[] resultA = new char[max];
+    boolean foundFirst = false;
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = values[count];
+      if( !foundFirst )
+        {
+        if( testChar == toFind )
+          {
+          foundFirst = true;
+          resultA[count] = replaceC;
+          continue;
+          }
+        }
+
+      resultA[count] = testChar;
+      }
+
+    return new StrA( resultA );
+    }
+
+
+
+  public StrA removeSections( char startChar,
+                                       char endChar )
+    {
+    final int max = values.length;
+    if( max == 0 )
+      return new StrA( "" );
+
+    StrABld sBld = new StrABld( max );
+    boolean isInside = false;
+    for( int count = 0; count < max; count++ )
+      {
+      char testChar = values[count];
+      if( testChar == startChar )
+        {
+        isInside = true;
+        continue;
+        }
+
+      if( testChar == endChar )
+        {
+        isInside = false;
+        continue;
+        }
+
+      if( !isInside )
+        sBld.appendChar( testChar );
+
+      }
+
+    return sBld.toStrA();
+    }
+
+
+
+  /*
+  // This is a Cyclic Redundancy Check (CRC) function.
+  // CCITT is the international standards body.
+  // This CRC function is translated from a magazine
+  // article in Dr. Dobbs Journal.
+  // By Bob Felice, June 17, 2007
+  // But this is my translation of what was in that
+  // article.  (It was written in C.)
+  internal static uint GetCRC16( string InString )
+    {
+    // Different Polynomials can be used.
+    uint Polynomial = 0x8408;
+    uint crc = 0xFFFF;
+    if( InString == null )
+      return ~crc;
+
+    if( InString.Length == 0 )
+      return ~crc;
+
+    uint data = 0;
+    for( int Count = 0; Count < InString.Length; Count++ )
+      {
+      data = (uint)(0xFF & InString[Count] );
+      // For each bit in the data byte.
+      for( int i = 0; i < 8; i++ )
+        {
+        if( 0 != ((crc & 0x0001) ^ (data & 0x0001)) )
+          crc = (crc >> 1) ^ Polynomial;
+        else
+          crc >>= 1;
+
+        data >>= 1;
+        }
+      }
+
+    crc = ~crc;
+    data = crc;
+    crc = (crc << 8) | ((data >> 8) & 0xFF);
+
+    // Just make sure it's 16 bits.
+    return crc & 0xFFFF;
+    }
+    */
+
+
+
+
+  public boolean contains( StrA toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    if( toFind.length() == 0 )
+      return false;
+
+    if( values.length < toFind.length() )
+      return  false;
+    
+    char firstChar = toFind.charAt( 0 );    
+    final int last = values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = values[count];
+      if( testChar != firstChar )
+        continue;
+
+      if( searchTextMatches( count,
+                              values,
+                              toFind.values ))
+        {
+        return true;
+        }
+      }
+
+    return false;
+    }
+
+
+
+  public boolean startsWith( StrA toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    if( toFind.length() == 0 )
+      return false;
+
+    if( values.length < toFind.length() )
+      return  false;
+    
+    char firstChar = toFind.charAt( 0 );    
+    char testChar = values[0];
+    if( testChar != firstChar )
+      return false;
+
+    if( searchTextMatches( 0, values, toFind.values ))
+      return true;
+
+    return false;
+    }
+
+
+
+  public boolean endsWith( StrA toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    if( toFind.length() == 0 )
+      return false;
+
+    if( values.length < toFind.length() )
+      return  false;
+    
+    int offset = (values.length - 1) -
+                 (toFind.length() - 1);
+
+    final int max = toFind.length();
+    for( int count = 0; count < max; count++ )
+      {
+      if( values[count + offset] !=
+                               toFind.values[count] )
+        return false;
+
+      }
+
+    return true;
+    }
+
+
+
+  public StrA substring( int begin, int end )
+    {
+    if( begin < 0 )
+      begin = 0;
+
+    if( end < 0 )
+      end = 0;
+
+    if( end >= values.length )
+      end = values.length - 1;
+
+    if( begin > end )
+      return new StrA( "" );
+
+    StrABld sBld = new StrABld( end );
+    for( int count = begin; count <= end; count++ )
+      sBld.appendChar( values[count] );
+
+    return sBld.toStrA();
+    }
 
 
   }
