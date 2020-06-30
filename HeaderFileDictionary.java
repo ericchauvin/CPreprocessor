@@ -32,10 +32,14 @@ public class HeaderFileDictionary
   // This should be commented out.
   private void readFileList( String fileName )
     {
-    String fileS = FileUtility.readFileToString(
+    StrA fileSA = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
+                                        false,
                                         false );
+
+    // Fix this for all StrA. ====
+    String fileS = fileSA.toString();
 
     if( fileS.length() == 0 )
       {
@@ -250,11 +254,13 @@ public class HeaderFileDictionary
 
   public void writeFile( String fileName )
     {
-    String toWrite = makeKeysValuesString();
+    // Fix this for all StrA. ====
+    StrA toWrite = new StrA( makeKeysValuesString());
 
-    FileUtility.writeStringToFile( mApp,
+    FileUtility.writeStrAToFile( mApp,
                                    fileName,
                                    toWrite,
+                                   false,
                                    false );
     }
 
@@ -270,10 +276,15 @@ public class HeaderFileDictionary
     //////
 
 
-    String fileStr = FileUtility.readFileToString(
+    StrA fileSA = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
+                                        false,
                                         false );
+
+
+    // Fix this for all StrA. ====
+    String fileStr = fileSA.toString(); 
 
     if( fileStr.length() == 0 )
       return;
