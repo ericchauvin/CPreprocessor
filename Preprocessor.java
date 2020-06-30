@@ -6,33 +6,32 @@ public class Preprocessor
   {
 
 
-  public static String PreprocessFile( MainApp mApp,
-               String fileName,
+  public static StrA PreprocessFile( MainApp mApp,
+               StrA fileName,
                MacroDictionary macroDictionary,
                HeaderFileDictionary headerDictionary )
     {
     try
     {
     String showError = "";
-    mApp.showStatusAsync( "Preprocessing file:\n" + fileName );
+    mApp.showStatusAsync( "Preprocessing file:\n" +
+                                fileName.toString() );
 
     // The first level of lexical analysis and
     // processing is inside FileUtility.java when
     // it reads the file to a string.
-    StrA resultA = FileUtility.readFileToStrA(
+    StrA result = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
                                         false,
                                         false );
 
-    // Fix this for all StrA. ====
-    String result = resultA.toString();
     if( result.trim().length() == 0 )
       {
       mApp.showStatusAsync( "Nothing in Source File." );
       // Return an empty string to stop further 
       // processing.
-      return "";
+      return new StrA( "" );
       }
 
     // This adds line number markers and also fixes
