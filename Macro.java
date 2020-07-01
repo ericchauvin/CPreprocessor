@@ -17,7 +17,8 @@
 public class Macro
   {
   private MainApp mApp;
-  private StrA key = new StrA( "" );
+  // Once the key is assigned, it can't be changed.
+  private final StrA key;
   private StrA markedUpS = new StrA( "" );
   private boolean isFunctionType = false;  
   private boolean enabled = true; // For undef.
@@ -39,19 +40,21 @@ public class Macro
 
 
 
+  public Macro( MainApp useApp, StrA keyToUse )
+    {
+    mApp = useApp;
+    enabled = true;
+    key = keyToUse;
+    markedUpS = new StrA( "" );
+    }
+
+
+
   public boolean getIsFunctionType()
     {
     return isFunctionType;
     }
-  
-
-
-  public void setMacroWithEmptyParams(
-                                     StrA keyToUse )
-    {
-    key = keyToUse;
-    markedUpS = new StrA( "" );
-    }
+ 
 
 
 
@@ -59,6 +62,7 @@ public class Macro
     {
     return enabled;
     }
+
 
 
   public void setEnabled( boolean setTo )
@@ -86,27 +90,28 @@ public class Macro
       return false;
       }
 
-    key = splitS.getStrAt( 0 );
+    StrA tempKey = splitS.getStrAt( 0 );
 
     // The parentheses is not part of the key.
-    if( key.contains( new StrA( "(" )))
+    if( tempKey.contains( new StrA( "(" )))
       {
       // This is a function-like macro because there
       // was no space before the first parentheses.
       isFunctionType = true;
 
-      StrArray lineSplitter = key.splitChar( '(' );
+      StrArray lineSplitter = tempKey.splitChar( '(' );
       int lastPart = lineSplitter.length();
 
-      key = lineSplitter.getStrAt( 0 );
+      tempKey = lineSplitter.getStrAt( 0 );
       }
 
-    if( key.length() == 0 )
+    if( tempKey.length() == 0 )
       {
       mApp.showStatusAsync( "The key length is zero." );
       return false;
       }
 
+    key = tempKey;  // Assigned once.
     return true;
     }
     catch( Exception e )
@@ -119,13 +124,13 @@ public class Macro
 
 
 
-  public boolean markUpFromString( String in,
+  public boolean markUpFromStrA( StrA in,
                      MacroDictionary macroDictionary,
                      boolean doStrict )
     {
     try
     {
-    String originalStr = in;
+    StrA originalStr = in;
     markedUpS = new StrA( in );
     // Remove the line number markers.
     markedUpS = markedUpS.removeSections( 
@@ -229,14 +234,14 @@ public class Macro
 
 
 
-  public static String replaceMacros( MainApp mApp,
-                                      String key,
-                                      String in,
-                                      MacroDictionary
+  public static StrA replaceMacros( MainApp mApp,
+                                    StrA key,
+                                    StrA in,
+                                    MacroDictionary
                                       macroDictionary )
     {
     if( in == null )
-      return "";
+      return new StrA( "" );
 
     String result = in;
     for( int count = 0; count < 100; count++ )
@@ -281,12 +286,11 @@ public class Macro
 
 
 
-  private static String replaceMacrosOnce(
-                                    MainApp mApp,
-                                    String key,
-                                    String in,
+  private static StrA replaceMacrosOnce( MainApp mApp,
+                                    StrA key,
+                                    StrA in,
                                     MacroDictionary
-                                    macroDictionary )
+                                      macroDictionary )
     {
     if( in.length() == 0 )
       return "";
@@ -465,16 +469,16 @@ public class Macro
 
 
 
-  public String getMarkedUpString()
+  public StrA getMarkedUpS()
     {
-    return markedUpS.toString();
+    return markedUpS;
     }
 
 
 
-  public String getKey()
+  public StrA getKey()
     {
-    return key.toString();
+    return key;
     }
 
 
@@ -488,12 +492,12 @@ public class Macro
 
 
 
-  public String getParamArrayValue( int where )
+  public StrA getParamArrayValue( int where )
     {
     if( paramArray == null )
-      return "";
+      return new StrA( "" );
 
-    return paramArray.getStrAt( where ).toString();
+    return paramArray.getStrAt( where );
     }
 
 
