@@ -4,8 +4,8 @@
 
 public class HeaderFileDictionaryLine
   {
-  private String[] keyArray;
-  private String[] valueArray;
+  private StrA[] keyArray;
+  private StrA[] valueArray;
   private int[] sortIndexArray;
   private int arrayLast = 0;
 
@@ -13,8 +13,8 @@ public class HeaderFileDictionaryLine
 
   public HeaderFileDictionaryLine()
     {
-    keyArray = new String[8];
-    valueArray = new String[8];
+    keyArray = new StrA[8];
+    valueArray = new StrA[8];
     sortIndexArray = new int[8];
     resetSortIndexArray();
     }
@@ -38,8 +38,8 @@ public class HeaderFileDictionaryLine
     sortIndexArray = new int[max + toAdd];
     resetSortIndexArray();
 
-    String[] tempKeyArray = new String[max + toAdd];
-    String[] tempValueArray = new String[max + toAdd];
+    StrA[] tempKeyArray = new StrA[max + toAdd];
+    StrA[] tempValueArray = new StrA[max + toAdd];
 
     for( int count = 0; count < arrayLast; count++ )
       {
@@ -91,7 +91,7 @@ public class HeaderFileDictionaryLine
 
 
 
-  private int getIndexOfKey( String key )
+  private int getIndexOfKey( StrA key )
     {
     if( arrayLast < 1 )
       return -1;
@@ -108,7 +108,7 @@ public class HeaderFileDictionaryLine
 
 
 
-  public void setValue( String key, String value )
+  public void setValue( StrA key, StrA value )
     {
     int index = getIndexOfKey( key );
     if( index >= 0 )
@@ -129,11 +129,11 @@ public class HeaderFileDictionaryLine
 
 
 
-  public String getValue( String key )
+  public StrA getValue( StrA key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
-      return "";
+      return new StrA( "" );
 
     return valueArray[index];
     }
@@ -141,7 +141,7 @@ public class HeaderFileDictionaryLine
 
 
 
-  public boolean keyExists( String key )
+  public boolean keyExists( StrA key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
@@ -153,25 +153,28 @@ public class HeaderFileDictionaryLine
 
 
 
-  public String makeKeysValuesString()
+  public StrA makeKeysValuesStrA()
     {
     if( arrayLast < 1 )
-      return "";
+      return new StrA( "" );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 * 32 );
 
     for( int count = 0; count < arrayLast; count++ )
       {
       // Using the sortIndexArray for the sorted order.
-      String oneLine = keyArray[sortIndexArray[count]] +
-                       ";" +
-                       valueArray[sortIndexArray[count]] +
-                       "\n";
+      StrA oneLine = new StrA( 
+              keyArray[sortIndexArray[count]] );
 
-      sBuilder.append( oneLine );
+      oneLine = oneLine.concat( new StrA( ";" ));
+      oneLine = oneLine.concat( 
+                valueArray[sortIndexArray[count]] );
+      oneLine = oneLine.concat( new StrA( "\n" ));
+
+      sBuilder.appendStrA( oneLine );
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
