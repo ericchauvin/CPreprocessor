@@ -2,8 +2,6 @@
 
 
 
-
-
 public class BoolExp
   {
   public static final StrA TrueA = new StrA( 
@@ -156,21 +154,22 @@ public class BoolExp
 
 
 
-  public static String evaluate( MainApp mApp,
-                                 String in )
+  public static StrA evaluate( MainApp mApp,
+                               StrA in )
     {
     if( in == null )
-      return "";
+      return new StrA( "" );
 
-    String originalExpr = in;
+    StrA originalExpr = in;
     StrA result = new StrA( in );
 
-    mApp.showStatusAsync( "\n\nEvaluate top: " + in );
+    mApp.showStatusAsync( "\n\nEvaluate top: " +
+                                      in.toString() );
 
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return "";
+        return new StrA( "" );
 
       StrA testA = new StrA( result );
       result = result.replace( ConcatAnd, And2 );
@@ -200,7 +199,7 @@ public class BoolExp
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return "";
+        return new StrA( "" );
 
       StrA testA = new StrA( result );
 
@@ -223,7 +222,7 @@ public class BoolExp
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return "";
+        return new StrA( "" );
 
       StrA testA = new StrA( result );
 
@@ -261,17 +260,17 @@ public class BoolExp
       }
 
 
-    if( !MarkupString.testBeginEnd( mApp, result.toString() ))
+    if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatusAsync( "BoolExp.evaluate() The string isn't right: " + result );
-      return "";
+      return new StrA( "" );
       }
 
     // mApp.showStatusAsync( "After true && false changes: " + result );
 
     mApp.showStatusAsync( "\n\nEvaluate bottom: " + result );
 
-    return result.toString();
+    return result;
     }
 
 
