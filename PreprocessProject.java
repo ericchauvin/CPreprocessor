@@ -243,28 +243,26 @@ Are these Cygwin predefined macros?
     // can trivially be built on any system."
 
     // TARGET_ARCH_zero, TARGET_ARCH_arm,
-    Macro macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA( 
-                     "TARGET_ARCH_x86" ));
-    macroDictionary.setMacro( "TARGET_ARCH_x86",
+    Macro macro = new Macro( mApp, new StrA( 
+                           "TARGET_ARCH_x86" ));
+
+    macroDictionary.setMacro( macro.getKey(),
                                 macro );
 
 
     // Intel x86 is Little Endian.
     // __IEEE_BIG_ENDIAN
-    macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA(
+    macro = new Macro( mApp, new StrA(
                           "__IEEE_LITTLE_ENDIAN" ));
-    macroDictionary.setMacro( "__IEEE_LITTLE_ENDIAN",
+    macroDictionary.setMacro( macro.getKey(),
                                 macro );
 
     // I want to use the Cygwin compiler to compile
     // this after it is preprocessed here.
-    macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA(
+    macro = new Macro( mApp, new StrA(
                                      "__CYGWIN__" ));
-    macroDictionary.setMacro( "__CYGWIN__",
-                                macro );
+    macroDictionary.setMacro( macro.getKey(),
+                                     macro );
 
 
     // Gamma is Hotspot internal test code.
@@ -273,16 +271,14 @@ Are these Cygwin predefined macros?
  
     // __cplusplus
      
-    macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA(
+    macro = new Macro( mApp, new StrA(
                                    "__x86_64__" ));
-    macroDictionary.setMacro( "__x86_64__",
-                                macro );
+    macroDictionary.setMacro( macro.getKey(),
+                                     macro );
 
-    macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA(
+    macro = new Macro( mApp, new StrA(
                                 "__STRICT_ANSI__" ));
-    macroDictionary.setMacro( "__STRICT_ANSI__",
+    macroDictionary.setMacro( macro.getKey(),
                                 macro );
 
     // JIT compilers.    
@@ -290,10 +286,10 @@ Are these Cygwin predefined macros?
     // C2 compiler.  Called opto?  Higher
     // optimization.
 
-    macro = new Macro( mApp );
-    macro.setMacroWithEmptyParams( new StrA(
+    macro = new Macro( mApp, new StrA(
                                      "COMPILER1" ));
-    macroDictionary.setMacro( "COMPILER1", macro );
+    macroDictionary.setMacro( macro.getKey(),
+                                             macro );
 
     // .pch is Precompiled header.
     // or  .gch for Gnu.  Gnu compiled header.
