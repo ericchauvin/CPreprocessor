@@ -7,12 +7,10 @@ public class StrArray
   private StrA[] valueArray;
   private int[] sortIndexArray;
   private int arrayLast = 0;
-  private StrABld sBld;
 
 
   public StrArray()
     {
-    sBld = new StrABld( 1024 * 64 );
     valueArray = new StrA[8];
     sortIndexArray = new int[8];
     resetSortIndexArray();
@@ -35,7 +33,7 @@ public class StrArray
   private void resetSortIndexArray()
     {
     // It's not to arrayLast.  It's to the whole length.
-    int max = sortIndexArray.length;
+    final int max = sortIndexArray.length;
     for( int count = 0; count < max; count++ )
       sortIndexArray[count] = count;
 
@@ -80,7 +78,8 @@ public class StrArray
     // This returns true if it swaps anything.
 
     boolean switched = false;
-    for( int count = 0; count < (arrayLast - 1); count++ )
+    final int last = arrayLast - 1;
+    for( int count = 0; count < last; count++ )
       {
       // compareTo() uses case.
       if( valueArray[count].compareToIgnoreCase(
@@ -109,6 +108,7 @@ public class StrArray
 
 
 
+  // Gets it in sorted order.
   public StrA getStrAt( int where )
     {
     if( where < 0 )
@@ -117,7 +117,7 @@ public class StrArray
     if( where >= arrayLast )
       return new StrA( "" );
 
-    return valueArray[where];
+    return valueArray[sortIndexArray[where]];
     }
 
 
