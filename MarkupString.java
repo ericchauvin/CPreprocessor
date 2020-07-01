@@ -5,33 +5,33 @@
 public class MarkupString
   {
 
-  public static String MarkItUp( MainApp mApp,
-                                    String result )
+  public static StrA MarkItUp( MainApp mApp,
+                                    StrA result )
 
     {
     result = markStrings( mApp, result );
     if( !testMarkers( result, "markStrings() at top.", mApp ))
-      return "";
+      return new StrA( "" );
 
     result = markCharacters( mApp, result );
     if( !testMarkers( result, "markCharacters().", mApp ))
-      return "";
+      return new StrA( "" );
 
     result = markIdentifiers( mApp, result );
     if( !testMarkers( result, "markIdentifiers().", mApp ))
-      return "";
+      return new StrA( "" );
 
     result = markNumbers( result );
     if( !testMarkers( result, "markNumbers().", mApp ))
-      return "";
+      return new StrA( "" );
 
     result = markOperators( result );
     if( !testMarkers( result, "markOperators().", mApp ))
-      return "";
+      return new StrA( "" );
 
     result = removeOutsideWhiteSpace( result );
     if( !testMarkers( result, "removeOutsideWhiteSpace().", mApp ))
-      return "";
+      return new StrA( "" );
 
     // mApp.showStatus( result );
     // mApp.showStatus( " " );
@@ -40,8 +40,8 @@ public class MarkupString
 
 
 
-  public static boolean testMarkers( String testS, 
-                                     String errorS,
+  public static boolean testMarkers( StrA testS, 
+                                     StrA errorS,
                                      MainApp mApp )
     {
     if( testS.length() == 0 )
@@ -50,12 +50,13 @@ public class MarkupString
       return false;
       }
 
-    if( testS.contains( "" + Markers.ErrorPoint ))
+    if( testS.contains( new StrA( 
+                      "" + Markers.ErrorPoint )))
       {
       mApp.showStatusAsync( " " );
       mApp.showStatusAsync( "There was an error after: " + errorS );
       mApp.showStatusAsync( " " );
-      mApp.showStatusAsync( testS );
+      mApp.showStatusAsync( testS.toString() );
       return false;
       }
 
@@ -71,14 +72,14 @@ public class MarkupString
 
 
 
-  private static String markStrings( MainApp mApp,
-                                     String in )
+  private static StrA markStrings( MainApp mApp,
+                                     StrA in )
     {
     // A wide character string literal looks
     // like:  L"This string." with the L in front of
     // it.
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld();
 
     // Notice the double slash in front of the quote
     // character here at the end of the string:
@@ -149,10 +150,10 @@ public class MarkupString
           }
         }
 
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
 
     result = result.replace(
                      Character.toString(
@@ -174,8 +175,8 @@ public class MarkupString
 
 
 
-  private static String markCharacters( MainApp mApp,
-                                        String in )
+  private static StrA markCharacters( MainApp mApp,
+                                        StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
@@ -278,8 +279,8 @@ public class MarkupString
 
 
 
-  private static String markIdentifiers( MainApp mApp,
-                                         String in )
+  private static StrA markIdentifiers( MainApp mApp,
+                                       StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
@@ -415,7 +416,7 @@ public class MarkupString
 // See if it's valid.
 // float a = Float.parseFloat( SomeString );
 
-  private static String markNumbers( String in )
+  private static StrA markNumbers( StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
@@ -597,7 +598,7 @@ public class MarkupString
     // +=, -=, *=, /=,
     // *** Pointer to a pointer to a... indefintely.
 
-  private static String markOperators( String in )
+  private static StrA markOperators( StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
@@ -736,7 +737,7 @@ public class MarkupString
 
 
   public static boolean testBeginEnd( MainApp mApp,
-                                      String in )
+                                      StrA in )
     {
     if( in.length() == 0 )
       return true;
@@ -780,7 +781,7 @@ public class MarkupString
 
 
 
-  public static int countEndMarkers( String in )
+  public static int countEndMarkers( StrA in )
     {
     int howMany = 0;
 
@@ -797,8 +798,7 @@ public class MarkupString
 
 
 
-  public static String removeOutsideWhiteSpace(
-                                            String in )
+  public static StrA removeOutsideWhiteSpace( StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
 
