@@ -69,36 +69,36 @@
 
 
 
-  public static String removeAllMarkers( String in )
+  public static StrA removeAllMarkers( StrA in )
     {
     if( in == null )
-      return "";
+      return new StrA( "" );
 
-    int max = in.length();
+    final int max = in.length();
     if( max == 0 )
-      return "";
+      return new StrA( "" );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( in.length());
     for( int count = 0; count < max; count++ )
       {
       char testChar = in.charAt( count );
       if( isMarker( testChar ))
         continue;
 
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
 
-  public static int countMarkers( String in )
+  public static int countMarkers( StrA in )
     {
     if( in == null )
       return 0;
 
-    int max = in.length();
+    final int max = in.length();
     if( max == 0 )
       return 0;
 
