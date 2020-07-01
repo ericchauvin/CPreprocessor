@@ -1,7 +1,6 @@
 // Copyright Eric Chauvin 2020.
 
-// Need a contains() with no regular expression.
-// containsChar() too.
+// containsChar()
 
 
 
@@ -747,6 +746,23 @@ public class StrA
     }
     */
 
+
+
+  public boolean containsChar( char toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    final int last = values.length;
+    for( int count = 0; count < last; count++ )
+      {
+      if( toFind == values[count] )
+        return true;
+
+      }
+
+    return false;
+    }
 
 
 
