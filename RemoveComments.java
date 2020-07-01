@@ -24,13 +24,13 @@ public class RemoveComments
 
   public static StrA removeAllComments( MainApp mApp,
                                      StrA in,
-                                     String fileName )
+                                     StrA fileName )
     {
     String showError = "";
     StrA result = in;
 
-    File file = new File( fileName );
-    fileName = file.getName();
+    File file = new File( fileName.toString() );
+    fileName = new StrA( file.getName());
     // String pathName = file.getPath();
     // showStatus( "Path name picked is: " + pathName );
 
@@ -184,8 +184,9 @@ public class RemoveComments
 
 
 
-  private static String removeStarComments( MainApp mApp,
-                                    String in )
+  private static StrA removeStarComments(
+                                      MainApp mApp,
+                                      StrA in )
     {
     // This ignores Markers.Begin, Markers.End
     // and any other markers.
@@ -312,9 +313,9 @@ public class RemoveComments
 
 
 
-  private static String removeAllDoubleSlashComments(
+  private static StrA removeAllDoubleSlashComments(
                                        MainApp mApp,
-                                       String in )
+                                       StrA in )
     {
     StringBuilder sBuilder = new StringBuilder();
     String[] splitS = in.split( "\n" );
@@ -341,15 +342,15 @@ public class RemoveComments
 
 
 
-  private static String removeDoubleSlashComments(
+  private static StrA removeDoubleSlashComments(
                                         MainApp mApp,
-                                        String line )
+                                        StrA line )
     {
     // This line with the two back slashes in the
     // URL should not be considered to be a comment.
     //     GetPage( "https://gcc.gnu.org/" );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld();
 
     line = line.replace( "\\\\",
                          "" + Markers.EscapedSlash );
