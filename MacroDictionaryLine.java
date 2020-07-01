@@ -9,10 +9,11 @@
 public class MacroDictionaryLine
   {
   private MainApp mApp;
-  private String[] keyArray;
+  private StrA[] keyArray;
   private Macro[] valueArray;
   private int[] sortIndexArray;
   private int arrayLast = 0;
+
 
 
   private MacroDictionaryLine()
@@ -24,7 +25,7 @@ public class MacroDictionaryLine
   public MacroDictionaryLine( MainApp appToUse )
     {
     mApp = appToUse;
-    keyArray = new String[8];
+    keyArray = new StrA[8];
     valueArray = new Macro[8];
     sortIndexArray = new int[8];
     resetSortIndexArray();
@@ -35,7 +36,7 @@ public class MacroDictionaryLine
   private void resetSortIndexArray()
     {
     // It's not to arrayLast.  It's to the whole length.
-    int max = sortIndexArray.length;
+    final int max = sortIndexArray.length;
     for( int count = 0; count < max; count++ )
       sortIndexArray[count] = count;
 
@@ -49,7 +50,7 @@ public class MacroDictionaryLine
     sortIndexArray = new int[max + toAdd];
     resetSortIndexArray();
 
-    String[] tempKeyArray = new String[max + toAdd];
+    StrA[] tempKeyArray = new StrA[max + toAdd];
     Macro[] tempValueArray = new Macro[max + toAdd];
 
     for( int count = 0; count < max; count++ )
@@ -102,7 +103,7 @@ public class MacroDictionaryLine
 
 
 
-  private int getIndexOfKey( String key )
+  private int getIndexOfKey( StrA key )
     {
     if( arrayLast < 1 )
       return -1;
@@ -119,7 +120,7 @@ public class MacroDictionaryLine
 
 
 
-  public void setMacro( String key, Macro value )
+  public void setMacro( StrA key, Macro value )
     {
     // This sets the macro to the new value whether
     // it's already there or not, and whether it's
@@ -144,7 +145,7 @@ public class MacroDictionaryLine
 
 
 
-  public void setMacroEnabled( String key,
+  public void setMacroEnabled( StrA key,
                                boolean setTo )
     {
     int index = getIndexOfKey( key );
@@ -156,7 +157,7 @@ public class MacroDictionaryLine
 
 
 
-  public Macro getMacro( String key )
+  public Macro getMacro( StrA key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
@@ -168,7 +169,7 @@ public class MacroDictionaryLine
 
 
 
-  public boolean getMacroEnabled( String key )
+  public boolean getMacroEnabled( StrA key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
@@ -179,7 +180,7 @@ public class MacroDictionaryLine
 
 
 
-  public boolean keyExists( String key )
+  public boolean keyExists( StrA key )
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
@@ -192,7 +193,7 @@ public class MacroDictionaryLine
 
 
 /*
-  public String makeKeysValuesString()
+  public StrA makeKeysValuesString()
     {
     if( arrayLast < 1 )
       return "";
