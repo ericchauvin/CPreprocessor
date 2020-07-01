@@ -22,7 +22,6 @@ public class HeaderFileDictionary
   public HeaderFileDictionary( MainApp useApp )
     {
     mApp = useApp;
-
     lineArray = new HeaderFileDictionaryLine[keySize];
     }
 
@@ -44,6 +43,7 @@ public class HeaderFileDictionary
 
     fileListArray = fileS.splitChar( '\n' );
     }
+
 
 
   private StrA getFileFromList( StrA key )
@@ -84,7 +84,7 @@ public class HeaderFileDictionary
                           key + "\n";
                           
       mApp.showStatusAsync( showS );
-      return "";
+      return new StrA( "" );
       }
 
     return result;
@@ -136,7 +136,7 @@ public class HeaderFileDictionary
     // the two letters az unless the space character
     // is added.
     if( keyLength == 1 )
-      key = key + " ";
+      key = key.concat( new StrA( " " ));
 
     int one = letterToIndexNumber( key.charAt( 0 ));
     int tempTwo = letterToIndexNumber( key.charAt( 1 ));
@@ -182,17 +182,17 @@ public class HeaderFileDictionary
   public StrA getValue( StrA key )
     {
     if( key == null )
-      return "";
+      return new StrA( "" );
 
     key = key.trim();
     if( key.length() < 1 )
-      return "";
+      return new StrA( "" );
 
     int index = getIndex( key );
     if( lineArray[index] == null )
       return getFileFromList( key );
 
-    String result = lineArray[index].getValue( key );
+    StrA result = lineArray[index].getValue( key );
     if( result.length() == 0 )
       return getFileFromList( key );
 
@@ -216,39 +216,38 @@ public class HeaderFileDictionary
 
 
 
-  public StrA makeKeysValuesStr()
+  public StrA makeKeysValuesStrA()
     {
     try
     {
     sort();
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 * 64 );
 
     for( int count = 0; count < keySize; count++ )
       {
       if( lineArray[count] == null )
         continue;
 
-      sBuilder.append( lineArray[count].
-                            makeKeysValuesString());
+      sBuilder.appendStrA( lineArray[count].
+                            makeKeysValuesStrA());
 
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
     catch( Exception e )
       {
       mApp.showStatusAsync( "Exception in HeaderFilesDictionary.makeKeysValuesString():\n" );
       mApp.showStatusAsync( e.getMessage() );
-      return "";
+      return new StrA( "" );
       }
     }
 
 
   public void writeFile( StrA fileName )
     {
-    // Fix this for all StrA. ====
-    StrA toWrite = new StrA( makeKeysValuesString());
+    StrA toWrite = makeKeysValuesStrA();
 
     FileUtility.writeStrAToFile( mApp,
                                    fileName,
@@ -262,39 +261,35 @@ public class HeaderFileDictionary
   public void readFile( StrA fileName )
     {
     ////////
-    String tempFileList = 
-              "\\Eric\\CPreprocessor\\FileList.txt";
+    StrA tempFileList = new StrA( 
+              "\\Eric\\CPreprocessor\\FileList.txt" );
 
     readFileList( tempFileList );
     //////
 
 
-    StrA fileSA = FileUtility.readFileToStrA(
+    StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
                                         false,
                                         false );
 
-
-    // Fix this for all StrA. ====
-    String fileStr = fileSA.toString(); 
-
-    if( fileStr.length() == 0 )
+    if( fileS.length() == 0 )
       return;
    
-    String[] fileLines = fileStr.split( "\n" );
-    int last = fileLines.length;
+    StrArray fileLines = fileS.splitChar( '\n' );
+    final int last = fileLines.length();
     for( int count = 0; count < last; count++ )
       {
-      String line = fileLines[count];
+      StrA line = fileLines.getStrAt( count );
       // mApp.showStatusAsync( line );
-      String[] parts = line.split( ";" );
-      if( parts.length < 2 )
+      StrArray parts = line.splitChar( ';' );
+      if( parts.length() < 2 )
         {
         mApp.showStatusAsync( "This line has less than two parts.\n" + line );
         }
 
-      setValue( parts[0], parts[1] );
+      setValue( parts.getStrAt( 0 ), parts.getStrAt( 1 ));
       }
     }
 
