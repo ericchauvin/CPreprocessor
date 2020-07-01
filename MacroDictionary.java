@@ -88,37 +88,37 @@ public class MacroDictionary
 
 
 
-  private boolean isBadKey( String key )
+  private boolean isBadKey( StrA key )
     {
     // C++ named operators.
-    if( key.equals( "and" ))
+    if( key.equals( new StrA( "and" )))
       return true;
 
-    if( key.equals( "and_eq" ))
+    if( key.equals( new StrA( "and_eq" )))
       return true;
 
-    if( key.equals( "bitand" ))
+    if( key.equals( new StrA( "bitand" )))
       return true;
 
-    if( key.equals( "bitor" ))
+    if( key.equals( new StrA( "bitor" )))
       return true;
 
-    if( key.equals( "compl" ))
+    if( key.equals( new StrA( "compl" )))
       return true;
 
-    if( key.equals( "not" ))
+    if( key.equals( new StrA( "not" )))
       return true;
 
-    if( key.equals( "not_eq" ))
+    if( key.equals( new StrA( "not_eq" )))
       return true;
 
-    if( key.equals( "or" ))
+    if( key.equals( new StrA( "or" )))
       return true;
 
-    if( key.equals( "or_eq" ))
+    if( key.equals( new StrA( "or_eq" )))
       return true;
 
-    if( key.equals( "xor" ))
+    if( key.equals( new StrA( "xor" )))
       return true;
 
     return false;
@@ -126,7 +126,7 @@ public class MacroDictionary
 
 
 
-  private int getIndex( String key )
+  private int getIndex( StrA key )
     {
     // This index needs to be in sorted order.
 
@@ -138,7 +138,7 @@ public class MacroDictionary
     // the two letters az unless the space character
     // is added.
     if( keyLength == 1 )
-      key = key + " ";
+      key = key.concat( new StrA( " " ));
 
     int one = letterToIndexNumber( key.charAt( 0 ));
     int tempTwo = letterToIndexNumber( key.charAt( 1 ));
@@ -152,7 +152,7 @@ public class MacroDictionary
 
 
 
-  public void setMacro( String key, Macro value )
+  public void setMacro( StrA key, Macro value )
     {
     try
     {
@@ -184,7 +184,7 @@ public class MacroDictionary
 
 
 
-  public void setMacroEnabled( String key,
+  public void setMacroEnabled( StrA key,
                                boolean setTo )
     {
     try
@@ -213,7 +213,7 @@ public class MacroDictionary
 
 
 
-  public Macro getMacro( String key )
+  public Macro getMacro( StrA key )
     {
     if( key == null )
       return null;
@@ -231,7 +231,7 @@ public class MacroDictionary
 
 
 
-  public boolean getMacroEnabled( String key )
+  public boolean getMacroEnabled( StrA key )
     {
     if( key == null )
       return false;
@@ -264,7 +264,7 @@ public class MacroDictionary
 
 
 /*
-  public String makeKeysValuesString()
+  public StrA makeKeysValuesStrA()
     {
     try
     {
@@ -296,7 +296,7 @@ public class MacroDictionary
 
 
 
-  public boolean keyExists( String key )
+  public boolean keyExists( StrA key )
     {
     if( key == null )
       return false;
@@ -315,7 +315,7 @@ public class MacroDictionary
 
 
   public boolean setNewMacro( boolean dostrict,
-                              String key,
+                              StrA key,
                               Macro macro )
     {
     if( dostrict )
@@ -323,10 +323,10 @@ public class MacroDictionary
       if( keyExists( key ))
         {
         mApp.showStatusAsync( "Macro key already exists: " + key );
-        mApp.showStatusAsync( "markedUpS: " + macro.getMarkedUpString() );
+        mApp.showStatusAsync( "markedUpS: " + macro.getMarkedUpS() );
         Macro showMac = getMacro( key );
         mApp.showStatusAsync( "Original markedUpS: " +
-                            showMac.getMarkedUpString());
+                            showMac.getMarkedUpS());
         return false;
         }
       }
