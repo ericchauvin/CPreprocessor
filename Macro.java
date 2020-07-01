@@ -28,15 +28,17 @@ public class Macro
 
   private Macro()
     {
+    key = new StrA( "" );
     }
 
 
-
+/*
   public Macro( MainApp useApp )
     {
     mApp = useApp;
     enabled = true;
     }
+*/
 
 
 
@@ -46,6 +48,58 @@ public class Macro
     enabled = true;
     key = keyToUse;
     markedUpS = new StrA( "" );
+    }
+
+
+
+  public Macro( MainApp useApp, StrA in,
+                                boolean notUsed )
+    {
+    mApp = useApp;
+    enabled = true;
+    markedUpS = new StrA( "" );
+    isFunctionType = false;
+    key = getKeyForConstructor( in );
+    }
+
+
+
+  private StrA getKeyForConstructor( StrA in )
+    {
+    StrA line = in.removeSections( Markers.Begin,
+                                        Markers.End );
+
+    line = line.trim();
+    StrArray splitS = line.splitChar( ' ' );
+    final int last = splitS.length();
+    if( last == 0 )
+      {
+      mApp.showStatusAsync( "There is no key." );
+      return new StrA( "" );
+      }
+
+    StrA tempKey = splitS.getStrAt( 0 );
+
+    // The parentheses is not part of the key.
+    if( tempKey.containsChar( '(' ))
+      {
+      // This is a function-like macro because there
+      // was no space before the first parentheses.
+      isFunctionType = true;
+
+      StrArray lineSplitter = tempKey.splitChar( '(' );
+      int lastPart = lineSplitter.length();
+
+      tempKey = lineSplitter.getStrAt( 0 );
+      }
+
+    if( tempKey.length() == 0 )
+      {
+      mApp.showStatusAsync( "The key length is zero." );
+      return new StrA( "" );
+      }
+
+    return tempKey;
     }
 
 
@@ -72,58 +126,6 @@ public class Macro
 
 
 
-  public boolean setKeyFromStrA( StrA in )
-    {
-    try
-    {
-    isFunctionType = false;
-
-    StrA line = in.removeSections( Markers.Begin,
-                                        Markers.End );
-
-    line = line.trim();
-    StrArray splitS = line.splitChar( ' ' );
-    int last = splitS.length();
-    if( last == 0 )
-      {
-      mApp.showStatusAsync( "There is no key in the directive." );
-      return false;
-      }
-
-    StrA tempKey = splitS.getStrAt( 0 );
-
-    // The parentheses is not part of the key.
-    if( tempKey.contains( new StrA( "(" )))
-      {
-      // This is a function-like macro because there
-      // was no space before the first parentheses.
-      isFunctionType = true;
-
-      StrArray lineSplitter = tempKey.splitChar( '(' );
-      int lastPart = lineSplitter.length();
-
-      tempKey = lineSplitter.getStrAt( 0 );
-      }
-
-    if( tempKey.length() == 0 )
-      {
-      mApp.showStatusAsync( "The key length is zero." );
-      return false;
-      }
-
-    key = tempKey;  // Assigned once.
-    return true;
-    }
-    catch( Exception e )
-      {
-      mApp.showStatusAsync( "Exception in setKeyFromString()." );
-      mApp.showStatusAsync( e.getMessage() );
-      return false;
-      }
-    }
-
-
-
   public boolean markUpFromStrA( StrA in,
                      MacroDictionary macroDictionary,
                      boolean doStrict )
@@ -131,34 +133,33 @@ public class Macro
     try
     {
     StrA originalStr = in;
-    markedUpS = new StrA( in );
+    markedUpS = in;
     // Remove the line number markers.
     markedUpS = markedUpS.removeSections( 
                                         Markers.Begin,
                                         Markers.End );
 
-    markedUpS = new StrA( MarkupString.MarkItUp( mApp,
-                               markedUpS.toString()));
+    markedUpS = MarkupString.MarkItUp( mApp,
+                              markedUpS );
 
     StrArray splitS = markedUpS.splitChar( 
                                      Markers.Begin );
 
-    int last = splitS.length();
+    final int last = splitS.length();
     if( last < 2 )
       {
       mApp.showStatusAsync( "This macro has no key marked up." );
       return false;
       }
       
-    String testNothing = splitS.getStrAt( 0 ).
-                                         toString();
+    StrA testNothing = splitS.getStrAt( 0 );
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
       return false;
       }
 
-    String testKey = splitS.getStrAt( 1 ).toString();
+    StrA testKey = splitS.getStrAt( 1 );
     // It would have at least 2 marker characters.
     if( testKey.length() < 2 )
       {
@@ -185,15 +186,16 @@ public class Macro
       return false;
       }
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
     for( int count = 2; count < last; count++ )
       {
-      sBuilder.append( "" + Markers.Begin  +
-                            splitS.getStrAt( count ));
+      sBuilder.appendStrA( new StrA( "" +
+                            Markers.Begin  +
+                            splitS.getStrAt( count )));
       }
 
     // Put the paramters back, but leave the key out.
-    markedUpS = new StrA( sBuilder.toString());
+    markedUpS = sBuilder.toStrA();
     // If there are no parameters then markedUpS
     // would have zero length.
     // mApp.showStatusAsync( "markedUpS after toString: " + markedUpS );
@@ -215,10 +217,10 @@ public class Macro
     // If there are any parameters.
     if( markedUpS.length() > 0 )
       {
-      markedUpS = new StrA( replaceMacros( mApp,
-                                 key.toString(),
-                                 markedUpS.toString(),
-                                 macroDictionary ));
+      markedUpS = replaceMacros( mApp,
+                                 key,
+                                 markedUpS,
+                                 macroDictionary );
 
       }
 
@@ -243,7 +245,7 @@ public class Macro
     if( in == null )
       return new StrA( "" );
 
-    String result = in;
+    StrA result = in;
     for( int count = 0; count < 100; count++ )
       {
       if( count > 10 )
@@ -255,7 +257,7 @@ public class Macro
         return result;
         }
 
-      String testS = result;
+      StrA testS = result;
 
       // If this is being called from outside,
       // when a macro is not being created.
@@ -293,9 +295,9 @@ public class Macro
                                       macroDictionary )
     {
     if( in.length() == 0 )
-      return "";
+      return new StrA( "" );
 
-    if( !in.contains( "" + Markers.Begin ))
+    if( !in.containsChar( Markers.Begin ))
       {
       mApp.showStatusAsync( "\n\nNo begin marker in replaceMacrosOnce(): " + in );
       return in;
@@ -303,36 +305,37 @@ public class Macro
 
     // mApp.showStatusAsync( "\n\nIn: " + in );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
-    String[] splitS = in.split( "" + Markers.Begin );
-    int last = splitS.length;
+    StrArray splitS = in.splitChar( Markers.Begin );
+    final int last = splitS.length();
     if( last == 0 )
       {
       mApp.showStatusAsync( "Last is zero in replaceMacrosOnce()." );
-      return "";
+      return new StrA( "" );
       } 
       
-    String testNothing = splitS[0];
+    StrA testNothing = splitS.getStrAt( 0 );
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
-      return "";
+      return new StrA( "" );
       }
 
     for( int count = 1; count < last; count++ )
       {
-      String partS = splitS[count];
+      StrA partS = splitS.getStrAt( count );
       // It would have at least two markers.
       if( partS.length() < 2 )
         continue;
 
-      String originalPartS = partS;
+      StrA originalPartS = partS;
       char firstChar = partS.charAt( 0 ); 
       if( firstChar != Markers.TypeIdentifier )
         {
-        sBuilder.append( "" + Markers.Begin +
-                                     originalPartS );
+        sBuilder.appendStrA( new StrA( "" +
+                                     Markers.Begin +
+                                     originalPartS ));
         continue;
         }
 
@@ -351,7 +354,7 @@ public class Macro
           if( key.equals( replaceMacro.getKey()))
             {
             mApp.showStatusAsync( "This is a self-referential macro: " + key );
-            return "";
+            return new StrA( "" );
             }
           }
 
@@ -359,23 +362,25 @@ public class Macro
           {
           // Ignore it here, since it's done
           // somewhere else.
-          sBuilder.append( "" + Markers.Begin +
-                                       originalPartS );
+          sBuilder.appendStrA( new StrA( "" +
+                                      Markers.Begin +
+                                      originalPartS ));
           continue;
           }
 
         // The whole string can include many markers.
-        sBuilder.append( replaceMacro.
-                                getMarkedUpString());
+        sBuilder.appendStrA( replaceMacro.
+                                getMarkedUpS());
 
         continue;
         }
 
-      sBuilder.append( "" + Markers.Begin +
-                                    originalPartS );
+      sBuilder.appendStrA( new StrA( "" +
+                                    Markers.Begin +
+                                    originalPartS ));
       }
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
 
     // It can replace a macro with an empty string,
     // so it could be length zero.
@@ -383,11 +388,12 @@ public class Macro
     if( result.length() > 0 )
       {
       if( !MarkupString.testMarkers( result, 
-                                     "replaceMacros().",
-                                     mApp ))
+                                 new StrA(
+                                 "replaceMacros()." ),
+                                 mApp ))
         {
         mApp.showStatusAsync( "testMarkers() returned false." );
-        return "";
+        return new StrA( "" );
         }
       }
 
