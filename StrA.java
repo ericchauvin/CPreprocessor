@@ -3,12 +3,17 @@
 // Need a contains() with no regular expression.
 // containsChar() too.
 
-// substring(int beginIndex, int endIndex)
-
 
 
 public class StrA
   {
+  // Since values is final, you can do things like
+  // StrA twoS = oneS;
+  // And the variable oneS can be assigned to
+  // something else later, but it doesn't change
+  // twoS.
+
+
   private final char[] values;
 
 
