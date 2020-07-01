@@ -41,7 +41,7 @@ public class Preprocessor
                                            fileName );
 
     if( result.length() == 0 )
-      return "";
+      return new StrA( "" );
 
     if( !MarkupString.testMarkers( result, 
                                   "RemoveAllComments()",
