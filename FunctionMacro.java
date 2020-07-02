@@ -91,7 +91,7 @@ public class FunctionMacro
           }
 
         isInFunction = true;
-        functionBuilder.setLength( 0 );
+        functionBuilder.clear();
         functionBuilder.appendStrA( linePart );
         continue;
         }
@@ -143,7 +143,7 @@ public class FunctionMacro
                                   replaceMacro );
       
           lineBuilder.appendStrA( fReturned );
-          functionBuilder.setLength( 0 );
+          functionBuilder.clear();
           continue;
           }
         }
@@ -250,7 +250,7 @@ public class FunctionMacro
           {
           paramArray.append( new StrA( paramBuilder.
                                         toString()));
-          paramBuilder.setLength( 0 );
+          paramBuilder.clear();
           continue;
           }
         }
