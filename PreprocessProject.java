@@ -51,7 +51,7 @@ public class PreprocessProject
 
     // String mainDir = "C:\\jdk7hotspotmaster\\src\\share\\vm\\code\\";
     // String mainDir = "C:\\gccmaster\\gcc\\";
-    String outDir = "C:\\PreprocessOut\\";
+    StrA outDir = new StrA( "C:\\PreprocessOut\\" );
 
     StrA projectFileName = new StrA( 
           "\\Eric\\CPreprocessor\\ProjectFiles.txt" );
@@ -87,8 +87,8 @@ public class PreprocessProject
     for( int count = 0; count < max; count++ )
       {
       // For testing:
-      // if( count > 2 )
-        // break;
+      if( count > 2 )
+        break;
 
       StrA fileName = fileArray.getStrAt( count );
       fileName = fileName.trim();
@@ -98,7 +98,7 @@ public class PreprocessProject
       if( fileName.startsWith( new StrA( "//" )))
         continue;
 
-      StrA outFileName = new StrA( outDir );
+      StrA outFileName = outDir;
       outFileName.concat( Utility.getFileName(
                           fileName, '\\' ));
 
@@ -297,9 +297,10 @@ Are these Cygwin predefined macros?
 
 
 
+
   private void listHeaderFiles()
     {
-    // String dir = "\\jdk7hotspotmaster\\src";
+    String dir = "\\jdk7hotspotmaster\\src";
     // String dir = "\\cygwin64\\usr\\include";
     // String dir = "\\cygwin64\\usr\\include\\sys";
     // String dir = "\\cygwin64\\usr\\include\\machine";
@@ -310,7 +311,7 @@ Are these Cygwin predefined macros?
 
     // String dir = "\\EricFiles\\WindowsSdk10\\ucrt";
     // String dir = "\\EricFiles\\WindowsSdk10\\um";
-    String dir = "\\EricFiles\\WindowsSdk10\\shared";
+    // String dir = "\\EricFiles\\WindowsSdk10\\shared";
 
 
     // Add it to the semicolon delimited dictionary file.
