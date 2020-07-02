@@ -44,10 +44,10 @@ public class Preprocessor
       return new StrA( "" );
 
     if( !MarkupString.testMarkers( result, 
-                                  "RemoveAllComments()",
+                   new StrA( "RemoveAllComments()" ),
                                   mApp ))
       {
-      return "";
+      return new StrA( "" );
       }
     
     PreProcessLines procLines = new
@@ -58,7 +58,7 @@ public class Preprocessor
     result = procLines.mainFileLoop( result, fileName );
 
     if( result.length() == 0 )
-      return "";
+      return new StrA( "" );
 
 
 
@@ -79,7 +79,7 @@ public class Preprocessor
       {
       mApp.showStatusAsync( "Exception in PreprocessFile()." );
       mApp.showStatusAsync( e.getMessage() );
-      return "";
+      return new StrA( "" );
       }
     }
 
