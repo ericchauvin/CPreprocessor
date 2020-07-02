@@ -66,7 +66,7 @@ public class Preprocessor
        //                                 result );
 
 
-    // mApp.showStatusAsync( result );
+    mApp.showStatusAsync( result.toString() );
     mApp.showStatusAsync( " " );
     // mApp.showStatusAsync( "Done preprocessing:" );
     // mApp.showStatus( fileName );
