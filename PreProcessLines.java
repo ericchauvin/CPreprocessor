@@ -9,6 +9,48 @@ public class PreProcessLines
   private HeaderFileDictionary headerDictionary;
   private BoolLevelArray boolLevArray;
 
+    // #line
+
+    // #warning
+
+  private static final StrA DirectiveError =
+                                new StrA( "error" );
+
+  private static final StrA DirectiveDefine =
+                                new StrA( "define" );
+
+  private static final StrA DirectiveUndef =
+                                new StrA( "undef" );
+
+    // #include_next is a GNU extension.
+    // It means to include the next file with
+    // the same name.  Next in the search path for
+    // include files.
+  private static final StrA DirectiveInclude =
+                             new StrA( "include" );
+
+  private static final StrA DirectivePragma =
+                             new StrA( "pragma" );
+
+  private static final StrA DirectiveIf =
+                                new StrA( "if" );
+
+  private static final StrA DirectiveIfdef =
+                                  new StrA( "ifdef" );
+
+  private static final StrA DirectiveIfndef = 
+                              new StrA( "ifndef" );
+
+  private static final StrA DirectiveElse =
+                              new StrA( "else" );
+
+  private static final StrA DirectiveElif =
+                              new StrA( "elif" );
+
+  private static final StrA DirectiveEndif =
+                             new StrA( "endif" );
+
+
 
 
   private PreProcessLines()
@@ -30,47 +72,50 @@ public class PreProcessLines
 
 
 
-  private boolean isValidDirective( String in )
+  private boolean isValidDirective( StrA in )
     {
+    // These strA values should be constants.
+    // Don't create them each time.
+
     // #line
 
     // #warning
 
-    if( in.equals( "error" ))
+    if( in.equals( DirectiveError ))
       return true;
 
-    if( in.equals( "define" ))
+    if( in.equals( DirectiveDefine ))
       return true;
 
-    if( in.equals( "undef" ))
+    if( in.equals( DirectiveUndef ))
       return true;
 
     // #include_next is a GNU extension.
     // It means to include the next file with
     // the same name.  Next in the search path for
     // include files.
-    if( in.equals( "include" ))
+    if( in.equals( DirectiveInclude ))
       return true;
 
-    if( in.equals( "pragma" ))
+    if( in.equals( DirectivePragma ))
       return true;
 
-    if( in.equals( "if" ))
+    if( in.equals( DirectiveIf ))
       return true;
 
-    if( in.equals( "ifdef" ))
+    if( in.equals( DirectiveIfdef ))
       return true;
 
-    if( in.equals( "ifndef" ))
+    if( in.equals( DirectiveIfndef ))
       return true;
 
-    if( in.equals( "else" ))
+    if( in.equals( DirectiveElse ))
       return true;
 
-    if( in.equals( "elif" ))
+    if( in.equals( DirectiveElif ))
       return true;
 
-    if( in.equals( "endif" ))
+    if( in.equals( DirectiveEndif ))
       return true;
 
     return false;
@@ -78,9 +123,9 @@ public class PreProcessLines
 
 
 
-  public String mainFileLoop( String in, String fileName )
+  public StrA mainFileLoop( StrA in, StrA fileName )
     {
-    return "";
+    return new StrA( "" );
 /*
     try
     {
@@ -232,8 +277,9 @@ This can't be right to use LineSplitter again here.
 
 
 
-  private String processDirective( String directive,
-                                String directiveBody )
+/*
+  private StrA processDirective( StrA directive,
+                                StrA directiveBody )
     {
     // Anything that gets returned here should end
     // with a newline.  And include files will have
@@ -311,9 +357,10 @@ This can't be right to use LineSplitter again here.
 
     return result;
     }
+*/
 
 
-
+/*
   private String processEndIf()
     {
     if( !boolLevArray.subtractLevel())
@@ -321,14 +368,15 @@ This can't be right to use LineSplitter again here.
 
     return "// #endif\n";
     }
+*/
 
 
-
+/*
   private String processIfDef( String directive,
                                String directiveBody )
     {
     return "";
-/*
+//////////
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -360,16 +408,17 @@ This can't be right to use LineSplitter again here.
       boolLevArray.addNewLevel( false );
       return result;
       }
-*/
+////////
     }
+*/
 
 
-
+/*
   private String processIfNDef( String directive,
                                 String directiveBody )
     {
     return "";
-/*
+//////
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -402,11 +451,13 @@ This can't be right to use LineSplitter again here.
       boolLevArray.addNewLevel( false );
       return result;
       }
-*/
+//////
     }
+*/
 
 
 
+/*
   private String processError( String directiveBody )
     {
     if( !boolLevArray.getCurrentValue())
@@ -415,9 +466,10 @@ This can't be right to use LineSplitter again here.
     mApp.showStatusAsync( "Error directive: " + directiveBody );
     return "";
     }
+*/
 
 
-
+/*
   private String processPragma( String directiveBody ) 
     {
     // === Use the ProcessPragma.java file.
@@ -435,9 +487,10 @@ This can't be right to use LineSplitter again here.
 
     return result;
     }
+*/
 
 
-
+/*
   private String processUndef( String directiveBody ) 
     {
     String result = "// #undef " + directiveBody + "\n"; 
@@ -463,14 +516,14 @@ This can't be right to use LineSplitter again here.
 
     return result;
     }
+*/
 
 
-
-
+/*
   private String processInclude( String directiveBody )
     {
     return "";
-/*
+/////////
     if( !boolLevArray.getCurrentValue())
       return "// #include " + directiveBody + "\n";
       
@@ -531,15 +584,17 @@ This can't be right to use LineSplitter again here.
            "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n";
 
     return inclFileStr;
-*/
+//////
     }
+*/
 
 
-
+/*
   private String processDefine( String directiveBody )
     {
     return "";
-/*
+///////
+
     if( !boolLevArray.getCurrentValue())
       return "// #define " + directiveBody + "\n";
 
@@ -564,15 +619,17 @@ This can't be right to use LineSplitter again here.
                                  macro );
 
     return "// #define " + directiveBody + "\n";
-*/
+///////
     }
+*/
 
 
 
+/*
   private String processIf( String directiveBody ) 
     {
     return "";
-/*
+//////
     String result = "if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
@@ -604,12 +661,13 @@ This can't be right to use LineSplitter again here.
       }
 
     return "// unknown if value returned.";
-*/
+///////
     }
+*/
 
 
 
-
+/*
   private String processElif( String directiveBody ) 
     {
     int currentLevel = boolLevArray.getLevel();
@@ -656,9 +714,10 @@ This can't be right to use LineSplitter again here.
       return result;
       }
     }
+*/
 
 
-
+/*
   private String processElse( String directiveBody ) 
     {
     int currentLevel = boolLevArray.getLevel();
@@ -703,6 +762,7 @@ This can't be right to use LineSplitter again here.
       return result;
       }
     }
+*/
 
 
   }
