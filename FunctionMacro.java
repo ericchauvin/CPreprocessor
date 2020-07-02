@@ -114,7 +114,7 @@ public class FunctionMacro
         if( secondChar == '(' )
           {
           inside++;
-          functionBuilder.append( linePart );
+          functionBuilder.appendStrA( linePart );
           continue;
           }
 
@@ -135,7 +135,7 @@ public class FunctionMacro
 
           // inside is zero.
           isInFunction = false;
-          functionBuilder.append( linePart );
+          functionBuilder.appendStrA( linePart );
           StrA fLine = functionBuilder.toStrA();
           StrA fReturned = replaceOneFunctionString(
                                   mApp,
@@ -213,7 +213,7 @@ public class FunctionMacro
         if( inside == 0 )
           continue;
 
-        paramBuilder.append( linePart );
+        paramBuilder.appendStrA( linePart );
         continue;
         }
 
@@ -223,7 +223,7 @@ public class FunctionMacro
           {
           inside++;
           if( inside > 1 )
-            paramBuilder.append( linePart );
+            paramBuilder.appendStrA( linePart );
 
           continue;
           }
@@ -242,7 +242,7 @@ public class FunctionMacro
             break;
             }
 
-          paramBuilder.append( linePart );
+          paramBuilder.appendStrA( linePart );
           continue;
           }
 
@@ -255,7 +255,7 @@ public class FunctionMacro
           }
         }
 
-      paramBuilder.append( linePart );
+      paramBuilder.appendStrA( linePart );
       }
 
     int replaceLength = replaceMacro.getParamArrayLength();
@@ -282,7 +282,7 @@ public class FunctionMacro
                             ')' +
                             Markers.End );
 
-    StrA macBody = replaceMacro.getMarkedUpString();
+    StrA macBody = replaceMacro.getMarkedUpS();
     // mApp.showStatusAsync( "macBody: " + macBody );
 
     for( int count = 0; count < lastP; count++ )
