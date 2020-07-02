@@ -27,9 +27,9 @@ public class StrABld
     }
 
 
-  public void setLength( int in )
+  public void clear()
     {
-    valuesLast = in;
+    valuesLast = 0;
     }
 
 
@@ -91,32 +91,12 @@ public class StrABld
 
 
 
-/*
-  public String toString()
-    {
-    if( valuesLast == 0 )
-      return "";
-
-    // Can't do:
-    // String result = new String( aCharArray );
- 
-    StringBuilder sBuilder = new StringBuilder();
-    for( int count = 0; count < valuesLast; count++ )
-      sBuilder.append( "" + values[count] );
-
-    return sBuilder.toString();
-    }
-*/
-
 
   public StrA toStrA()
     {
     if( valuesLast == 0 )
       return new StrA( "" );
 
-    // Can't do:
-    // String result = new String( aCharArray );
-    
     char[] result = new char[valuesLast];
     for( int count = 0; count < valuesLast; count++ )
       result[count] = values[count];
@@ -125,11 +105,16 @@ public class StrABld
     }
 
 
+
   public StrA getReverse()
     {
     char[] result = new char[valuesLast];
+    int where = 0;
     for( int count = valuesLast - 1; count >= 0; count-- )
-      result[count] = values[count];
+      {
+      result[where] = values[count];
+      where++;
+      }
 
     return new StrA( result );
     }
