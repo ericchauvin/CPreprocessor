@@ -850,6 +850,21 @@ public class StrA
 
 
 
+  public boolean endsWithChar( char toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    final int where = values.length - 1;
+    if( values[where] == toFind )
+      return true;
+    else
+      return false;
+
+    }
+
+
+
   public StrA substring( int begin, int end )
     {
     if( begin < 0 )
