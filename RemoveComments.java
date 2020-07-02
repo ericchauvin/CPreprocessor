@@ -37,16 +37,14 @@ public class RemoveComments
     // This fixes line splices too.  (Lines with 
     // a newline character at the end.)
     result = markLineNumbers( mApp, result, fileName );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
+    if( result.containsChar( Markers.ErrorPoint ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "There was an error marker after" +
+      showError = "\n\nThere was an error marker after" +
                                " markLineNumbers.";
 
       // mApp.showStatusAsync( result );
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
@@ -55,53 +53,47 @@ public class RemoveComments
                        " after markLineNumbers.";
 
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     result = removeStarComments( mApp, result );
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
+    if( result.containsChar( Markers.ErrorPoint ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "There was an error marker after" +
+      showError = "\n\nThere was an error marker after" +
                                " removeStarComments.";
 
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "TestBeginEnd returned false" +
+      showError = "\n\nTestBeginEnd returned false" +
                        " after removeStarComments.";
 
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     result = removeAllDoubleSlashComments( mApp,
                                            result );
 
-    if( result.contains( Character.toString(
-                      Markers.ErrorPoint )))
+    if( result.containsChar( Markers.ErrorPoint ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "There was an error marker after" +
+      showError = "\n\nThere was an error marker after" +
                      " removeAllDoubleSlashComments.";
 
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
-      mApp.showStatusAsync( " " );
-      showError = "TestBeginEnd returned false" +
+      showError = "\n\nTestBeginEnd returned false" +
                " after removeAllDoubleSlashComments.";
 
       mApp.showStatusAsync( showError );
-      return "";
+      return new StrA( "" );
       }
 
     return result;
@@ -116,7 +108,7 @@ public class RemoveComments
     if( in.length() == 0 )
       return new StrA( "" );
 
-    StrABld sBuilder = new StrABld();
+    StrABld sBuilder = new StrABld( 1024 );
 
     StrArray splitS = in.splitChar( '\n' );
     final int last = splitS.length();
@@ -143,7 +135,7 @@ public class RemoveComments
         }
 
       // Fix line splices.
-      if( line.endsWith( "\\" ))
+      if( line.endsWithChar( '\\' ))
         {
         // This would be a bad idea, but somebody
         // could split an identifier right at the end
@@ -154,7 +146,7 @@ public class RemoveComments
         if( lineLength == 1 )
           {
           // The line contains only the slash character.
-          line = "";
+          line = new StrA( "" );
           }
         else
           {
@@ -162,24 +154,24 @@ public class RemoveComments
           line = line.substring( 0, lineLength - 2 );
           }
 
-        sBuilder.append( line );
+        sBuilder.appendStrA( line );
         continue;
         }
 
       int lineNumber = count + 1;
-      line = "" + line +
+      line = new StrA( "" + line.toString() +
          Markers.Begin +
          Markers.TypeLineNumber +
          lineNumber +
          ";" +
          fileName +
          Markers.End +
-         "\n";
+         "\n" );
 
-      sBuilder.append( line );
+      sBuilder.appendStrA( line );
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
@@ -192,30 +184,32 @@ public class RemoveComments
     // and any other markers.
 
     if( in.trim().length() == 0 )
-      return "";
+      return new StrA( "" );
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     // There is a form of comment like this:
-    String strangeComment = "/" + "/" + "*" + "*";
-    String twoSlashes = "/" + "/";
+    StrA strangeComment = new StrA(
+                             "/" + "/" + "*" + "*" );
+
+    StrA twoSlashes = new StrA( "/" + "/" );
     in = in.replace( strangeComment, twoSlashes );
 
-    String slashStar = "/" + "*";
-    String starSlash = "*" + "/";
+    StrA slashStar = new StrA( "/" + "*" );
+    StrA starSlash = new StrA( "*" + "/" );
 
     // This replaces the comment marker strings
     // anywhere and everywhere in the file.  Whether
     // they are inside quotes or not.
-    in = in.replace( slashStar,
-                            "" + Markers.SlashStar );
+    in = in.replace( slashStar, new StrA(
+                           "" + Markers.SlashStar ));
 
-    in = in.replace( starSlash,
-                            "" + Markers.StarSlash );
+    in = in.replace( starSlash, new StrA( 
+                            "" + Markers.StarSlash ));
 
 
     boolean isInsideComment = false;
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       char testChar = in.charAt( count );
@@ -226,18 +220,17 @@ public class RemoveComments
           {
           // It shouldn't find this start marker
           // if it's already inside a comment.
-          sBuilder.append( "" + Markers.ErrorPoint );
+          sBuilder.appendChar( Markers.ErrorPoint );
 
-          mApp.showStatusAsync( " " );
-          mApp.showStatusAsync( "Error with nested comment at: " + count );
-          return sBuilder.toString();
+          mApp.showStatusAsync( "\n\nError with nested comment at: " + count );
+          return sBuilder.toStrA();
           }
 
         isInsideComment = true;
         // Replace a comment with white space so
         // that identifier strings don't come
         // together.
-        sBuilder.append( " " );
+        sBuilder.appendChar( ' ' );
         continue;
         }
 
@@ -253,18 +246,17 @@ public class RemoveComments
           {
           // It shouldn't find this end marker
           // if it's not already inside a comment.
-          sBuilder.append( "" + Markers.ErrorPoint );
+          sBuilder.appendChar( Markers.ErrorPoint );
 
-          mApp.showStatusAsync( " " );
-          mApp.showStatusAsync( "Error with star-slash outside of a comment at: " + count );
-          return sBuilder.toString();
+          mApp.showStatusAsync( "\n\nError with star-slash outside of a comment at: " + count );
+          return sBuilder.toStrA();
           }
 
-        sBuilder.append( "" + testChar );
+        sBuilder.appendChar( testChar );
         }
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
@@ -317,27 +309,27 @@ public class RemoveComments
                                        MainApp mApp,
                                        StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
-    String[] splitS = in.split( "\n" );
-    int last = splitS.length;
+    StrABld sBuilder = new StrABld( 1024 );
+    StrArray splitS = in.splitChar( '\n' );
+    final int last = splitS.length();
     for( int count = 0; count < last; count++ )
       {
-      String line = splitS[count];
+      StrA line = splitS.getStrAt( count );
       line = removeDoubleSlashComments( mApp, line );
 
-      String startString =
-              Character.toString( Markers.Begin ) +
-              Character.toString( 
-                             Markers.TypeLineNumber );
+      StrA startS = new StrA( "" + Markers.Begin +
+                 Markers.TypeLineNumber );
 
       // Don't keep empty lines.
-      String tLine = line.trim();
-      if( !tLine.startsWith( startString ))
-        sBuilder.append( line + "\n" );
-
+      StrA tLine = line.trim();
+      if( !tLine.startsWith( startS ))
+        {
+        sBuilder.appendStrA( line );
+        sBuilder.appendStrA( new StrA( "\n" ));
+        }
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
@@ -350,34 +342,36 @@ public class RemoveComments
     // URL should not be considered to be a comment.
     //     GetPage( "https://gcc.gnu.org/" );
 
-    StrABld sBuilder = new StrABld();
+    StrABld sBuilder = new StrABld( 1024 );
 
-    line = line.replace( "\\\\",
-                         "" + Markers.EscapedSlash );
+    line = line.replace( new StrA( "\\\\" ), new StrA( 
+                       "" + Markers.EscapedSlash ));
 
     // Notice the escaped forward slash in front of
     // the quote character here at the end of the
     // string:
     // "c:\\BrowserECFiles\\PageFiles\\";
 
-    line = line.replace( "\\\"",
-                    "" + Markers.EscapedDoubleQuote );
+    line = line.replace( new StrA( "\\\"" ),
+                    new StrA(
+                  "" + Markers.EscapedDoubleQuote ));
 
     // This double quote inside single quotes can't
     // be inside of a normal string literal.
-    String singleQuoteCharStr = "\'\"\'";
+    StrA singleQuoteCharStr = new StrA( "\'\"\'" );
     if( singleQuoteCharStr.length() != 3 )
       {
       mApp.showStatusAsync( "SingleQuoteCharStr.Length != 3" );
-      return Character.toString( Markers.ErrorPoint );
+      return new StrA( "" + Markers.ErrorPoint );
       }
 
     line = line.replace( singleQuoteCharStr,
-                "" + Markers.QuoteAsSingleCharacter );
+                new StrA(
+              "" + Markers.QuoteAsSingleCharacter ));
 
-    String doubleSlash = "/" + "/";
-    line = line.replace( doubleSlash,
-                           "" + Markers.DoubleSlash );
+    StrA doubleSlash = new StrA( "/" + "/" );
+    line = line.replace( doubleSlash, new StrA(
+                           "" + Markers.DoubleSlash ));
 
     int lineLength = line.length();
     boolean isInside = true;
@@ -414,23 +408,27 @@ public class RemoveComments
         isInside = true;
 
       if( isInside )
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
 
       }
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
 
-    result = result.replace( "" + Markers.DoubleSlash,
-                              doubleSlash );
+    result = result.replace( new StrA( 
+             "" + Markers.DoubleSlash ),
+                         new StrA( doubleSlash ));
 
-    result = result.replace( "" + Markers.QuoteAsSingleCharacter,
-                  singleQuoteCharStr );
+    result = result.replace( new StrA(
+              "" + Markers.QuoteAsSingleCharacter ),
+              new StrA( singleQuoteCharStr ));
 
-    result = result.replace( "" + Markers.EscapedDoubleQuote,
-                     "\\\"" );
+    result = result.replace( new StrA(
+               "" + Markers.EscapedDoubleQuote ),
+               new StrA( "\\\"" ));
 
-    result = result.replace( "" + Markers.EscapedSlash,
-                           "\\\\" );
+    result = result.replace( new StrA( 
+                          "" + Markers.EscapedSlash ),
+                          new StrA( "\\\\" ));
 
     return result;
     }
