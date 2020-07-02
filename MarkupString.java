@@ -10,27 +10,33 @@ public class MarkupString
 
     {
     result = markStrings( mApp, result );
-    if( !testMarkers( result, "markStrings() at top.", mApp ))
+    if( !testMarkers( result, new StrA(
+                "markStrings() at top." ), mApp ))
       return new StrA( "" );
 
     result = markCharacters( mApp, result );
-    if( !testMarkers( result, "markCharacters().", mApp ))
+    if( !testMarkers( result, new StrA(
+                      "markCharacters()." ), mApp ))
       return new StrA( "" );
 
     result = markIdentifiers( mApp, result );
-    if( !testMarkers( result, "markIdentifiers().", mApp ))
+    if( !testMarkers( result, new StrA(
+                     "markIdentifiers()." ), mApp ))
       return new StrA( "" );
 
     result = markNumbers( result );
-    if( !testMarkers( result, "markNumbers().", mApp ))
+    if( !testMarkers( result, new StrA( 
+                           "markNumbers()." ), mApp ))
       return new StrA( "" );
 
     result = markOperators( result );
-    if( !testMarkers( result, "markOperators().", mApp ))
+    if( !testMarkers( result, new StrA( 
+                         "markOperators()." ), mApp ))
       return new StrA( "" );
 
     result = removeOutsideWhiteSpace( result );
-    if( !testMarkers( result, "removeOutsideWhiteSpace().", mApp ))
+    if( !testMarkers( result, new StrA( 
+               "removeOutsideWhiteSpace()." ), mApp ))
       return new StrA( "" );
 
     // mApp.showStatus( result );
@@ -79,28 +85,28 @@ public class MarkupString
     // like:  L"This string." with the L in front of
     // it.
 
-    StrABld sBuilder = new StrABld();
+    StrABld sBuilder = new StrABld( 1024 );
 
     // Notice the double slash in front of the quote
     // character here at the end of the string:
     // "c:\\BrowserECFiles\\PageFiles\\";
 
-    in = in.replace( "\\\\",
-                             Character.toString(
+    in = in.replace( new StrA( "\\\\" ),
+                     new StrA( "" + 
                              Markers.EscapedSlash ));
 
-    in = in.replace( "\\\"",
-                                  Character.toString(
+    in = in.replace( new StrA( "\\\"" ),
+                     new StrA( "" + 
                         Markers.EscapedDoubleQuote ));
 
     // This string marking is done before character
     // marking.  char thisQuoteChar = '"';
     // Don't use those quote characters that are
     // defined as characters.
-    String singleQuoteCharStr = "\'\"\'";
+    StrA singleQuoteCharStr = new StrA( "\'\"\'" );
 
     in = in.replace( singleQuoteCharStr,
-                   Character.toString(
+                   new StrA( "" + 
                    Markers.QuoteAsSingleCharacter ));
 
     boolean isInsideObject = false;
@@ -113,21 +119,21 @@ public class MarkupString
       // It can't have nested Begin/End markers.
       if( testChar == Markers.Begin )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = true;
         continue;
         }
 
       if( testChar == Markers.End )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = false;
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -138,14 +144,14 @@ public class MarkupString
           isInsideString = false;
           // It doesn't keep the quote character as
           // part of the marked string.
-          sBuilder.append( Markers.End );
+          sBuilder.appendChar( Markers.End );
           continue;
           }
         else
           {
           isInsideString = true;
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( Markers.TypeString );
+          sBuilder.appendChar( Markers.Begin );
+          sBuilder.appendChar( Markers.TypeString );
           continue;
           }
         }
@@ -156,19 +162,21 @@ public class MarkupString
     StrA result = sBuilder.toStrA();
 
     result = result.replace(
-                     Character.toString(
+                     new StrA( "" + 
                      Markers.QuoteAsSingleCharacter ),
                      singleQuoteCharStr );
 
-    result = result.replace( Character.toString(
-                        Markers.EscapedDoubleQuote ),
-                        "\\\"" );
+    result = result.replace( new StrA( "" +
+                       Markers.EscapedDoubleQuote ),
+                       new StrA( "\\\"" ));
 
-    result = result.replace( Character.toString(
-                               Markers.EscapedSlash ),
-                               "\\\\" );
+    result = result.replace( new StrA( "" +
+                            Markers.EscapedSlash ),
+                            new StrA( "\\\\" ));
     if( isInsideString )
-      return result + "\nNever found the end quote." + Markers.ErrorPoint;
+      return result.concat( new StrA(
+            "\nNever found the end quote." +
+            Markers.ErrorPoint ));
 
     return result;
     }
@@ -178,17 +186,19 @@ public class MarkupString
   private static StrA markCharacters( MainApp mApp,
                                         StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     // A character could look like this: '\n' or '\0'
     // But this is an integer cast to a char:
     //  (char)0x2710
-    in = in.replace( "\\\\",
-       Character.toString( Markers.EscapedSlash ));
+    in = in.replace( new StrA( "\\\\" ),
+                     new StrA( "" + 
+                     Markers.EscapedSlash ));
 
     // It could be '\''.
-    in = in.replace( "\\\'",
-       Character.toString( Markers.EscapedSingleQuote ));
+    in = in.replace( new StrA( "\\\'" ),
+                     new StrA( "" +
+                     Markers.EscapedSingleQuote ));
 
     boolean isInsideChar = false;
     boolean isInsideObject = false;
@@ -200,21 +210,21 @@ public class MarkupString
       // It can't have nested Begin/End markers.
       if( testChar == Markers.Begin )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = true;
         continue;
         }
 
       if( testChar == Markers.End )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = false;
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -222,31 +232,32 @@ public class MarkupString
         {
         if( isInsideChar )
           {
-          sBuilder.append( Markers.End );
+          sBuilder.appendChar( Markers.End );
           isInsideChar = false;
           continue;
           }
         else
           {
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( Markers.TypeChar );
+          sBuilder.appendChar( Markers.Begin );
+          sBuilder.appendChar( Markers.TypeChar );
           isInsideChar = true;
           continue;
           }
         }
 
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
 
     // Put the single quote character back in.
-    result = result.replace( Character.toString(
-             Markers.EscapedSingleQuote ), "\\\'" );
+    result = result.replace( new StrA( "" +
+                    Markers.EscapedSingleQuote ),
+                    new StrA( "\\\'" ));
 
-    result = result.replace(
-                Character.toString( Markers.EscapedSlash ),
-                "\\\\" );
+    result = result.replace( new StrA( "" +
+                  Markers.EscapedSlash ),
+                  new StrA( "\\\\" ));
 
     return result;
     }
@@ -282,13 +293,13 @@ public class MarkupString
   private static StrA markIdentifiers( MainApp mApp,
                                        StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     char previousChar = '\n';
     boolean isInsideID = false;
     boolean isInsideObject = false;
     int position = 0;
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       char testChar = in.charAt( count );
@@ -299,24 +310,24 @@ public class MarkupString
         if( isInsideID )
           {
           isInsideID = false;
-          sBuilder.append( Markers.End );
+          sBuilder.appendChar( Markers.End );
           }
 
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = true;
         continue;
         }
 
       if( testChar == Markers.End )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = false;
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -331,8 +342,8 @@ public class MarkupString
                                     position ))
           {
           isInsideID = false;
-          sBuilder.append( Markers.End );
-          sBuilder.append( testChar );
+          sBuilder.appendChar( Markers.End );
+          sBuilder.appendChar( testChar );
           continue;
           }
         }
@@ -345,21 +356,21 @@ public class MarkupString
                                    position ))
           {
           isInsideID = true;
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( Markers.TypeIdentifier );
-          sBuilder.append( testChar );
+          sBuilder.appendChar( Markers.Begin );
+          sBuilder.appendChar( Markers.TypeIdentifier );
+          sBuilder.appendChar( testChar );
           continue;
           }
         }
 
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
     // If the ID went to the end of the line.
     if( isInsideID )
-      sBuilder.append( Markers.End );
+      sBuilder.appendChar( Markers.End );
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
     return result;
     }
 
@@ -418,13 +429,13 @@ public class MarkupString
 
   private static StrA markNumbers( StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     char previousChar = '\n';
     char nextChar = '\n';
     boolean isInsideNumber = false;
     boolean isInsideObject = false;
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       char testChar = in.charAt( count );
@@ -435,24 +446,24 @@ public class MarkupString
         if( isInsideNumber )
           {
           isInsideNumber = false;
-          sBuilder.append( Markers.End );
+          sBuilder.appendChar( Markers.End );
           }
 
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = true;
         continue;
         }
 
       if( testChar == Markers.End )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = false;
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -469,13 +480,13 @@ public class MarkupString
         if( isNumberStart( testChar ))
           {
           isInsideNumber = true;
-          sBuilder.append( Markers.Begin );
-          sBuilder.append( Markers.TypeNumber );
-          sBuilder.append( testChar );
+          sBuilder.appendChar( Markers.Begin );
+          sBuilder.appendChar( Markers.TypeNumber );
+          sBuilder.appendChar( testChar );
           continue;
           }
 
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -485,20 +496,20 @@ public class MarkupString
                                        nextChar ))
         {
         isInsideNumber = false;
-        sBuilder.append( Markers.End );
-        sBuilder.append( testChar );
+        sBuilder.appendChar( Markers.End );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
       // It is continuing inside a number.
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
     // If the number went to the end of the line.
     if( isInsideNumber )
-      sBuilder.append( Markers.End );
+      sBuilder.appendChar( Markers.End );
    
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
@@ -600,10 +611,10 @@ public class MarkupString
 
   private static StrA markOperators( StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     boolean isInsideObject = false;
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       char testChar = in.charAt( count );
@@ -611,37 +622,37 @@ public class MarkupString
       // It can't have nested Begin/End markers.
       if( testChar == Markers.Begin )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = true;
         continue;
         }
 
       if( testChar == Markers.End )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         isInsideObject = false;
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
       if( isBasicOpCharacter( testChar ))
         {
-        sBuilder.append( Markers.Begin );
-        sBuilder.append( Markers.TypeOperator );
-        sBuilder.append( testChar );
-        sBuilder.append( Markers.End );
+        sBuilder.appendChar( Markers.Begin );
+        sBuilder.appendChar( Markers.TypeOperator );
+        sBuilder.appendChar( testChar );
+        sBuilder.appendChar( Markers.End );
         continue;
         }
 
-      sBuilder.append( testChar );
+      sBuilder.appendChar( testChar );
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
@@ -746,32 +757,33 @@ public class MarkupString
     if( 0 == Markers.countMarkers( in ))
       return true;
 
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
-    String[] splitS = in.split(
-                  "" + Markers.Begin );
+    StrArray splitS = in.splitChar( Markers.Begin );
 
     // This can be a partially marked up line.
     // Like if only the line numbers have been added.
-    String testEmpty = splitS[0];
+    StrA testEmpty = splitS.getStrAt( 0 );
     if( testEmpty.length() != 0 )
       {
-      sBuilder.append( testEmpty + "\n" );
+      sBuilder.appendStrA( testEmpty );
+      sBuilder.appendStrA( new StrA( "\n" ));
       }
 
-    int last = splitS.length;
+    final int last = splitS.length();
     // This starts at 1, at the first
     // Markers.Begin.
     for( int count = 1; count < last; count++ )
       {
-      String line = splitS[count];
-      sBuilder.append( line + "\n" );
+      StrA line = splitS.getStrAt( count );
+      sBuilder.appendStrA( line );
+      sBuilder.appendStrA( new StrA( "\n" ));
       int howMany = countEndMarkers( line );
       if( 1 != howMany )
         {
         // mApp.showStatusAsync( sBuilder.toString() );
         mApp.showStatusAsync( "\n\n(" + howMany + ") The line should have one end marker." );
-        mApp.showStatusAsync( "Line: " + line );
+        mApp.showStatusAsync( "Line: " + line.toString() );
         return false;
         }
       }
@@ -785,7 +797,7 @@ public class MarkupString
     {
     int howMany = 0;
 
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       if( Markers.End == in.charAt( count ))
@@ -800,10 +812,10 @@ public class MarkupString
 
   public static StrA removeOutsideWhiteSpace( StrA in )
     {
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
 
     boolean isInsideObject = false;
-    int last = in.length();
+    final int last = in.length();
     for( int count = 0; count < last; count++ )
       {
       char testChar = in.charAt( count );
@@ -811,20 +823,20 @@ public class MarkupString
       if( testChar == Markers.Begin )
         {
         isInsideObject = true;
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
       if( testChar == Markers.End )
         {
         isInsideObject = false;
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
       if( isInsideObject )
         {
-        sBuilder.append( testChar );
+        sBuilder.appendChar( testChar );
         continue;
         }
 
@@ -834,14 +846,15 @@ public class MarkupString
       if( testChar == '\n' )
         continue;
 
-      sBuilder.append( "Right here >" + testChar + "<" );
+      sBuilder.appendStrA( new StrA(
+                 "Right here >" + testChar + "<" ));
 
-      sBuilder.append( testChar );
-      sBuilder.append( Markers.ErrorPoint );
-      return sBuilder.toString();
+      sBuilder.appendChar( testChar );
+      sBuilder.appendChar( Markers.ErrorPoint );
+      return sBuilder.toStrA();
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
 
 
