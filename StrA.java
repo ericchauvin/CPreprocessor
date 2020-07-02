@@ -1,6 +1,5 @@
 // Copyright Eric Chauvin 2020.
 
-// containsChar()
 
 
 
@@ -387,7 +386,7 @@ public class StrA
       if( testChar == delimit )
         {
         result.append( sBld.toStrA());
-        sBld.setLength( 0 );
+        sBld.clear();
         }
       else
         {
@@ -454,7 +453,7 @@ public class StrA
 
       skip = delimit.length();
       result.append( sBld.toStrA() );
-      sBld.setLength( 0 );
+      sBld.clear();
       }
 
     if( sBld.length() > 0 )
@@ -541,7 +540,7 @@ public class StrA
   public StrA trimRight()
     {
     StrABld sBld = new StrABld( values.length + 1024 );
-    int last = values.length;
+    final int last = values.length;
     boolean foundFirst = false;
     for( int count = last - 1; count >= 0; count-- )
       {
@@ -563,12 +562,14 @@ public class StrA
     }
 
 
+
   public StrA trim()
     {
     StrA result = trimRight();
     result = result.trimLeft();
     return result;
     }
+
 
 
   public StrA toLowerCase()
