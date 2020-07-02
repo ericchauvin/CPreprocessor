@@ -74,9 +74,6 @@ public class PreProcessLines
 
   private boolean isValidDirective( StrA in )
     {
-    // These strA values should be constants.
-    // Don't create them each time.
-
     // #line
 
     // #warning
@@ -129,17 +126,15 @@ public class PreProcessLines
 /*
     try
     {
-
-
     if( in.trim().length() == 0 )
-      return "";
+      return new StrA( "" );
 
     StrArray fileLines = new StrArray();
-    StringBuilder sBuilder = new StringBuilder();
-    StringBuilder paramBuilder = new StringBuilder();
-    StrA inA = new StrA( in );
+    StrABld sBuilder = new StrABld( 1024 );
+    StrABld paramBuilder = new StrABld( 1024 );
 
-======    StrArray lineSplitter = inA.splitChar( '\n' );
+
+    StrArray lineSplitter = inA.splitChar( '\n' );
 
     final int last = lineSplitter.length();
     for( int count = 0; count < last; count++ )
