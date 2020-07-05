@@ -53,11 +53,13 @@ public class PreprocessProject
     // String mainDir = "C:\\gccmaster\\gcc\\";
     StrA outDir = new StrA( "C:\\PreprocessOut\\" );
 
-    StrA projectFileName = new StrA( 
-          "\\Eric\\CPreprocessor\\ProjectFiles.txt" );
+    StrA projectFileName = mApp.getProgramDirectory();
+    projectFileName = projectFileName.concat(  
+                   new StrA( "\\ProjectFiles.txt" ));
 
-    StrA headerFileName = new StrA(  
-           "\\Eric\\CPreprocessor\\HeaderFiles.txt" );
+    StrA headerFileName = mApp.getProgramDirectory();
+    headerFileName = headerFileName.concat( 
+                     new StrA( "\\HeaderFiles.txt" ));
 
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
