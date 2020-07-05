@@ -1,6 +1,21 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
+/*
+DirectiveError
+DirectiveDefine
+DirectiveUndef
+DirectiveInclude
+DirectivePragma
+DirectiveIf
+DirectiveIfdef
+DirectiveIfndef
+DirectiveElse
+DirectiveElif
+DirectiveEndif
+*/
+
+
 
 public class PreProcessLines
   {
@@ -122,37 +137,37 @@ public class PreProcessLines
 
   public StrA mainFileLoop( StrA in, StrA fileName )
     {
-    return new StrA( "" );
-/*
     try
     {
     if( in.trim().length() == 0 )
       return new StrA( "" );
 
-    StrArray fileLines = new StrArray();
     StrABld sBuilder = new StrABld( 1024 );
     StrABld paramBuilder = new StrABld( 1024 );
 
 
-    StrArray lineSplitter = inA.splitChar( '\n' );
-
-    final int last = lineSplitter.length();
+    StrArray fileLines = in.splitChar( '\n' );
+    final int last = fileLines.length();
     for( int count = 0; count < last; count++ )
       {
       StrA line = fileLines.getStrAt( count );
       if( '#' != line.firstNonSpaceChar())
         {
+/*
+Do this.
+        // Markers.TypeCodeBlock 
+
         if( boolLevArray.getCurrentValue())
           sBuilder.append( line + "\n" );
         else
           sBuilder.append( "//  " + line + "\n" );
-
+*/
         continue;
         }
+
      
-      // String originalLine = line;
-      line = line.replaceFirstChar( '#',
-                                              ' ' );
+      // StrA originalLine = line;
+      line = line.replaceFirstChar( '#', ' ' );
 
       // This trim is needed to make sure the directive
       // is the first field.  So there are no empty
@@ -167,85 +182,79 @@ public class PreProcessLines
       // create a zero-length string on the second
       // space because there was nothing after the
       // first space.
-====
-This can't be right to use LineSplitter again here.
 
-      lineSplitter = line.splitChar( ' ' );
-
-      int lastPart = lineSplitter.
-                    makeFieldsFromString( line, ' ' );
-
+      StrArray lineSplitter = line.splitChar( ' ' );
+      final int lastPart = lineSplitter.length();
       if( lastPart == 0 )
         {
         mApp.showStatusAsync(
              "Preprocessor line doesn't have parts." );
 
-        return "";
+        return new StrA( "" );
         }
 
-      String directive = lineSplitter.getStringAt( 0 );
+      StrA directive = lineSplitter.getStrAt( 0 );
 
       // if(WINVER
-      String directiveExtra = "";
-      if( directive.contains( "(" ))
+      StrA directiveExtra = new StrA( "" );
+      if( directive.containsChar( '(' ))
         {
-        StringArray dirSplitter = new StringArray();
-        int dirPart = dirSplitter.
-                     makeFieldsFromString( directive,
-                                             '(' );
+        StrArray dirSplitter = directive.splitChar(
+                                                '(' );
+        final int dirPart = dirSplitter.length();
+        directive = dirSplitter.getStrAt( 0 );
 
-        directive = dirSplitter.getStringAt( 0 );
-
-        StringBuilder extraBuilder = new StringBuilder();
-        for( int countD = 1; countD < dirPart; countD++ )
+        StrABld extraBuilder = new StrABld( 1024 );
+        for( int countD = 1; countD < dirPart;
+                                           countD++ )
           {
-          extraBuilder.append( 
-                    dirSplitter.getStringAt( countD ));
+          extraBuilder.appendStrA( 
+                    dirSplitter.getStrAt( countD ));
  
           }
 
-        directiveExtra = extraBuilder.toString();
+        directiveExtra = extraBuilder.toStrA();
         }
 
       // Remove the line number markers if they are
       // there.  Like endif with nothing following it.
-      directive = StringsUtility.removeSections(
-                                        directive,
+      directive = directive.removeSections( 
                                         Markers.Begin,
                                         Markers.End );
 
       if( !isValidDirective( directive ))
         {
-        mApp.showStatusAsync( directive + " is not a valid directive." );
-        return "";
+        mApp.showStatusAsync( directive.toString() +
+                       " is not a valid directive." );
+        return new StrA( "" );
         }
 
-      paramBuilder.setLength( 0 );
+      paramBuilder.clear();
       for( int countP = 1; countP < lastPart; countP++ )
         {
-        String field = lineSplitter.
-                               getStringAt( countP );
-
-        paramBuilder.append( field + " " );
+        StrA field = lineSplitter.getStrAt( countP );
+        field.concat( new StrA( " " ));
+        paramBuilder.appendStrA( field );
         }
 
-      String directiveBody = directiveExtra + " " +
-                             paramBuilder.toString();
+      StrA directiveBody = new StrA( directiveExtra,
+                             new StrA( " " ),
+                             paramBuilder.toStrA());
 
       directiveBody = directiveBody.trim();
 
       // mApp.showStatusAsync( directive + " " + directiveBody );
 
-      String result = processDirective( directive,
+      StrA result = processDirective( directive,
                                        directiveBody );
 
       if( result.length() == 0 )
-        return "";
+        return new StrA( "" );
 
       // This might be appending a whole include file
       // worth of stuff.  And the include files it
       // contains.
-      sBuilder.append( result );
+      sBuilder.appendStrA( result );
       }
 
     if( boolLevArray.getLevel() != 0 )
@@ -253,26 +262,39 @@ This can't be right to use LineSplitter again here.
       String showS = "Level is not zero at end.\n" +
                      "Level: " +
                      boolLevArray.getLevel() + "\n" +
-                     fileName;
+                     fileName.toString();
 
       mApp.showStatusAsync( showS );
-      return "";
+      return new StrA( "" );
       }
 
-    return sBuilder.toString();
+    return sBuilder.toStrA();
     }
     catch( Exception e )
       {
       mApp.showStatusAsync( "Exception in mainFileLoop()." );
       mApp.showStatusAsync( e.getMessage() );
-      return "";
+      return new StrA( "" );
       }
-*/
     }
 
 
-
 /*
+====
+DirectiveError
+DirectiveDefine
+DirectiveUndef
+DirectiveInclude
+DirectivePragma
+DirectiveIf
+DirectiveIfdef
+DirectiveIfndef
+DirectiveElse
+DirectiveElif
+DirectiveEndif
+====
+*/
+
   private StrA processDirective( StrA directive,
                                 StrA directiveBody )
     {
@@ -280,8 +302,8 @@ This can't be right to use LineSplitter again here.
     // with a newline.  And include files will have
     // many newlines.
 
-    String result = "";
-    if( directive.equals( "define" ))
+    StrA result = new StrA( "" );
+    if( directive.equals( DirectiveDefine ))
       {
       result = processDefine( directiveBody );
       }
@@ -340,38 +362,42 @@ This can't be right to use LineSplitter again here.
       }
 
     if( result.length() == 0 )
-      return "";
+      return new StrA( "" );
 
-    if( !result.endsWith( "\n" ))
+    if( !result.endsWithChar( '\n' ))
       {
       mApp.showStatusAsync( "processDirective() line has to end with a line feed." );
-      mApp.showStatusAsync( directive );
-      mApp.showStatusAsync( directiveBody );
-      return "";
+      mApp.showStatusAsync( directive.toString() );
+      mApp.showStatusAsync( directiveBody.toString() );
+      return new StrA( "" );
       }
 
     return result;
     }
-*/
 
+
+
+
+  private StrA processEndIf()
+    {
+    return new StrA( "" );
 
 /*
-  private String processEndIf()
-    {
     if( !boolLevArray.subtractLevel())
       return "";
 
     return "// #endif\n";
-    }
 */
+    }
 
+
+
+  private StrA processIfDef( StrA directive,
+                               StrA directiveBody )
+    {
+    return new StrA( "" );
 
 /*
-  private String processIfDef( String directive,
-                               String directiveBody )
-    {
-    return "";
-//////////
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -403,17 +429,18 @@ This can't be right to use LineSplitter again here.
       boolLevArray.addNewLevel( false );
       return result;
       }
-////////
-    }
 */
+    }
 
+
+
+
+  private StrA processIfNDef( StrA directive,
+                                StrA directiveBody )
+    {
+    return new StrA( "" );
 
 /*
-  private String processIfNDef( String directive,
-                                String directiveBody )
-    {
-    return "";
-//////
     String result = "// #" + directive + " " +
                                 directiveBody + "\n";
 
@@ -446,27 +473,33 @@ This can't be right to use LineSplitter again here.
       boolLevArray.addNewLevel( false );
       return result;
       }
-//////
-    }
 */
+    }
 
 
+
+
+  private StrA processError( StrA directiveBody )
+    {
+    return new StrA( "" );
 
 /*
-  private String processError( String directiveBody )
-    {
     if( !boolLevArray.getCurrentValue())
       return "// #error " + directiveBody + "\n";
 
     mApp.showStatusAsync( "Error directive: " + directiveBody );
     return "";
-    }
 */
+    }
 
+
+
+
+  private StrA processPragma( StrA directiveBody ) 
+    {
+    return new StrA( "" );
 
 /*
-  private String processPragma( String directiveBody ) 
-    {
     // === Use the ProcessPragma.java file.
 
     // pragma GCC system_header  15;stddef.h 
@@ -481,13 +514,17 @@ This can't be right to use LineSplitter again here.
     // Do something with it.
 
     return result;
-    }
 */
+    }
 
+
+
+
+  private StrA processUndef( StrA directiveBody ) 
+    {
+    return new StrA( "" );
 
 /*
-  private String processUndef( String directiveBody ) 
-    {
     String result = "// #undef " + directiveBody + "\n"; 
     if( !boolLevArray.getCurrentValue())
       return result;
@@ -510,15 +547,17 @@ This can't be right to use LineSplitter again here.
       }
 
     return result;
-    }
 */
+    }
 
+
+
+
+  private StrA processInclude( StrA directiveBody )
+    {
+    return new StrA( "" );
 
 /*
-  private String processInclude( String directiveBody )
-    {
-    return "";
-/////////
     if( !boolLevArray.getCurrentValue())
       return "// #include " + directiveBody + "\n";
       
@@ -579,16 +618,17 @@ This can't be right to use LineSplitter again here.
            "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n";
 
     return inclFileStr;
-//////
-    }
 */
+    }
 
+
+
+
+  private StrA processDefine( StrA directiveBody )
+    {
+    return new StrA( "" );
 
 /*
-  private String processDefine( String directiveBody )
-    {
-    return "";
-///////
 
     if( !boolLevArray.getCurrentValue())
       return "// #define " + directiveBody + "\n";
@@ -614,17 +654,18 @@ This can't be right to use LineSplitter again here.
                                  macro );
 
     return "// #define " + directiveBody + "\n";
-///////
-    }
 */
+    }
 
 
+
+
+
+  private StrA processIf( StrA directiveBody ) 
+    {
+    return new StrA( "" );
 
 /*
-  private String processIf( String directiveBody ) 
-    {
-    return "";
-//////
     String result = "if " + directiveBody + "\n";
     if( !boolLevArray.getCurrentValue())
       {
@@ -656,15 +697,18 @@ This can't be right to use LineSplitter again here.
       }
 
     return "// unknown if value returned.";
-///////
-    }
 */
+    }
 
 
+
+
+
+  private StrA processElif( StrA directiveBody ) 
+    {
+    return new StrA( "" );
 
 /*
-  private String processElif( String directiveBody ) 
-    {
     int currentLevel = boolLevArray.getLevel();
     if( currentLevel == 0 )
       {
@@ -708,13 +752,16 @@ This can't be right to use LineSplitter again here.
 
       return result;
       }
-    }
 */
+    }
 
+
+
+  private StrA processElse( StrA directiveBody ) 
+    {
+    return new StrA( "" );
 
 /*
-  private String processElse( String directiveBody ) 
-    {
     int currentLevel = boolLevArray.getLevel();
     if( currentLevel == 0 )
       {
@@ -756,8 +803,9 @@ This can't be right to use LineSplitter again here.
 
       return result;
       }
-    }
 */
+    }
+
 
 
   }
