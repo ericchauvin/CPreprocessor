@@ -155,7 +155,8 @@ public class PreProcessLines
         {
 /*
 Do this.
-        // Markers.TypeCodeBlock 
+        // Markers.TypeCodeBlock and the number
+        of the code block for the dictionary. 
 
         if( boolLevArray.getCurrentValue())
           sBuilder.append( line + "\n" );
@@ -279,21 +280,7 @@ Do this.
     }
 
 
-/*
-====
-DirectiveError
-DirectiveDefine
-DirectiveUndef
-DirectiveInclude
-DirectivePragma
-DirectiveIf
-DirectiveIfdef
-DirectiveIfndef
-DirectiveElse
-DirectiveElif
-DirectiveEndif
-====
-*/
+
 
   private StrA processDirective( StrA directive,
                                 StrA directiveBody )
@@ -308,55 +295,55 @@ DirectiveEndif
       result = processDefine( directiveBody );
       }
 
-    if( directive.equals( "error" ))
+    if( directive.equals( DirectiveError ))
       {
       result = processError( directiveBody );
       }
 
-    if( directive.equals( "undef" ))
+    if( directive.equals( DirectiveUndef ))
       {
       result = processUndef( directiveBody );
       }
 
 
-    if( directive.equals( "include" ))
+    if( directive.equals( DirectiveInclude ))
       {
       result = processInclude( directiveBody );
       }
 
-    if( directive.equals( "pragma" ))
+    if( directive.equals( DirectivePragma ))
       {
       result = processPragma( directiveBody ); 
       }
 
-    if( directive.equals( "if" ))
+    if( directive.equals( DirectiveIf ))
       {
       result = processIf( directiveBody );
       }
 
-    if( directive.equals( "ifdef" ))
+    if( directive.equals( DirectiveIfdef ))
       {
       result = processIfDef( directive,
                                       directiveBody );
       }
 
-    if( directive.equals( "ifndef" ))
+    if( directive.equals( DirectiveIfndef ))
       {
       result = processIfNDef( directive,
                                      directiveBody );
       }
 
-    if( directive.equals( "else" ))
+    if( directive.equals( DirectiveElse ))
       {
       result = processElse( directiveBody );
       }
 
-    if( directive.equals( "elif" ))
+    if( directive.equals( DirectiveElif ))
       {
       result = processElif( directiveBody );
       }
 
-    if( directive.equals( "endif" ))
+    if( directive.equals( DirectiveEndif ))
       {
       result = processEndIf();
       }
@@ -380,14 +367,10 @@ DirectiveEndif
 
   private StrA processEndIf()
     {
-    return new StrA( "" );
-
-/*
     if( !boolLevArray.subtractLevel())
-      return "";
+      return new StrA( "" );
 
-    return "// #endif\n";
-*/
+    return new StrA( "// #endif\n" );
     }
 
 
@@ -395,11 +378,8 @@ DirectiveEndif
   private StrA processIfDef( StrA directive,
                                StrA directiveBody )
     {
-    return new StrA( "" );
-
-/*
-    String result = "// #" + directive + " " +
-                                directiveBody + "\n";
+    StrA result = new StrA( "// #" + directive +
+                        " " + directiveBody + "\n" );
 
     if( !boolLevArray.getCurrentValue())
       {
@@ -409,8 +389,7 @@ DirectiveEndif
       return result;
       }
 
-    directiveBody = StringsUtility.removeSections(
-                                        directiveBody,
+    directiveBody = directiveBody.removeSections(
                                         Markers.Begin,
                                         Markers.End );
 
@@ -429,7 +408,6 @@ DirectiveEndif
       boolLevArray.addNewLevel( false );
       return result;
       }
-*/
     }
 
 
@@ -438,11 +416,8 @@ DirectiveEndif
   private StrA processIfNDef( StrA directive,
                                 StrA directiveBody )
     {
-    return new StrA( "" );
-
-/*
-    String result = "// #" + directive + " " +
-                                directiveBody + "\n";
+    StrA result = new StrA( "// #" + directive +
+                         " " + directiveBody + "\n" );
 
     if( !boolLevArray.getCurrentValue())
       {
@@ -451,8 +426,7 @@ DirectiveEndif
       return result;
       }
 
-    directiveBody = StringsUtility.removeSections(
-                                        directiveBody,
+    directiveBody = directiveBody.removeSections(
                                         Markers.Begin,
                                         Markers.End );
 
@@ -473,7 +447,6 @@ DirectiveEndif
       boolLevArray.addNewLevel( false );
       return result;
       }
-*/
     }
 
 
@@ -481,15 +454,14 @@ DirectiveEndif
 
   private StrA processError( StrA directiveBody )
     {
-    return new StrA( "" );
-
-/*
     if( !boolLevArray.getCurrentValue())
-      return "// #error " + directiveBody + "\n";
+      return new StrA( "// #error " +
+                             directiveBody + "\n" );
 
-    mApp.showStatusAsync( "Error directive: " + directiveBody );
-    return "";
-*/
+    mApp.showStatusAsync( "Error directive: " +
+                        directiveBody.toString() );
+
+    return new StrA( "" );
     }
 
 
@@ -497,16 +469,14 @@ DirectiveEndif
 
   private StrA processPragma( StrA directiveBody ) 
     {
-    return new StrA( "" );
-
-/*
     // === Use the ProcessPragma.java file.
 
     // pragma GCC system_header  15;stddef.h 
 
     // mApp.showStatusAsync( "#pragma: " + directiveBody );
 
-    String result = "// #pragma " + directiveBody + "\n";
+    StrA result = new StrA( "// #pragma " +
+                            directiveBody + "\n" );
 
     if( !boolLevArray.getCurrentValue())
       return result;
@@ -514,7 +484,6 @@ DirectiveEndif
     // Do something with it.
 
     return result;
-*/
     }
 
 
@@ -522,10 +491,9 @@ DirectiveEndif
 
   private StrA processUndef( StrA directiveBody ) 
     {
-    return new StrA( "" );
-
-/*
-    String result = "// #undef " + directiveBody + "\n"; 
+    StrA result = new StrA( "// #undef " + 
+                              directiveBody + "\n" );
+ 
     if( !boolLevArray.getCurrentValue())
       return result;
 
@@ -547,7 +515,6 @@ DirectiveEndif
       }
 
     return result;
-*/
     }
 
 
@@ -555,70 +522,75 @@ DirectiveEndif
 
   private StrA processInclude( StrA directiveBody )
     {
-    return new StrA( "" );
-
-/*
     if( !boolLevArray.getCurrentValue())
-      return "// #include " + directiveBody + "\n";
+      return new StrA( "// #include " +
+                              directiveBody + "\n" );
       
     // Add comments back in to the code to show
     // where a file was included and all that.
 
-    String inclFileName = StringsUtility.removeSections(
-                                        directiveBody,
+    StrA inclFileName = directiveBody.removeSections(
                                         Markers.Begin,
                                         Markers.End );
 
-    inclFileName = inclFileName.replace( "\"", "" );
-    inclFileName = inclFileName.replace( "<", "" );
-    inclFileName = inclFileName.replace( ">", "" );
+    inclFileName = inclFileName.replace( 
+                      new StrA( "\"" ), StrA.Empty );
+    inclFileName = inclFileName.replace( 
+                       new StrA( "<" ), StrA.Empty );
+    inclFileName = inclFileName.replace( 
+                       new StrA( ">" ), StrA.Empty );
     inclFileName = inclFileName.trim();
     inclFileName = inclFileName.toLowerCase();
     
     // Make a configuration file.
     // Make this work for your operating system.
-    String pathDelim = "\\";
-    String linuxPathDelim = "/";
-    inclFileName = inclFileName.replace(
+    char pathDelim = '\\';
+    char linuxPathDelim = '/';
+    inclFileName = inclFileName.replaceChar(
                                      linuxPathDelim,
                                      pathDelim );
 
-    if( inclFileName.equals( "precompiled.hpp" ))
-      return "// #include precompiled.hpp is not used.\n";
+    if( inclFileName.equals( new StrA( 
+                            "precompiled.hpp" )))
+      {
+      return new StrA( 
+        "// #include precompiled.hpp is not used.\n" );
+      }
 
     // mApp.showStatusAsync( "Looking for: " + inclFileName );
-    String fileName = headerDictionary.
+    StrA fileName = headerDictionary.
                             getValue( inclFileName );
     
     if( fileName.length() == 0 )
       {
-      mApp.showStatusAsync( "No file found for: " + inclFileName );
-      return ""; 
+      mApp.showStatusAsync( "No file found for: " +
+                            inclFileName.toString() );
+      return StrA.Empty; 
       }
     
     // String showS = "Filename found is:\n" + fileName;
     // mApp.showStatusAsync( showS );
 
-    String inclFileStr = Preprocessor.PreprocessFile(
+    StrA inclFileStr = Preprocessor.PreprocessFile(
                                     mApp,
                                     fileName,
                                     macroDictionary,
                                     headerDictionary );
 
     if( inclFileStr.length() == 0 )
-      return "";
+      return StrA.Empty;
 
     // Once this returns from processing the
     // included files it will have a bunch of new
     // macros defined in the dictionary.
 
-    inclFileStr = "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n" +
-           "// #include " + fileName + "\n" +
-           inclFileStr +
-           "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n";
+    inclFileStr = new StrA( 
+               "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n" +
+               "// #include " + fileName + "\n" +
+               inclFileStr +
+               "\n\n\\\\\\\\\\\\\\\\\\\\\\\\\n\n" );
 
     return inclFileStr;
-*/
     }
 
 
@@ -626,35 +598,32 @@ DirectiveEndif
 
   private StrA processDefine( StrA directiveBody )
     {
-    return new StrA( "" );
-
-/*
-
     if( !boolLevArray.getCurrentValue())
-      return "// #define " + directiveBody + "\n";
+      return new StrA( 
+              "// #define " + directiveBody + "\n" );
 
-    Macro macro = new Macro( mApp );
-    if( !macro.setKeyFromString( directiveBody ))
-      return "";
+    Macro macro = new Macro( mApp, directiveBody,
+                                              false );
 
-    // String showKey = macro.getKey();
-    // mApp.showStatusAsync( "Key: " + showKey );
+// ==== If the key is empty .. then.
+    StrA showKey = macro.getKey();
+    mApp.showStatusAsync( "Key: " + showKey.toString() );
 
     boolean doStrict = false;
-    if( !macro.markUpFromString( directiveBody,
+    if( !macro.markUpFromStrA( directiveBody,
                                  macroDictionary,
                                  doStrict ))
       {
       mApp.showStatusAsync( "markUpFromString had an error." );
-      return "";
+      return StrA.Empty;
       }
 
     macroDictionary.setNewMacro( doStrict,
                                  macro.getKey(),
                                  macro );
 
-    return "// #define " + directiveBody + "\n";
-*/
+    return new StrA( "// #define " +
+                          directiveBody + "\n" );
     }
 
 
@@ -663,41 +632,38 @@ DirectiveEndif
 
   private StrA processIf( StrA directiveBody ) 
     {
-    return new StrA( "" );
-
-/*
-    String result = "if " + directiveBody + "\n";
+    StrA result = new StrA( "if " +
+                             directiveBody + "\n" );
     if( !boolLevArray.getCurrentValue())
       {
       // If what's above it is false, then this
       // has to be false.
       boolLevArray.addNewLevel( false );
-      return "// false  " + result;
+      return new StrA( "// false  " + result );
       }
 
-    String exprValue = IfExpression.
+    StrA exprValue = IfExpression.
                                   evaluateExpression(
                                         mApp,
                                         directiveBody,
                                      macroDictionary );
 
     if( exprValue.length() == 0 )
-      return "";
+      return StrA.Empty;
 
-    if( exprValue.equals( "true" ))
+    if( exprValue.equals( BoolExp.True ))
       {
       boolLevArray.addNewLevel( true );
-      return "// true  " + result;
+      return new StrA( "// true  " + result );
       }
 
-    if( exprValue.equals( "false" ))
+    if( exprValue.equals( BoolExp.False ))
       {
       boolLevArray.addNewLevel( false );
-      return "// false  " + result;
+      return new StrA( "// false  " + result );
       }
 
-    return "// unknown if value returned.";
-*/
+    return new StrA( "// unknown if value returned." );
     }
 
 
