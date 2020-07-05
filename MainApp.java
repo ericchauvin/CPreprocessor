@@ -11,10 +11,11 @@ import javax.swing.SwingUtilities;
 
 public class MainApp implements Runnable
   {
-  public static final String versionDate = "7/2/2020";
+  public static final String versionDate = "7/5/2020";
   private MainWindow mainWin;
   // public ConfigureFile mainConfigFile;
   private String[] argsArray;
+  private StrA programDirectory;
 
 
 
@@ -45,35 +46,43 @@ public class MainApp implements Runnable
     }
 
 
+  public StrA getProgramDirectory()
+    {
+    return programDirectory;
+    }
+
+
 
   private void setupProgram()
     {
     // checkSingleInstance()
- 
-    /*
-    String programDirectory = "\\Eric\\CPreprocessor\\";
+
+    // All programs need to have a batch file give
+    // it the program directory, so it's not stuck
+    // to that fixed directory. 
+    programDirectory = new StrA( 
+                          "\\Eric\\CPreprocessor\\" );
+
     int length = argsArray.length;
     if( length > 0 )
-      programDirectory = argsArray[0];
+      programDirectory = new StrA( argsArray[0] );
 
-    String mainConfigFileName = programDirectory +
-                                      "MainConfigure.txt";
+    // String mainConfigFileName = programDirectory +
+    //                            "MainConfigure.txt";
 
-    mainConfigFile = new ConfigureFile( this,
-                                mainConfigFileName );
-    */
+    // mainConfigFile = new ConfigureFile( this,
+    //                            mainConfigFileName );
 
     mainWin = new MainWindow( this, "C Preprocessor" );
     mainWin.initialize();
 
-    /*
-    showStatus( " " );
-    showStatus( "argsArray length: " + length );
-    for( int count = 0; count < length; count++ )
-      showStatus( argsArray[count] );
-    */
+    // showStatusAsync( "argsArray length: " + length );
+    // for( int count = 0; count < length; count++ )
+      // showStatusAsync( argsArray[count] );
 
-    // showStatus( " " );
+
+    showStatusAsync( "\nProgram Directory:\n" +
+                                   programDirectory );
     }
 
 
