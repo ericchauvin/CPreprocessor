@@ -28,17 +28,8 @@ public class Macro
 
   private Macro()
     {
-    key = new StrA( "" );
+    key = StrA.Empty;
     }
-
-
-/*
-  public Macro( MainApp useApp )
-    {
-    mApp = useApp;
-    enabled = true;
-    }
-*/
 
 
 
@@ -47,7 +38,7 @@ public class Macro
     mApp = useApp;
     enabled = true;
     key = keyToUse;
-    markedUpS = new StrA( "" );
+    markedUpS = StrA.Empty;
     }
 
 
