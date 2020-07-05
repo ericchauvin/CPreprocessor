@@ -5,14 +5,11 @@
 
 public class StrA
   {
-  // Since values is final, you can do things like
-  // StrA twoS = oneS;
-  // And the variable oneS can be assigned to
-  // something else later, but it doesn't change
-  // twoS.
-
-
   private final char[] values;
+
+
+  public static final StrA Empty =
+                                new StrA( "" );
 
 
   private StrA()
@@ -130,7 +127,7 @@ public class StrA
       return new char[0];
 
     // last can be zero.
-    int last = in.length();
+    final int last = in.length();
     char[] result = new char[last];
     for( int count = 0; count < last; count++ )
       result[count] = in.charAt( count );
@@ -239,41 +236,6 @@ public class StrA
 
     return true;
     }
-
-
-/*
-  public String replace( String toFind,
-                         String replaceS )
-    {
-    if( toFind.length() == 0 )
-      return toString();
-
-    if( toFind.length() == 0 )
-      return toString();
-
-    // ReplaceS might be an empty string.
-    // replace( in, "this", "" );
-    // if( replaceS.length() == 0 )
-
-    if( values.length < toFind.length() )
-      return toString();
-
-    String testS = toString().replace( toFind, replaceS );
-   
-    StrA toFindA = new StrA( toFind );
-    StrA replaceA = new StrA( replaceS );
-
-    StrA resultA = replace( toFindA,
-                           replaceA );
-
-
-    String result = resultA.toString();
-    if( !result.equals( testS ))
-      return "Bad string: " + result + " and testS " + testS;
-
-    return result;
-    }
-*/
 
 
 
@@ -491,6 +453,14 @@ public class StrA
     return new StrA( both );  
     }
 
+
+  // =======
+  // What's the deal with this?
+  private boolean equals( String in )
+    {
+    // Don't call this.
+    return false;
+    }
 
 
   public boolean equals( StrA in )
