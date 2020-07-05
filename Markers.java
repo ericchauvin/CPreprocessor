@@ -49,6 +49,8 @@
   public static final char QuoteAsSingleCharacter =
                                          (char)0x270F;
   public static final char TypeBoolean = (char)0x2710;
+  public static final char TypeCodeBlock =
+                                       (char)0x2711;
 
 
 
