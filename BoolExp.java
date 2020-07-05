@@ -4,14 +4,14 @@
 
 public class BoolExp
   {
-  public static final StrA TrueA = new StrA( 
+  public static final StrA True = new StrA( 
                      "" +
                      Markers.Begin +
                      Markers.TypeBoolean +
                      "true" + 
                      Markers.End );
 
-    public static final StrA FalseA = new StrA( 
+    public static final StrA False = new StrA( 
                      "" +
                      Markers.Begin +
                      Markers.TypeBoolean +
@@ -121,35 +121,35 @@ public class BoolExp
                         new StrA( LessThan, Equal1 );
 
     public static final StrA ConcatNotTrue =
-                        new StrA( NotA, TrueA );
+                        new StrA( NotA, True );
 
     public static final StrA ConcatNotFalse =
-                        new StrA( NotA, FalseA );
+                        new StrA( NotA, False );
 
 
     public static final StrA ConcatTrueAndTrue =
-                   new StrA( TrueA, And2, TrueA );
+                   new StrA( True, And2, True );
 
     public static final StrA ConcatFalseAndFalse =
-                   new StrA( FalseA, And2, FalseA );
+                   new StrA( False, And2, False );
 
     public static final StrA ConcatTrueAndFalse =
-                   new StrA( TrueA, And2, FalseA );
+                   new StrA( True, And2, False );
 
     public static final StrA ConcatFalseAndTrue =
-                   new StrA( FalseA, And2, TrueA );
+                   new StrA( False, And2, True );
 
     public static final StrA ConcatTrueOrTrue =
-                   new StrA( TrueA, Or2, TrueA );
+                   new StrA( True, Or2, True );
 
     public static final StrA ConcatFalseOrFalse =
-                   new StrA( FalseA, Or2, FalseA );
+                   new StrA( False, Or2, False );
 
     public static final StrA ConcatTrueOrFalse =
-                   new StrA( TrueA, Or2, FalseA );
+                   new StrA( True, Or2, False );
 
     public static final StrA ConcatFalseOrTrue =
-                   new StrA( FalseA, Or2, TrueA );
+                   new StrA( False, Or2, True );
 
 
 
@@ -204,10 +204,10 @@ public class BoolExp
       StrA testA = new StrA( result );
 
       result = result.replace( ConcatNotTrue,
-                                    FalseA );
+                                    False );
 
       result = result.replace( ConcatNotFalse,
-                                    TrueA );
+                                    True );
 
       if( result.equals( testA ))
         break;
@@ -227,29 +227,29 @@ public class BoolExp
       StrA testA = new StrA( result );
 
       result = result.replace( ConcatTrueAndTrue,
-                                         TrueA );
+                                         True );
 
       result = result.replace( ConcatFalseAndFalse,
-                                         FalseA );
+                                         False );
 
       result = result.replace( ConcatTrueAndFalse,
-                                         FalseA );
+                                         False );
 
       result = result.replace( ConcatFalseAndTrue,
-                                         FalseA );
+                                         False );
 
       // Combine OR markers.
       result = result.replace( ConcatTrueOrTrue,
-                                         TrueA );
+                                         True );
 
       result = result.replace( ConcatFalseOrFalse,
-                                         FalseA );
+                                         False );
 
       result = result.replace( ConcatTrueOrFalse,
-                                         TrueA );
+                                         True );
 
       result = result.replace( ConcatFalseOrTrue,
-                                         TrueA );
+                                         True );
 
       if( result.equals( testA ))
         break;
