@@ -143,6 +143,7 @@ public class StrA
     }
 
 
+
   public char charAt( int where )
     {
     if( where < 0 )
@@ -243,7 +244,7 @@ public class StrA
                        StrA replaceA )
     {
     if( values.length == 0 )
-      return new StrA( "" );
+      return Empty;
 
     if( toFind.length() == 0 )
       return new StrA( values ); // this
@@ -311,7 +312,7 @@ public class StrA
   public StrA replaceChar( char toFind, char replace )
     {
     if( values.length == 0 )
-      return new StrA( "" );
+      return Empty;
 
     int last = values.length;
     char[] toArray = new char[last];
@@ -454,18 +455,11 @@ public class StrA
     }
 
 
-  // =======
-  // What's the deal with this?
-  private boolean equals( String in )
-    {
-    // Don't call this.
-    return false;
-    }
 
-
-  public boolean equals( StrA in )
+  // Don't use equals() inherited from Object.
+  public boolean equalTo( StrA in )
     {
-    int last = values.length;
+    final int last = values.length;
     if( last != in.values.length )
       return false;
 
@@ -544,8 +538,8 @@ public class StrA
 
   public StrA toLowerCase()
     {
-    char[] lower = new char[values.length];
     final int max = values.length;
+    char[] lower = new char[max];
     for( int count = 0; count < max; count++ )
       {
       lower[count] = Character.toLowerCase(
@@ -559,8 +553,8 @@ public class StrA
 
   public int compareToIgnoreCase( StrA in )
     {
-    int thisLen = values.length;
-    int inLen = in.values.length;
+    final int thisLen = values.length;
+    final int inLen = in.values.length;
     int shorter = thisLen;
     if( inLen < shorter )
       shorter = inLen;
@@ -614,7 +608,7 @@ public class StrA
     {
     final int max = values.length;
     if( max == 0 )
-      return new StrA( "" );
+      return Empty;
 
     char[] resultA = new char[max];
     boolean foundFirst = false;
@@ -644,7 +638,7 @@ public class StrA
     {
     final int max = values.length;
     if( max == 0 )
-      return new StrA( "" );
+      return Empty;
 
     StrABld sBld = new StrABld( max );
     boolean isInside = false;
@@ -848,7 +842,7 @@ public class StrA
       end = values.length - 1;
 
     if( begin > end )
-      return new StrA( "" );
+      return Empty;
 
     StrABld sBld = new StrABld( end );
     for( int count = begin; count <= end; count++ )
