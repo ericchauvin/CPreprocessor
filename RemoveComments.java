@@ -44,7 +44,7 @@ public class RemoveComments
 
       // mApp.showStatusAsync( result );
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
@@ -53,7 +53,7 @@ public class RemoveComments
                        " after markLineNumbers.";
 
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     result = removeStarComments( mApp, result );
@@ -63,7 +63,7 @@ public class RemoveComments
                                " removeStarComments.";
 
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
@@ -72,7 +72,7 @@ public class RemoveComments
                        " after removeStarComments.";
 
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     result = removeAllDoubleSlashComments( mApp,
@@ -84,7 +84,7 @@ public class RemoveComments
                      " removeAllDoubleSlashComments.";
 
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     if( !MarkupString.testBeginEnd( mApp, result ))
@@ -93,7 +93,7 @@ public class RemoveComments
                " after removeAllDoubleSlashComments.";
 
       mApp.showStatusAsync( showError );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     return result;
@@ -106,14 +106,14 @@ public class RemoveComments
                                      StrA fileName )
     {
     if( in.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrABld sBuilder = new StrABld( 1024 );
 
     StrArray splitS = in.splitChar( '\n' );
     final int last = splitS.length();
     if( last == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrA starSlash = new StrA( "*" + "/" );
     StrA newline = new StrA( "\n" );
@@ -127,7 +127,7 @@ public class RemoveComments
       if( tLine.length() == 0 )
         continue;
 
-      if( tLine.equals( starSlash ))
+      if( tLine.equalTo( starSlash ))
         {
         // Don't mark this empty line with a number.
         sBuilder.appendStrA( starSlashNewline );
@@ -146,7 +146,7 @@ public class RemoveComments
         if( lineLength == 1 )
           {
           // The line contains only the slash character.
-          line = new StrA( "" );
+          line = StrA.Empty;
           }
         else
           {
@@ -184,7 +184,7 @@ public class RemoveComments
     // and any other markers.
 
     if( in.trim().length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrABld sBuilder = new StrABld( 1024 );
 
