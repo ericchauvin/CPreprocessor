@@ -49,9 +49,9 @@ public class HeaderFileDictionary
   private StrA getFileFromList( StrA key )
     {
     if( fileListArray == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
-    StrA result = new StrA( "" );
+    StrA result = StrA.Empty;
 
     key = key.trim().toLowerCase();
     // if( !key.startsWith( pathDelim ))
@@ -84,7 +84,7 @@ public class HeaderFileDictionary
                           key + "\n";
                           
       mApp.showStatusAsync( showS );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     return result;
@@ -182,11 +182,11 @@ public class HeaderFileDictionary
   public StrA getValue( StrA key )
     {
     if( key == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
     key = key.trim();
     if( key.length() < 1 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     int index = getIndex( key );
     if( lineArray[index] == null )
@@ -240,7 +240,7 @@ public class HeaderFileDictionary
       {
       mApp.showStatusAsync( "Exception in HeaderFilesDictionary.makeKeysValuesString():\n" );
       mApp.showStatusAsync( e.getMessage() );
-      return new StrA( "" );
+      return StrA.Empty;
       }
     }
 
@@ -260,13 +260,11 @@ public class HeaderFileDictionary
 
   public void readFile( StrA fileName )
     {
-    ////////
-    StrA tempFileList = new StrA( 
-              "\\Eric\\CPreprocessor\\FileList.txt" );
+    StrA fileList = mApp.getProgramDirectory();
+    fileList = fileList.concat( new StrA(
+                                 "\\FileList.txt" ));
 
-    readFileList( tempFileList );
-    //////
-
+    readFileList( fileList );
 
     StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
