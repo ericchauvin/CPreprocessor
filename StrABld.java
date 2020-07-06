@@ -27,6 +27,7 @@ public class StrABld
     }
 
 
+
   public void clear()
     {
     valuesLast = 0;
@@ -95,7 +96,7 @@ public class StrABld
   public StrA toStrA()
     {
     if( valuesLast == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     char[] result = new char[valuesLast];
     for( int count = 0; count < valuesLast; count++ )
