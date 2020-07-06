@@ -398,7 +398,7 @@ public class Macro
 
   private StrA putFParametersInArray( StrA in )
     {
-    // mApp.showStatusAsync( "\nputFParam: " + in );
+    mApp.showStatusAsync( "\nIn Macro.putFParam: " + in );
 
     paramArray = new StrArray();
     StringBuilder sBuilder = new StringBuilder();
