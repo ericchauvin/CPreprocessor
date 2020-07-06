@@ -1,6 +1,9 @@
 // Copyright Eric Chauvin 2020.
 
 
+// An old saying: "Make it work first, then make
+// it work fast.
+
 
 
 public class StrA
@@ -192,7 +195,7 @@ public class StrA
 */
 
 
-
+  @Override
   public String toString()
     {
     int last = values.length;
@@ -787,6 +790,22 @@ public class StrA
 
 
 
+  public StrA getReverse()
+    {
+    final int max = values.length;
+    char[] result = new char[max];
+    int where = 0;
+    for( int count = max - 1; count >= 0; count-- )
+      {
+      result[where] = values[count];
+      where++;
+      }
+
+    return new StrA( result );
+    }
+
+
+
   public boolean endsWith( StrA toFind )
     {
     if( values.length == 0 )
@@ -797,15 +816,15 @@ public class StrA
 
     if( values.length < toFind.length() )
       return  false;
-    
-    int offset = (values.length - 1) -
-                 (toFind.length() - 1);
 
-    final int max = toFind.length();
+    StrA toFindR = toFind.getReverse();
+    StrA valuesR = getReverse();
+    
+    final int max = toFindR.length();
     for( int count = 0; count < max; count++ )
       {
-      if( values[count + offset] !=
-                               toFind.values[count] )
+      if( valuesR.values[count] !=
+                             toFindR.values[count] )
         return false;
 
       }
