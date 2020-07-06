@@ -12,32 +12,32 @@ public class MarkupString
     result = markStrings( mApp, result );
     if( !testMarkers( result, new StrA(
                 "markStrings() at top." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     result = markCharacters( mApp, result );
     if( !testMarkers( result, new StrA(
                       "markCharacters()." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     result = markIdentifiers( mApp, result );
     if( !testMarkers( result, new StrA(
                      "markIdentifiers()." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     result = markNumbers( result );
     if( !testMarkers( result, new StrA( 
                            "markNumbers()." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     result = markOperators( result );
     if( !testMarkers( result, new StrA( 
                          "markOperators()." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     result = removeOutsideWhiteSpace( result );
     if( !testMarkers( result, new StrA( 
                "removeOutsideWhiteSpace()." ), mApp ))
-      return new StrA( "" );
+      return StrA.Empty;
 
     // mApp.showStatus( result );
     // mApp.showStatus( " " );
