@@ -19,7 +19,7 @@ public class Macro
   private MainApp mApp;
   // Once the key is assigned, it can't be changed.
   private final StrA key;
-  private StrA markedUpS = new StrA( "" );
+  private StrA markedUpS = StrA.Empty;
   private boolean isFunctionType = false;  
   private boolean enabled = true; // For undef.
   private StrArray paramArray = null;
@@ -48,7 +48,7 @@ public class Macro
     {
     mApp = useApp;
     enabled = true;
-    markedUpS = new StrA( "" );
+    markedUpS = StrA.Empty;
     isFunctionType = false;
     key = getKeyForConstructor( in );
     }
@@ -66,7 +66,7 @@ public class Macro
     if( last == 0 )
       {
       mApp.showStatusAsync( "There is no key." );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     StrA tempKey = splitS.getStrAt( 0 );
@@ -87,7 +87,7 @@ public class Macro
     if( tempKey.length() == 0 )
       {
       mApp.showStatusAsync( "The key length is zero." );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     return tempKey;
@@ -168,7 +168,7 @@ public class Macro
       }
 
     testKey = Markers.removeAllMarkers( testKey );
-    if( !key.equals( testKey ))
+    if( !key.equalTo( testKey ))
       {
       mApp.showStatusAsync( "The key is not equal to the first token." );
       mApp.showStatusAsync( "Key: >" + key + "<" );
@@ -234,7 +234,7 @@ public class Macro
                                       macroDictionary )
     {
     if( in == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrA result = in;
     for( int count = 0; count < 100; count++ )
@@ -268,7 +268,7 @@ public class Macro
 
 
       // If it hasn't replaced anything.
-      if( testS.equals( result ))
+      if( testS.equalTo( result ))
         break;
 
       }
@@ -286,7 +286,7 @@ public class Macro
                                       macroDictionary )
     {
     if( in.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     if( !in.containsChar( Markers.Begin ))
       {
@@ -303,7 +303,7 @@ public class Macro
     if( last == 0 )
       {
       mApp.showStatusAsync( "Last is zero in replaceMacrosOnce()." );
-      return new StrA( "" );
+      return StrA.Empty;
       } 
       
     StrA testNothing = splitS.getStrAt( 0 );
@@ -342,10 +342,10 @@ public class Macro
         // IfExpression.
         if( key.length() > 0 )
           {
-          if( key.equals( replaceMacro.getKey()))
+          if( key.equalTo( replaceMacro.getKey()))
             {
             mApp.showStatusAsync( "This is a self-referential macro: " + key );
-            return new StrA( "" );
+            return StrA.Empty;
             }
           }
 
@@ -384,7 +384,7 @@ public class Macro
                                  mApp ))
         {
         mApp.showStatusAsync( "testMarkers() returned false." );
-        return new StrA( "" );
+        return StrA.Empty;
         }
       }
 
@@ -407,14 +407,14 @@ public class Macro
     if( last == 0 )
       {
       mApp.showStatusAsync( "Last is zero in putFParametersInArray()." );
-      return new StrA( "" );
+      return StrA.Empty;
       } 
       
     String testNothing = splitS.getStrAt( 0 ).toString();
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     int inside = 0;
@@ -492,7 +492,7 @@ public class Macro
   public StrA getParamArrayValue( int where )
     {
     if( paramArray == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
     return paramArray.getStrAt( where );
     }
