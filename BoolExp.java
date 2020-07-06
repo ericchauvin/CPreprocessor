@@ -158,7 +158,7 @@ public class BoolExp
                                StrA in )
     {
     if( in == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrA originalExpr = in;
     StrA result = new StrA( in );
@@ -169,7 +169,7 @@ public class BoolExp
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return new StrA( "" );
+        return StrA.Empty;
 
       StrA testA = new StrA( result );
       result = result.replace( ConcatAnd, And2 );
@@ -185,7 +185,7 @@ public class BoolExp
                                LessThanOrEq );
 
       // If nothing was replaced.
-      if( testA.equals( result ))
+      if( testA.equalTo( result ))
         break;
 
       if( count > 10 )
@@ -199,7 +199,7 @@ public class BoolExp
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return new StrA( "" );
+        return StrA.Empty;
 
       StrA testA = new StrA( result );
 
@@ -209,7 +209,7 @@ public class BoolExp
       result = result.replace( ConcatNotFalse,
                                     True );
 
-      if( result.equals( testA ))
+      if( result.equalTo( testA ))
         break;
 
       if( count > 10 )
@@ -222,7 +222,7 @@ public class BoolExp
     for( int count = 0; count < 1000; count++ )
       {
       if( result.length() < 1 )
-        return new StrA( "" );
+        return StrA.Empty;
 
       StrA testA = new StrA( result );
 
@@ -251,7 +251,7 @@ public class BoolExp
       result = result.replace( ConcatFalseOrTrue,
                                          True );
 
-      if( result.equals( testA ))
+      if( result.equalTo( testA ))
         break;
 
       if( count > 10 )
@@ -263,7 +263,7 @@ public class BoolExp
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatusAsync( "BoolExp.evaluate() The string isn't right: " + result );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     // mApp.showStatusAsync( "After true && false changes: " + result );
