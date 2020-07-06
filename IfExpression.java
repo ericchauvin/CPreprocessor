@@ -28,10 +28,10 @@ public class IfExpression
       return new StrA( "" );
       }
 
-    if( expr.equals( "1" ))
+    if( expr.equalTo( new StrA( "1" )))
       return BoolExp.True;
 
-    if( expr.equals( "0" ))
+    if( expr.equalTo( new StrA( "0" )))
       return BoolExp.False;
 
     StrA markedUp = MarkupString.MarkItUp( 
@@ -60,18 +60,18 @@ public class IfExpression
 
     // mApp.showStatusAsync( markedUp );
 
-    if( markedUp.equals( BoolExp.True ))
+    if( markedUp.equalTo( BoolExp.True ))
       return BoolExp.True;
 
-    if( markedUp.equals( BoolExp.False ))
+    if( markedUp.equalTo( BoolExp.False ))
       return BoolExp.False;
 
     markedUp = BoolExp.evaluate( mApp, markedUp );
 
-    if( markedUp.equals( BoolExp.True ))
+    if( markedUp.equalTo( BoolExp.True ))
       return BoolExp.True;
 
-    if( markedUp.equals( BoolExp.False ))
+    if( markedUp.equalTo( BoolExp.False ))
       return BoolExp.False;
 
 
@@ -83,10 +83,10 @@ public class IfExpression
                                     markedUp,
                                     macroDictionary );
 
-    if( markedUp.equals( BoolExp.True ))
+    if( markedUp.equalTo( BoolExp.True ))
       return BoolExp.True;
 
-    if( markedUp.equals( BoolExp.False ))
+    if( markedUp.equalTo( BoolExp.False ))
       return BoolExp.False;
 
 
@@ -152,10 +152,10 @@ public class IfExpression
                          ")" +
                          Markers.End;
 
-    StrA trueIn1 = new StrA( TrueIn1Str );
-    StrA trueIn2 = new StrA( TrueIn2Str );
-    StrA falseIn1 = new StrA( FalseIn1Str );
-    StrA falseIn2 = new StrA( FalseIn2Str );
+    final StrA trueIn1 = new StrA( TrueIn1Str );
+    final StrA trueIn2 = new StrA( TrueIn2Str );
+    final StrA falseIn1 = new StrA( FalseIn1Str );
+    final StrA falseIn2 = new StrA( FalseIn2Str );
 
     StrArray exprParts = markedUp.splitChar(  
                                      Markers.Begin );
