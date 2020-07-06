@@ -91,34 +91,34 @@ public class MacroDictionary
   private boolean isBadKey( StrA key )
     {
     // C++ named operators.
-    if( key.equals( new StrA( "and" )))
+    if( key.equalTo( new StrA( "and" )))
       return true;
 
-    if( key.equals( new StrA( "and_eq" )))
+    if( key.equalTo( new StrA( "and_eq" )))
       return true;
 
-    if( key.equals( new StrA( "bitand" )))
+    if( key.equalTo( new StrA( "bitand" )))
       return true;
 
-    if( key.equals( new StrA( "bitor" )))
+    if( key.equalTo( new StrA( "bitor" )))
       return true;
 
-    if( key.equals( new StrA( "compl" )))
+    if( key.equalTo( new StrA( "compl" )))
       return true;
 
-    if( key.equals( new StrA( "not" )))
+    if( key.equalTo( new StrA( "not" )))
       return true;
 
-    if( key.equals( new StrA( "not_eq" )))
+    if( key.equalTo( new StrA( "not_eq" )))
       return true;
 
-    if( key.equals( new StrA( "or" )))
+    if( key.equalTo( new StrA( "or" )))
       return true;
 
-    if( key.equals( new StrA( "or_eq" )))
+    if( key.equalTo( new StrA( "or_eq" )))
       return true;
 
-    if( key.equals( new StrA( "xor" )))
+    if( key.equalTo( new StrA( "xor" )))
       return true;
 
     return false;
