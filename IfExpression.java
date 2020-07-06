@@ -14,7 +14,7 @@ public class IfExpression
                      MacroDictionary macroDictionary )
     {
     if( expr == null )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrA originalExpr = expr;
     // Remove line number markers.
@@ -25,7 +25,7 @@ public class IfExpression
     if( expr.length() == 0 )
       {
       mApp.showStatusAsync( "If expression is empty." );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     if( expr.equalTo( new StrA( "1" )))
@@ -38,7 +38,7 @@ public class IfExpression
                               mApp, expr );
 
     if( markedUp.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     // mApp.showStatusAsync( " " );
     // mApp.showStatusAsync( markedUp );
@@ -49,12 +49,12 @@ public class IfExpression
                                   markedUp );
 
       if( markedUp.length() == 0 )
-        return new StrA( "" );
+        return StrA.Empty;
 
       if( !MarkupString.testMarkers( markedUp,
             new StrA(  "After setDefineValues()." ),
                                      mApp ))
-        return new StrA( "" );
+        return StrA.Empty;
 
       }
 
@@ -231,7 +231,7 @@ public class IfExpression
     if( !MarkupString.testBeginEnd( mApp, result ))
       {
       mApp.showStatusAsync( "IfExpression. The string isn't right: " + result );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     // mApp.showStatusAsync( "\n\n" + result.toString() );
