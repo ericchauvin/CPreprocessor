@@ -1,20 +1,6 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-/*
-DirectiveError
-DirectiveDefine
-DirectiveUndef
-DirectiveInclude
-DirectivePragma
-DirectiveIf
-DirectiveIfdef
-DirectiveIfndef
-DirectiveElse
-DirectiveElif
-DirectiveEndif
-*/
-
 
 
 public class PreProcessLines
@@ -93,41 +79,42 @@ public class PreProcessLines
 
     // #warning
 
-    if( in.equals( DirectiveError ))
+    if( in.equalTo( DirectiveError ))
       return true;
 
-    if( in.equals( DirectiveDefine ))
+    if( in.equalTo( DirectiveDefine ))
       return true;
 
-    if( in.equals( DirectiveUndef ))
+    if( in.equalTo( DirectiveUndef ))
       return true;
 
     // #include_next is a GNU extension.
     // It means to include the next file with
     // the same name.  Next in the search path for
     // include files.
-    if( in.equals( DirectiveInclude ))
+
+    if( in.equalTo( DirectiveInclude ))
       return true;
 
-    if( in.equals( DirectivePragma ))
+    if( in.equalTo( DirectivePragma ))
       return true;
 
-    if( in.equals( DirectiveIf ))
+    if( in.equalTo( DirectiveIf ))
       return true;
 
-    if( in.equals( DirectiveIfdef ))
+    if( in.equalTo( DirectiveIfdef ))
       return true;
 
-    if( in.equals( DirectiveIfndef ))
+    if( in.equalTo( DirectiveIfndef ))
       return true;
 
-    if( in.equals( DirectiveElse ))
+    if( in.equalTo( DirectiveElse ))
       return true;
 
-    if( in.equals( DirectiveElif ))
+    if( in.equalTo( DirectiveElif ))
       return true;
 
-    if( in.equals( DirectiveEndif ))
+    if( in.equalTo( DirectiveEndif ))
       return true;
 
     return false;
@@ -140,7 +127,7 @@ public class PreProcessLines
     try
     {
     if( in.trim().length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrABld sBuilder = new StrABld( 1024 );
     StrABld paramBuilder = new StrABld( 1024 );
@@ -191,13 +178,13 @@ Do this.
         mApp.showStatusAsync(
              "Preprocessor line doesn't have parts." );
 
-        return new StrA( "" );
+        return StrA.Empty;
         }
 
       StrA directive = lineSplitter.getStrAt( 0 );
 
       // if(WINVER
-      StrA directiveExtra = new StrA( "" );
+      StrA directiveExtra = StrA.Empty;
       if( directive.containsChar( '(' ))
         {
         StrArray dirSplitter = directive.splitChar(
@@ -227,7 +214,7 @@ Do this.
         {
         mApp.showStatusAsync( directive.toString() +
                        " is not a valid directive." );
-        return new StrA( "" );
+        return StrA.Empty;
         }
 
       paramBuilder.clear();
@@ -250,7 +237,7 @@ Do this.
                                        directiveBody );
 
       if( result.length() == 0 )
-        return new StrA( "" );
+        return StrA.Empty;
 
       // This might be appending a whole include file
       // worth of stuff.  And the include files it
@@ -266,7 +253,7 @@ Do this.
                      fileName.toString();
 
       mApp.showStatusAsync( showS );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     return sBuilder.toStrA();
@@ -275,7 +262,7 @@ Do this.
       {
       mApp.showStatusAsync( "Exception in mainFileLoop()." );
       mApp.showStatusAsync( e.getMessage() );
-      return new StrA( "" );
+      return StrA.Empty;
       }
     }
 
@@ -289,74 +276,74 @@ Do this.
     // with a newline.  And include files will have
     // many newlines.
 
-    StrA result = new StrA( "" );
-    if( directive.equals( DirectiveDefine ))
+    StrA result = StrA.Empty;
+    if( directive.equalTo( DirectiveDefine ))
       {
       result = processDefine( directiveBody );
       }
 
-    if( directive.equals( DirectiveError ))
+    if( directive.equalTo( DirectiveError ))
       {
       result = processError( directiveBody );
       }
 
-    if( directive.equals( DirectiveUndef ))
+    if( directive.equalTo( DirectiveUndef ))
       {
       result = processUndef( directiveBody );
       }
 
 
-    if( directive.equals( DirectiveInclude ))
+    if( directive.equalTo( DirectiveInclude ))
       {
       result = processInclude( directiveBody );
       }
 
-    if( directive.equals( DirectivePragma ))
+    if( directive.equalTo( DirectivePragma ))
       {
       result = processPragma( directiveBody ); 
       }
 
-    if( directive.equals( DirectiveIf ))
+    if( directive.equalTo( DirectiveIf ))
       {
       result = processIf( directiveBody );
       }
 
-    if( directive.equals( DirectiveIfdef ))
+    if( directive.equalTo( DirectiveIfdef ))
       {
       result = processIfDef( directive,
                                       directiveBody );
       }
 
-    if( directive.equals( DirectiveIfndef ))
+    if( directive.equalTo( DirectiveIfndef ))
       {
       result = processIfNDef( directive,
                                      directiveBody );
       }
 
-    if( directive.equals( DirectiveElse ))
+    if( directive.equalTo( DirectiveElse ))
       {
       result = processElse( directiveBody );
       }
 
-    if( directive.equals( DirectiveElif ))
+    if( directive.equalTo( DirectiveElif ))
       {
       result = processElif( directiveBody );
       }
 
-    if( directive.equals( DirectiveEndif ))
+    if( directive.equalTo( DirectiveEndif ))
       {
       result = processEndIf();
       }
 
     if( result.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     if( !result.endsWithChar( '\n' ))
       {
       mApp.showStatusAsync( "processDirective() line has to end with a line feed." );
       mApp.showStatusAsync( directive.toString() );
       mApp.showStatusAsync( directiveBody.toString() );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     return result;
@@ -368,7 +355,7 @@ Do this.
   private StrA processEndIf()
     {
     if( !boolLevArray.subtractLevel())
-      return new StrA( "" );
+      return StrA.Empty;
 
     return new StrA( "// #endif\n" );
     }
@@ -461,7 +448,7 @@ Do this.
     mApp.showStatusAsync( "Error directive: " +
                         directiveBody.toString() );
 
-    return new StrA( "" );
+    return StrA.Empty;
     }
 
 
@@ -550,7 +537,7 @@ Do this.
                                      linuxPathDelim,
                                      pathDelim );
 
-    if( inclFileName.equals( new StrA( 
+    if( inclFileName.equalTo( new StrA( 
                             "precompiled.hpp" )))
       {
       return new StrA( 
@@ -651,13 +638,13 @@ Do this.
     if( exprValue.length() == 0 )
       return StrA.Empty;
 
-    if( exprValue.equals( BoolExp.True ))
+    if( exprValue.equalTo( BoolExp.True ))
       {
       boolLevArray.addNewLevel( true );
       return new StrA( "// true  " + result );
       }
 
-    if( exprValue.equals( BoolExp.False ))
+    if( exprValue.equalTo( BoolExp.False ))
       {
       boolLevArray.addNewLevel( false );
       return new StrA( "// false  " + result );
@@ -672,7 +659,7 @@ Do this.
 
   private StrA processElif( StrA directiveBody ) 
     {
-    return new StrA( "" );
+    return StrA.Empty;
 
 /*
     int currentLevel = boolLevArray.getLevel();
@@ -725,14 +712,14 @@ Do this.
 
   private StrA processElse( StrA directiveBody ) 
     {
-    return new StrA( "" );
+    return StrA.Empty;
 
 /*
     int currentLevel = boolLevArray.getLevel();
     if( currentLevel == 0 )
       {
       mApp.showStatusAsync( "else can't be at zero." );
-      return "";
+      return StrA.Empty;
       }
 
     String result = "// #else " + directiveBody + "\n";
