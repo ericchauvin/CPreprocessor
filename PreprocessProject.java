@@ -89,7 +89,7 @@ public class PreprocessProject
     for( int count = 0; count < max; count++ )
       {
       // For testing:
-      if( count > 2 )
+      if( count > 5 )
         break;
 
       StrA fileName = fileArray.getStrAt( count );
@@ -101,8 +101,12 @@ public class PreprocessProject
         continue;
 
       StrA outFileName = outDir;
-      outFileName.concat( Utility.getFileName(
-                          fileName, '\\' ));
+      StrA filePart = Utility.getFileName(
+                                     fileName, '\\' );
+      mApp.showStatusAsync( "filePart: " + 
+                                 filePart.toString());
+
+      outFileName = outFileName.concat( filePart );
 
       mApp.showStatusAsync( "Out file: " + outFileName );
     
