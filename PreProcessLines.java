@@ -2,7 +2,6 @@
 
 
 
-
 public class PreProcessLines
   {
   private MainApp mApp;
@@ -592,9 +591,14 @@ Do this.
     Macro macro = new Macro( mApp, directiveBody,
                                               false );
 
-// ==== If the key is empty .. then.
     StrA showKey = macro.getKey();
-    mApp.showStatusAsync( "Key: " + showKey.toString() );
+    if( showKey.length() == 0 )
+      {
+      mApp.showStatusAsync( "Key is empty." );
+      return StrA.Empty;
+      }
+
+    // mApp.showStatusAsync( "Key: " + showKey.toString() );
 
     boolean doStrict = false;
     if( !macro.markUpFromStrA( directiveBody,
@@ -612,8 +616,6 @@ Do this.
     return new StrA( "// #define " +
                           directiveBody + "\n" );
     }
-
-
 
 
 
