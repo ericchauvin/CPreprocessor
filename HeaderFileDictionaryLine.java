@@ -98,7 +98,7 @@ public class HeaderFileDictionaryLine
 
     for( int count = 0; count < arrayLast; count++ )
       {
-      if( keyArray[count].equals( key ))
+      if( keyArray[count].equalTo( key ))
         return count;
 
       }
