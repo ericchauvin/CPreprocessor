@@ -61,7 +61,7 @@ public class MainApp implements Runnable
     // it the program directory, so it's not stuck
     // to that fixed directory. 
     programDirectory = new StrA( 
-                          "\\Eric\\CPreprocessor\\" );
+                          "\\EricMain\\CPreprocessor\\" );
 
     int length = argsArray.length;
     if( length > 0 )
