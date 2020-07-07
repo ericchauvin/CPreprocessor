@@ -2,14 +2,22 @@
 
 
 
+
+// This can't be runnable because it gets called
+// recursively from PreProcessLines when it comes
+// to an include statement.
 public class Preprocessor
   {
 
 
   public static StrA PreprocessFile( MainApp mApp,
-               StrA fileName,
-               MacroDictionary macroDictionary,
-               HeaderFileDictionary headerDictionary )
+                             StrA fileName,
+                             MacroDictionary
+                                  macroDictionary,
+                             HeaderFileDictionary
+                                  headerDictionary,
+                             CodeBlockDictionary
+                                  codeBlockDictionary )
     {
     try
     {
@@ -53,7 +61,8 @@ public class Preprocessor
     PreProcessLines procLines = new
                               PreProcessLines( mApp,
                               macroDictionary,
-                              headerDictionary );
+                              headerDictionary,
+                              codeBlockDictionary );
 
     result = procLines.mainFileLoop( result, fileName );
 
