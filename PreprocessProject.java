@@ -2,6 +2,8 @@
 
 
 
+// This isn't runnable, but it would call things 
+// that are runnable.
 public class PreprocessProject
   {
   private MainApp mApp;
@@ -110,16 +112,23 @@ public class PreprocessProject
 
       mApp.showStatusAsync( "Out file: " + outFileName );
     
+      CodeBlockDictionary codeBlockDictionary = new
+                         CodeBlockDictionary( mApp );
+
       MacroDictionary macroDictionary = new
                            MacroDictionary( mApp );
 
       addMacros( macroDictionary );
 
+// implements Runnable
+// Something right here has to be created that
+// is runnable.  Outside of the Preprocessor object.
       StrA result = Preprocessor.PreprocessFile(
                                  mApp,
                                  fileName,
                                  macroDictionary,
-                                 headerDictionary );
+                                 headerDictionary,
+                                 codeBlockDictionary );
 
       if( result.length() == 0 )
         {
