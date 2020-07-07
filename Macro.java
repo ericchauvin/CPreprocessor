@@ -44,12 +44,13 @@ public class Macro
 
 
   public Macro( MainApp useApp, StrA in,
-                                boolean notUsed )
+                                    boolean notUsed )
     {
     mApp = useApp;
     enabled = true;
     markedUpS = StrA.Empty;
-    isFunctionType = false;
+
+    // This will set isFunctionType.
     key = getKeyForConstructor( in );
     }
 
@@ -57,6 +58,9 @@ public class Macro
 
   private StrA getKeyForConstructor( StrA in )
     {
+    isFunctionType = false;
+
+    // Remove line numbers.
     StrA line = in.removeSections( Markers.Begin,
                                         Markers.End );
 
@@ -79,8 +83,6 @@ public class Macro
       isFunctionType = true;
 
       StrArray lineSplitter = tempKey.splitChar( '(' );
-      int lastPart = lineSplitter.length();
-
       tempKey = lineSplitter.getStrAt( 0 );
       }
 
@@ -117,13 +119,12 @@ public class Macro
 
 
 
-  public boolean markUpFromStrA( StrA in,
-                     MacroDictionary macroDictionary,
-                     boolean doStrict )
+  public boolean markUpForDefine( StrA in,
+                     MacroDictionary macroDictionary )
     {
     try
     {
-    StrA originalStr = in;
+    // StrA originalStr = in;
     markedUpS = in;
     // Remove the line number markers.
     markedUpS = markedUpS.removeSections( 
@@ -131,7 +132,7 @@ public class Macro
                                         Markers.End );
 
     markedUpS = MarkupString.MarkItUp( mApp,
-                              markedUpS );
+                                        markedUpS );
 
     StrArray splitS = markedUpS.splitChar( 
                                      Markers.Begin );
@@ -193,13 +194,15 @@ public class Macro
 
     if( isFunctionType )
       {
-      markedUpS = putFParametersInArray(
-                             markedUpS );
-      if( markedUpS.length() == 0 )
-        {
-        mApp.showStatusAsync( "putFPameters had an error." );
-        return false;
-        }
+      // This is a function type macro with no
+      // function body.
+      // #define WINAPI_PARTITION_SERVER(
+      //       WINAPI_FAMILY==WINAPI_FAMILY_SERVER)
+
+      // mApp.showStatusAsync( "isFunctionType: " + markedUpS );
+      markedUpS = putFParametersInArray( markedUpS );
+      // The function might have no body.
+      // if( markedUpS.length() == 0 )
 
       // mApp.showStatusAsync( "\n\nMaking function type body: " + key );
       // mApp.showStatusAsync( markedUpS + "\n\n" );
@@ -214,6 +217,8 @@ public class Macro
                                  macroDictionary );
 
       }
+
+    // mApp.showStatusAsync( "markedUpS at end: " + markedUpS );
 
     return true;
     }
@@ -310,7 +315,7 @@ public class Macro
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     for( int count = 1; count < last; count++ )
@@ -398,19 +403,25 @@ public class Macro
 
   private StrA putFParametersInArray( StrA in )
     {
-    mApp.showStatusAsync( "\nIn Macro.putFParam: " + in );
+    // This is a function type macro with no
+    // function body.  And the parameters have to
+    // be evaluated.
+    // #define WINAPI_PARTITION_SERVER(
+    //       WINAPI_FAMILY==WINAPI_FAMILY_SERVER)
+
+    // mApp.showStatusAsync( "\nIn Macro.putFParam: " + in );
 
     paramArray = new StrArray();
-    StringBuilder sBuilder = new StringBuilder();
+    StrABld sBuilder = new StrABld( 1024 );
     StrArray splitS = in.splitChar( Markers.Begin );
-    int last = splitS.length();
+    final int last = splitS.length();
     if( last == 0 )
       {
       mApp.showStatusAsync( "Last is zero in putFParametersInArray()." );
       return StrA.Empty;
       } 
       
-    String testNothing = splitS.getStrAt( 0 ).toString();
+    StrA testNothing = splitS.getStrAt( 0 );
     if( testNothing.length() != 0 )
       {
       mApp.showStatusAsync( "testNothing: " + testNothing );
@@ -420,13 +431,16 @@ public class Macro
     int inside = 0;
     for( int count = 1; count < last; count++ )
       {
-      String partS = splitS.getStrAt( count ).toString();
+      StrA partS = splitS.getStrAt( count );
+      // mApp.showStatusAsync( "PartS: " + partS );
+
       if( partS.length() < 2 )
         continue;
 
       if( inside >= 2 )
         {
-        sBuilder.append( "" + Markers.Begin + partS );
+        sBuilder.appendChar( Markers.Begin );
+        sBuilder.appendStrA( partS );
         continue;
         }
 
@@ -449,18 +463,18 @@ public class Macro
 
       if( firstChar == Markers.TypeIdentifier )
         {
-        // mApp.showStatusAsync( "Adding param: " + partS );
- 
-        paramArray.append( new StrA( "" + Markers.Begin +
-                                 partS ));
- 
+        mApp.showStatusAsync( "Does this param have to be replaced wiht its macro value? " + partS );
+        // And evaluated to?
+
+        paramArray.append( new StrA( "" + 
+                             Markers.Begin + partS ));
         continue;
         }
       }
 
-    String result = sBuilder.toString();
+    StrA result = sBuilder.toStrA();
     // mApp.showStatusAsync( "Result: " + result );
-    return new StrA( result );   
+    return result;   
     }
 
 
