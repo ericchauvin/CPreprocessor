@@ -8,6 +8,7 @@ public class PreProcessLines
   private MacroDictionary macroDictionary;
   private HeaderFileDictionary headerDictionary;
   private BoolLevelArray boolLevArray;
+  private CodeBlockDictionary codeBlockDictionary;
 
     // #line
 
@@ -59,15 +60,19 @@ public class PreProcessLines
 
 
   public PreProcessLines( MainApp useApp, 
-                               MacroDictionary
+                          MacroDictionary
                                macroDictionaryToUse,
-                               HeaderFileDictionary
-                               headerDictionaryToUse )
+                          HeaderFileDictionary
+                               headerDictionaryToUse,
+                          CodeBlockDictionary
+                               codeBlockDToUse )
     {
     mApp = useApp;
     macroDictionary = macroDictionaryToUse;
     headerDictionary = headerDictionaryToUse;
     boolLevArray = new BoolLevelArray( mApp );
+    codeBlockDictionary = codeBlockDToUse;
+
     }
 
 
@@ -562,7 +567,8 @@ Do this.
                                     mApp,
                                     fileName,
                                     macroDictionary,
-                                    headerDictionary );
+                                    headerDictionary,
+                                    codeBlockDictionary );
 
     if( inclFileStr.length() == 0 )
       return StrA.Empty;
