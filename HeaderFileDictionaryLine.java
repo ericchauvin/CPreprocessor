@@ -114,7 +114,7 @@ public class HeaderFileDictionaryLine
     if( index >= 0 )
       {
       // valueArray[index] += ";" + value;
-      valueArray[arrayLast] = value;
+      valueArray[index] = value;
       }
     else
       {
@@ -133,7 +133,7 @@ public class HeaderFileDictionaryLine
     {
     int index = getIndexOfKey( key );
     if( index < 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     return valueArray[index];
     }
@@ -156,7 +156,7 @@ public class HeaderFileDictionaryLine
   public StrA makeKeysValuesStrA()
     {
     if( arrayLast < 1 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     StrABld sBuilder = new StrABld( 1024 * 32 );
 
