@@ -230,7 +230,7 @@ Do this.
 
       directiveBody = directiveBody.trim();
 
-      // mApp.showStatusAsync( directive + " " + directiveBody );
+      mApp.showStatusAsync( directive + " " + directiveBody );
 
       StrA result = processDirective( directive,
                                        directiveBody );
@@ -276,6 +276,7 @@ Do this.
     // many newlines.
 
     StrA result = StrA.Empty;
+
     if( directive.equalTo( DirectiveDefine ))
       {
       result = processDefine( directiveBody );
@@ -584,10 +585,15 @@ Do this.
 
   private StrA processDefine( StrA directiveBody )
     {
-    if( !boolLevArray.getCurrentValue())
-      return new StrA( 
+    StrA result = new StrA( 
               "// #define " + directiveBody + "\n" );
 
+    // mApp.showStatusAsync( "At top: " + result );
+ 
+    if( !boolLevArray.getCurrentValue())
+      return result;
+
+    // mApp.showStatusAsync( "Before constructor." );
     Macro macro = new Macro( mApp, directiveBody,
                                               false );
 
@@ -598,23 +604,21 @@ Do this.
       return StrA.Empty;
       }
 
-    // mApp.showStatusAsync( "Key: " + showKey.toString() );
+    // mApp.showStatusAsync( "Key: " + showKey );
 
-    boolean doStrict = false;
-    if( !macro.markUpFromStrA( directiveBody,
-                                 macroDictionary,
-                                 doStrict ))
+    if( !macro.markUpForDefine( directiveBody,
+                                 macroDictionary ))
       {
-      mApp.showStatusAsync( "markUpFromString had an error." );
+      mApp.showStatusAsync( "markUpForDefine had an error." );
       return StrA.Empty;
       }
 
+    boolean doStrict = false;
     macroDictionary.setNewMacro( doStrict,
                                  macro.getKey(),
                                  macro );
 
-    return new StrA( "// #define " +
-                          directiveBody + "\n" );
+    return result;
     }
 
 
@@ -658,20 +662,17 @@ Do this.
 
 
 
-
   private StrA processElif( StrA directiveBody ) 
     {
-    return StrA.Empty;
-
-/*
     int currentLevel = boolLevArray.getLevel();
     if( currentLevel == 0 )
       {
       mApp.showStatusAsync( "elif can't be at zero." );
-      return "";
+      return StrA.Empty;
       }
 
-    String result = "// #elif " + directiveBody + "\n";
+    StrA result = new StrA( 
+                "// #elif " + directiveBody + "\n" );
 
     boolean currentVal = boolLevArray.
                            getValueAt( currentLevel );
@@ -696,27 +697,23 @@ Do this.
     if( currentVal )
       {
       if( !boolLevArray.setCurrentValue( false ))
-        return "";
+        return StrA.Empty;
 
       return result;
       }
     else
       {
       if( !boolLevArray.setCurrentValue( true ))
-        return "";
+        return StrA.Empty;
 
       return result;
       }
-*/
     }
 
 
 
   private StrA processElse( StrA directiveBody ) 
     {
-    return StrA.Empty;
-
-/*
     int currentLevel = boolLevArray.getLevel();
     if( currentLevel == 0 )
       {
@@ -724,7 +721,8 @@ Do this.
       return StrA.Empty;
       }
 
-    String result = "// #else " + directiveBody + "\n";
+    StrA result = new StrA( 
+                "// #else " + directiveBody + "\n" );
 
     boolean currentVal = boolLevArray.
                            getValueAt( currentLevel );
@@ -747,18 +745,17 @@ Do this.
     if( currentVal )
       {
       if( !boolLevArray.setCurrentValue( false ))
-        return "";
+        return StrA.Empty;
 
       return result;
       }
     else
       {
       if( !boolLevArray.setCurrentValue( true ))
-        return "";
+        return StrA.Empty;
 
       return result;
       }
-*/
     }
 
 
