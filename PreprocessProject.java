@@ -7,6 +7,7 @@
 public class PreprocessProject
   {
   private MainApp mApp;
+// Whatever Thread.  Not just fileThread.
   private Thread fileThread;
 
 
@@ -315,8 +316,11 @@ Are these Cygwin predefined macros?
 
   private void listHeaderFiles()
     {
-    String dir = "\\jdk7hotspotmaster\\src";
-    // String dir = "\\cygwin64\\usr\\include";
+    // String dir = "\\jdk7hotspotmaster\\src";
+    
+    // Do this one so it's not recursive:
+    String dir = "\\cygwin64\\usr\\include";
+
     // String dir = "\\cygwin64\\usr\\include\\sys";
     // String dir = "\\cygwin64\\usr\\include\\machine";
     // String dir = "\\cygwin64\\usr\\include\\bits";
@@ -328,10 +332,15 @@ Are these Cygwin predefined macros?
     // String dir = "\\EricFiles\\WindowsSdk10\\um";
     // String dir = "\\EricFiles\\WindowsSdk10\\shared";
 
+    // String dir = "\\EricFiles\\WindowsSdk10";
+
+    // String dir = "\\MinGW\\include";
+
+
 
     // Add it to the semicolon delimited dictionary file.
     // endsWith( fileToFind )
-    String fileToFind = ""; // stddef.h";
+    String fileToFind = "stdio"; // stddef.h";
     listFiles( dir, fileToFind );
     }
 
@@ -356,12 +365,11 @@ Are these Cygwin predefined macros?
         }
       }
 
-// fileToFind
     FileSearchRunnable fileSearch = new 
                        FileSearchRunnable( mApp,
                        dir,
-                       true,
-                       "" );
+                       true, // recursive
+                       fileToFind );
 
     fileThread = new Thread( fileSearch );
     fileThread.start();
