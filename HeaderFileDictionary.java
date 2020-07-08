@@ -27,7 +27,7 @@ public class HeaderFileDictionary
 
 
 
-  private void readFileList( StrA fileName )
+  public void readFileList( StrA fileName )
     {
     StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
@@ -54,8 +54,8 @@ public class HeaderFileDictionary
     StrA result = StrA.Empty;
 
     key = key.trim().toLowerCase();
-    // if( !key.startsWith( pathDelim ))
-      // key = pathDelim + key;
+    if( !key.startsWithChar( '\\' ))
+      key = new StrA( new StrA( "\\" ), key );
 
     final int last = fileListArray.length();
     int matches = 0;
@@ -260,11 +260,14 @@ public class HeaderFileDictionary
 
   public void readFile( StrA fileName )
     {
+/*
+Testing
     StrA fileList = mApp.getProgramDirectory();
     fileList = fileList.concat( new StrA(
                                  "\\FileList.txt" ));
 
     readFileList( fileList );
+*/
 
     StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
