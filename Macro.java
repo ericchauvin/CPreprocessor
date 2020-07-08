@@ -171,7 +171,7 @@ public class Macro
     testKey = Markers.removeAllMarkers( testKey );
     if( !key.equalTo( testKey ))
       {
-      mApp.showStatusAsync( "The key is not equal to the first token." );
+      mApp.showStatusAsync( "The key is not equal to the first identifier." );
       mApp.showStatusAsync( "Key: >" + key + "<" );
       mApp.showStatusAsync( "TestKey: >" + testKey + "<" );
       mApp.showStatusAsync( markedUpS.toString() );
