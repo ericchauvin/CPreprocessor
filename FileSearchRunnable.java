@@ -7,7 +7,7 @@ import java.io.File;
 
 
 
-public class FileSearchRunnable  implements Runnable
+public class FileSearchRunnable implements Runnable
   {
   private MainApp mApp;
   private String directory = "";
@@ -74,6 +74,13 @@ public class FileSearchRunnable  implements Runnable
         }
 
       String fileName = dir + "\\" + filesArray[count]; 
+
+      if( fileToFind.length() > 0 )
+        {
+        if( !fileName.contains( fileToFind ))
+          continue;
+
+        }
 
       File listFile = new File( fileName );
       if( listFile.isDirectory())
