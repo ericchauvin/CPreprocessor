@@ -67,8 +67,16 @@ public class PreprocessProject
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
 
-    headerDictionary.readFile( headerFileName );
+    // ======
+    // For testing.  Don't read this yet.
+    // headerDictionary.readFile( headerFileName );
 
+    StrA fileList = mApp.getProgramDirectory();
+    fileList = fileList.concat( new StrA(
+                                 "\\FileList.txt" ));
+
+    headerDictionary.readFileList( fileList );
+    
 
     StrA fileS = FileUtility.readFileToStrA(
                                       mApp,
@@ -319,7 +327,9 @@ Are these Cygwin predefined macros?
     // String dir = "\\jdk7hotspotmaster\\src";
     
     // Do this one so it's not recursive:
-    String dir = "\\cygwin64\\usr\\include";
+    // String dir = "\\cygwin64\\usr\\include";
+
+    String dir = "\\gccmaster\\gcc\\ginclude";
 
     // String dir = "\\cygwin64\\usr\\include\\sys";
     // String dir = "\\cygwin64\\usr\\include\\machine";
@@ -337,17 +347,15 @@ Are these Cygwin predefined macros?
     // String dir = "\\MinGW\\include";
 
 
-
-    // Add it to the semicolon delimited dictionary file.
-    // endsWith( fileToFind )
-    String fileToFind = "stdio"; // stddef.h";
-    listFiles( dir, fileToFind );
+    String fileToFind = ""; // stdio"; // stddef.h";
+    listFiles( dir, fileToFind, true );
     }
 
 
 
   private void listFiles( String dir,
-                          String fileToFind )
+                          String fileToFind,
+                          boolean recursive )
     {
     try
     {
@@ -368,7 +376,7 @@ Are these Cygwin predefined macros?
     FileSearchRunnable fileSearch = new 
                        FileSearchRunnable( mApp,
                        dir,
-                       true, // recursive
+                       recursive,
                        fileToFind );
 
     fileThread = new Thread( fileSearch );
