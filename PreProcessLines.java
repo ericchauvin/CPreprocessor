@@ -59,6 +59,7 @@ public class PreProcessLines
     }
 
 
+
   public PreProcessLines( MainApp useApp, 
                           MacroDictionary
                                macroDictionaryToUse,
@@ -126,16 +127,83 @@ public class PreProcessLines
 
 
 
+  private StrA makeCodeBlocks( StrA in )
+    {
+    StrABld blockBld = new StrABld( 1024 * 64 );
+    StrABld resultBld = new StrABld( 1024 * 64 );
+
+    StrArray fileLines = in.splitChar( '\n' );
+    final int last = fileLines.length();
+    for( int count = 0; count < last; count++ )
+      {
+      StrA line = fileLines.getStrAt( count );
+      // mApp.showStatusAsync( "\n\nLine: " + line );
+      // if( line.trim().length() == 0 )
+      if( line.trimsToZero())
+        continue;
+
+      if( '#' != line.firstNonSpaceChar())
+        {
+        // mApp.showStatusAsync( "\n\nLine to block: " + line );
+        blockBld.appendStrA( line );
+        blockBld.appendChar( '\n' );
+        continue;
+        }
+
+      StrA block = blockBld.toStrA();
+      blockBld.clear();
+      if( block.length() > 0 )
+        {
+        // mApp.showStatusAsync( "\n\nOne block: " + block );
+        int blockKey = codeBlockDictionary.
+                                    setValue( block );
+
+        StrA testBlock = codeBlockDictionary.
+                                 getValue( blockKey );
+
+        if( !testBlock.equalTo( block ))
+          {
+          mApp.showStatusAsync( "\n\nError with CodeBlockDictionary." );
+          return StrA.Empty;
+          }
+ 
+        resultBld.appendChar( Markers.Begin );
+        resultBld.appendChar( Markers.TypeCodeBlock );
+        resultBld.appendStrA( new StrA( 
+                       Integer.toString( blockKey )));
+        resultBld.appendChar( Markers.End );
+        resultBld.appendChar( '\n' );
+        }
+          
+      resultBld.appendStrA( line );
+      resultBld.appendChar( '\n' );
+      }
+
+    return resultBld.toStrA();
+    }
+
+
+
+
   public StrA mainFileLoop( StrA in, StrA fileName )
     {
     try
     {
-    if( in.trim().length() == 0 )
+    if( in.length() == 0 )
       return StrA.Empty;
 
+    in = makeCodeBlocks( in );
+    if( in.length() == 0 )
+      return StrA.Empty;
+
+    if( !MarkupString.testMarkers( in, new StrA(
+            "mainFileLoop() after makeCodeBlocks()." ), mApp ))
+      return StrA.Empty;
+
+    // mApp.showStatusAsync( "\n\n\n\nAll Blocks: " + in );
+ 
     StrABld sBuilder = new StrABld( 1024 );
     StrABld paramBuilder = new StrABld( 1024 );
-
 
     StrArray fileLines = in.splitChar( '\n' );
     final int last = fileLines.length();
@@ -144,16 +212,19 @@ public class PreProcessLines
       StrA line = fileLines.getStrAt( count );
       if( '#' != line.firstNonSpaceChar())
         {
-/*
-Do this.
-        // Markers.TypeCodeBlock and the number
-        of the code block for the dictionary. 
-
+        // This should only be block codes.
         if( boolLevArray.getCurrentValue())
-          sBuilder.append( line + "\n" );
+          {
+          sBuilder.appendStrA( line );
+          sBuilder.appendChar( '\n' );
+          }
         else
-          sBuilder.append( "//  " + line + "\n" );
-*/
+          {
+          sBuilder.appendStrA( new StrA( "//  " ));
+          sBuilder.appendStrA( line );
+          sBuilder.appendChar( '\n' );
+          }
+
         continue;
         }
 
