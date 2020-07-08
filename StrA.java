@@ -786,6 +786,18 @@ public class StrA
     }
 
 
+  public boolean startsWithChar( char toFind )
+    {
+    if( values.length == 0 )
+      return false;
+
+    if( values[0] == toFind )
+      return true;
+
+    return false;
+    }
+
+
 
   public boolean startsWith( StrA toFind )
     {
