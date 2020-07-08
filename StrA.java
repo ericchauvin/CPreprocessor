@@ -478,6 +478,27 @@ public class StrA
 
 
 
+
+  public boolean trimsToZero()
+    {
+    final int last = values.length;
+    if( last == 0 )
+      return true;
+
+    for( int count = 0; count < last; count++ )
+      {
+      char testChar = values[count];
+      if( testChar > ' ' )
+        return false;
+
+      }
+
+    return true;
+    }
+
+
+
+
   public StrA trimLeft()
     {
     StrABld sBld = new StrABld( values.length + 1024 );
