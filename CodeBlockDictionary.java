@@ -24,7 +24,7 @@ public class CodeBlockDictionary
     }
 
 
-  public int getNextCodeBlock()
+  private int getNextCodeBlock()
     {
     nextCodeBlock++;
     return nextCodeBlock;
@@ -34,6 +34,7 @@ public class CodeBlockDictionary
 
   public void clear()
     {
+    nextCodeBlock = 0;
     for( int count = 0; count < keySize; count++ )
       lineArray[count] = null;
 
@@ -48,21 +49,24 @@ public class CodeBlockDictionary
 
 
 
-  public void setValue( int key, StrA value )
+  public int setValue( StrA value )
     {
     try
     {
+    int key = getNextCodeBlock();
     int index = getIndex( key );
 
     if( lineArray[index] == null )
       lineArray[index] = new CodeBlockDictionaryLine();
 
     lineArray[index].setValue( key, value );
+    return key;
     }
     catch( Exception e )
       {
       mApp.showStatusAsync( "Exception in setValue()." );
       mApp.showStatusAsync( e.getMessage() );
+      return -1;
       }
     }
 
