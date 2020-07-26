@@ -42,7 +42,7 @@ public class IfExpression
 
     // mApp.showStatusAsync( " " );
     // mApp.showStatusAsync( markedUp );
-    if( markedUp.contains( new StrA( "defined" )))
+    if( markedUp.containsStrA( new StrA( "defined" )))
       {
       markedUp = setDefineValues( mApp,
                                   macroDictionary,
