@@ -36,8 +36,10 @@ import java.nio.file.Paths;
       return StrA.Empty;
       }
 
-    StrA fileS = UTF8Strings.bytesToStrA( fileBytes,
-                                          2000000000 );
+    StrA showS = new StrA( "FileUtility" );
+    StrA fileS = UTF8StrA.bytesToStrA( mApp, fileBytes,
+                                       2000000000,
+                                       showS );
 
     StrABld sBld = new StrABld( fileBytes.length + 1024 );
 
@@ -146,7 +148,7 @@ import java.nio.file.Paths;
     if( outS.length() < 1 )
       return false;
 
-    byte[] outBuffer = UTF8Strings.strAToBytes( outS );
+    byte[] outBuffer = UTF8StrA.strAToBytes( outS );
     if( outBuffer == null )
       {
       mApp.showStatusAsync( "Could not write to the file: \n" + fileName );
