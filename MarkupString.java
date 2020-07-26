@@ -56,7 +56,7 @@ public class MarkupString
       return false;
       }
 
-    if( testS.contains( new StrA( 
+    if( testS.containsStrA( new StrA( 
                       "" + Markers.ErrorPoint )))
       {
       mApp.showStatusAsync( " " );
