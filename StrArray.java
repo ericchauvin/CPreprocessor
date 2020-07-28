@@ -82,11 +82,6 @@ public class StrArray
     final int last = arrayLast - 1;
     for( int count = 0; count < last; count++ )
       {
-      // compareTo() uses case.
-      // if( valueArray[count].toString().
-      //              compareToIgnoreCase(
-      //              valueArray[count + 1].toString() ) > 0 )
-
       if( valueArray[sortIndexArray[count]].
                              compareToIgnoreCase(
          valueArray[sortIndexArray[count + 1]] ) > 0 )
