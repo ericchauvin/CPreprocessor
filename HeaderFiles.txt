@@ -1,0 +1,5 @@
+__config;\EricMain\include\__config
+ios;\EricMain\include\ios
+iostream;\EricMain\include\iostream
+stdarg.h;\EricMain\include\stdarg.h
+streambuf;\EricMain\include\streambuf
