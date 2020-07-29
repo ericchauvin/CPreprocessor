@@ -87,9 +87,9 @@ public class MacroDictionaryLine
     boolean switched = false;
     for( int count = 0; count < (arrayLast - 1); count++ )
       {
-      // compareTo() uses case.
-      if( keyArray[count].compareToIgnoreCase(
-                              keyArray[count + 1] ) > 0 )
+      if( keyArray[sortIndexArray[count]].
+                           compareToIgnoreCase(
+           keyArray[sortIndexArray[count + 1]] ) > 0 )
         {
         int temp = sortIndexArray[count];
         sortIndexArray[count] = sortIndexArray[count + 1];
