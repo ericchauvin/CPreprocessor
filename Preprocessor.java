@@ -3,9 +3,9 @@
 
 
 
-// This can't be runnable because it gets called
-// recursively from PreProcessLines when it comes
-// to an include statement.
+// This gets called recursively from PreProcessLines
+// when it comes to an include statement.
+
 public class Preprocessor
   {
 
@@ -25,21 +25,18 @@ public class Preprocessor
     mApp.showStatusAsync( "Preprocessing file:\n" +
                                 fileName.toString() );
 
-    // The first level of lexical analysis and
-    // processing is inside FileUtility.java when
-    // it reads the file to a string.
     StrA result = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
                                         false,
                                         false );
 
-    if( result.trim().length() == 0 )
+    if( result.length() == 0 )
       {
       mApp.showStatusAsync( "Nothing in Source File." );
       // Return an empty string to stop further 
       // processing.
-      return new StrA( "" );
+      return StrA.Empty;
       }
 
     // This adds line number markers and also fixes
@@ -49,13 +46,13 @@ public class Preprocessor
                                            fileName );
 
     if( result.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
     if( !MarkupString.testMarkers( result, 
                    new StrA( "RemoveAllComments()" ),
                                   mApp ))
       {
-      return new StrA( "" );
+      return StrA.Empty;
       }
     
     PreProcessLines procLines = new
@@ -67,7 +64,7 @@ public class Preprocessor
     result = procLines.mainFileLoop( result, fileName );
 
     if( result.length() == 0 )
-      return new StrA( "" );
+      return StrA.Empty;
 
 
 
@@ -88,7 +85,7 @@ public class Preprocessor
       {
       mApp.showStatusAsync( "Exception in PreprocessFile()." );
       mApp.showStatusAsync( e.getMessage() );
-      return new StrA( "" );
+      return StrA.Empty;
       }
     }
 
