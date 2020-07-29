@@ -52,7 +52,7 @@ public class CodeBlockDictionaryLine
     }
 
 
-/*
+
   public void sort()
     {
     if( arrayLast < 2 )
@@ -65,10 +65,9 @@ public class CodeBlockDictionaryLine
 
       }
     }
-*/
 
 
-/*
+
   private boolean bubbleSortOnePass()
     {
     // This returns true if it swaps anything.
@@ -76,9 +75,9 @@ public class CodeBlockDictionaryLine
     boolean switched = false;
     for( int count = 0; count < (arrayLast - 1); count++ )
       {
-      // compareTo() uses case.
-      if( keyArray[count].compareToIgnoreCase(
-                              keyArray[count + 1] ) > 0 )
+      // compareToIgnoreCase(
+      if( keyArray[sortIndexArray[count]] >
+                keyArray[sortIndexArray[count + 1]] )
         {
         int temp = sortIndexArray[count];
         sortIndexArray[count] = sortIndexArray[count + 1];
@@ -89,7 +88,7 @@ public class CodeBlockDictionaryLine
 
     return switched;
     }
-*/
+
 
 
   private int getIndexOfKey( int key )
