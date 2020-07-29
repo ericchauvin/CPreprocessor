@@ -5,7 +5,6 @@
 public class HeaderFileDictionary
   {
   private MainApp mApp;
-  private StrArray fileListArray;
   private HeaderFileDictionaryLine lineArray[];
   private final int maxIndexLetter = 'z' - 'a';
   private final int keySize = ((maxIndexLetter << 6) |
@@ -23,71 +22,6 @@ public class HeaderFileDictionary
     {
     mApp = useApp;
     lineArray = new HeaderFileDictionaryLine[keySize];
-    }
-
-
-
-  public void readFileList( StrA fileName )
-    {
-    StrA fileS = FileUtility.readFileToStrA(
-                                        mApp,
-                                        fileName,
-                                        false,
-                                        false );
-
-    if( fileS.length() == 0 )
-      {
-      fileListArray = new StrArray();
-      return;
-      }
-
-    fileListArray = fileS.splitChar( '\n' );
-    }
-
-
-
-  private StrA getFileFromList( StrA key )
-    {
-    if( fileListArray == null )
-      return StrA.Empty;
-
-    StrA result = StrA.Empty;
-
-    key = key.trim().toLowerCase();
-    if( !key.startsWithChar( '\\' ))
-      key = new StrA( new StrA( "\\" ), key );
-
-    final int last = fileListArray.length();
-    int matches = 0;
-    for( int count = 0; count < last; count++ )
-      {
-      StrA line = fileListArray.getStrAt( count ).
-                                              trim();
-      line = line.toLowerCase();
-      // mApp.showStatusAsync( "Line: " + line );
-      if( line.endsWith( key ))
-        {
-        result = line;
-        // mApp.showStatusAsync( "Found: " + result );        
-        setValue( key, result );
-        matches++;
-        }
-      }
-
-    if( matches > 1 )
-      {
-      // stdio.h includes sys/stdio.h.
-      // So there are two keys:
-      // stdio.h and sys/stdio.h
-
-      String showS = "Duplicates for key: " +
-                          key + "\n";
-                          
-      mApp.showStatusAsync( showS );
-      return StrA.Empty;
-      }
-
-    return result;
     }
 
 
@@ -184,18 +118,14 @@ public class HeaderFileDictionary
     if( key == null )
       return StrA.Empty;
 
-    key = key.trim();
     if( key.length() < 1 )
       return StrA.Empty;
 
     int index = getIndex( key );
     if( lineArray[index] == null )
-      return getFileFromList( key );
+      return StrA.Empty;
 
     StrA result = lineArray[index].getValue( key );
-    if( result.length() == 0 )
-      return getFileFromList( key );
-
     return result;
     }
 
@@ -260,15 +190,6 @@ public class HeaderFileDictionary
 
   public void readFile( StrA fileName )
     {
-/*
-Testing
-    StrA fileList = mApp.getProgramDirectory();
-    fileList = fileList.concat( new StrA(
-                                 "\\FileList.txt" ));
-
-    readFileList( fileList );
-*/
-
     StrA fileS = FileUtility.readFileToStrA(
                                         mApp,
                                         fileName,
@@ -301,7 +222,6 @@ Testing
     if( key == null )
       return false;
 
-    key = key.trim();
     if( key.length() < 1 )
       return false;
 
