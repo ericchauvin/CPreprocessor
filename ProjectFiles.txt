@@ -1,0 +1,3 @@
+// Files in the current project.
+// See HeaderFiles.txt for header files.
+\EricMain\cpp\main.cpp
