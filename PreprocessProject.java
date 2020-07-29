@@ -67,16 +67,7 @@ public class PreprocessProject
     HeaderFileDictionary headerDictionary = new
                         HeaderFileDictionary( mApp );
 
-    // ======
-    // For testing.  Don't read this yet.
-    // headerDictionary.readFile( headerFileName );
-
-    StrA fileList = mApp.getProgramDirectory();
-    fileList = fileList.concat( new StrA(
-                                 "\\FileList.txt" ));
-
-    headerDictionary.readFileList( fileList );
-    
+    headerDictionary.readFile( headerFileName );
 
     StrA fileS = FileUtility.readFileToStrA(
                                       mApp,
@@ -100,14 +91,15 @@ public class PreprocessProject
     for( int count = 0; count < max; count++ )
       {
       // For testing:
-      if( count > 5 )
-        break;
+      // if( count > 5 )
+        // break;
 
       StrA fileName = fileArray.getStrAt( count );
       fileName = fileName.trim();
       if( fileName.length() < 1 )
         continue;
 
+      // Comments 
       if( fileName.startsWith( new StrA( "//" )))
         continue;
 
@@ -267,6 +259,7 @@ Are these Cygwin predefined macros?
     // can trivially be built on any system."
 
     // TARGET_ARCH_zero, TARGET_ARCH_arm,
+
     Macro macro = new Macro( mApp, new StrA( 
                            "TARGET_ARCH_x86" ));
 
