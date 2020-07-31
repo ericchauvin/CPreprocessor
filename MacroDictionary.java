@@ -1,7 +1,6 @@
 // Copyright Eric Chauvin 2019 - 2020.
 
 
-
 // An identifier name like Table is different from the
 // name table, so this dictionary needs to be
 // case-sensitive.  But when it's sorted, it is a
@@ -90,36 +89,13 @@ public class MacroDictionary
 
   private boolean isBadKey( StrA key )
     {
-    // C++ named operators.
-    if( key.equalTo( new StrA( "and" )))
+    if( CppReservedWords.isReserved( key.toString()))
+      {
+      mApp.showStatusAsync( "Using a reserved word for a macro name: " + key );
       return true;
+      }
 
-    if( key.equalTo( new StrA( "and_eq" )))
-      return true;
-
-    if( key.equalTo( new StrA( "bitand" )))
-      return true;
-
-    if( key.equalTo( new StrA( "bitor" )))
-      return true;
-
-    if( key.equalTo( new StrA( "compl" )))
-      return true;
-
-    if( key.equalTo( new StrA( "not" )))
-      return true;
-
-    if( key.equalTo( new StrA( "not_eq" )))
-      return true;
-
-    if( key.equalTo( new StrA( "or" )))
-      return true;
-
-    if( key.equalTo( new StrA( "or_eq" )))
-      return true;
-
-    if( key.equalTo( new StrA( "xor" )))
-      return true;
+    // If it's something else bad...
 
     return false;
     }
