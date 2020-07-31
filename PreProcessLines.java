@@ -10,9 +10,6 @@ public class PreProcessLines
   private BoolLevelArray boolLevArray;
   private CodeBlockDictionary codeBlockDictionary;
 
-    // #line
-
-    // #warning
 
   private static final StrA DirectiveError =
                                 new StrA( "error" );
@@ -51,6 +48,21 @@ public class PreProcessLines
   private static final StrA DirectiveEndif =
                              new StrA( "endif" );
 
+  private static final StrA DirectiveLine =
+                             new StrA( "line" );
+
+/*
+__has_include
+__has_cpp_attribute
+export
+import
+module
+
+The preprocessor processes this even though it's
+not in a preprocessor directive:
+_Pragma
+
+*/
 
 
 
