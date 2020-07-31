@@ -134,7 +134,7 @@ public class MacroDictionaryLine
     else
       {
       if( arrayLast >= sortIndexArray.length )
-        resizeArrays( 1024 * 4 );
+        resizeArrays( 1024 );
 
       // mApp.showStatusAsync( "New macro: " + key );
       keyArray[arrayLast] = key;
