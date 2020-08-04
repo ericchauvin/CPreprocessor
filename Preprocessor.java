@@ -14,8 +14,8 @@ public class Preprocessor
                              StrA fileName,
                              MacroDictionary
                                   macroDictionary,
-                             HeaderFileDictionary
-                                  headerDictionary,
+                             IncludeDictionary
+                                  includeDnry,
                              CodeBlockDictionary
                                   codeBlockDictionary )
     {
@@ -58,7 +58,7 @@ public class Preprocessor
     PreProcessLines procLines = new
                               PreProcessLines( mApp,
                               macroDictionary,
-                              headerDictionary,
+                              includeDnry,
                               codeBlockDictionary );
 
     result = procLines.mainFileLoop( result, fileName );
