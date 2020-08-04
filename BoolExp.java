@@ -163,8 +163,8 @@ public class BoolExp
     StrA originalExpr = in;
     StrA result = new StrA( in );
 
-    mApp.showStatusAsync( "\n\nEvaluate top: " +
-                                      in.toString() );
+    // mApp.showStatusAsync( "\n\nEvaluate top: " +
+     //                                 in.toString() );
 
     for( int count = 0; count < 1000; count++ )
       {
@@ -268,7 +268,7 @@ public class BoolExp
 
     // mApp.showStatusAsync( "After true && false changes: " + result );
 
-    mApp.showStatusAsync( "\n\nEvaluate bottom: " + result );
+    // mApp.showStatusAsync( "\n\nEvaluate bottom: " + result );
 
     return result;
     }
