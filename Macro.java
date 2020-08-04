@@ -463,7 +463,7 @@ public class Macro
 
       if( firstChar == Markers.TypeIdentifier )
         {
-        mApp.showStatusAsync( "Does this param have to be replaced wiht its macro value? " + partS );
+        // mApp.showStatusAsync( "Does this param have to be replaced with its macro value? " + partS );
         // And evaluated to?
 
         paramArray.append( new StrA( "" + 
