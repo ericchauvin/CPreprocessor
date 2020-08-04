@@ -6,7 +6,7 @@ public class PreProcessLines
   {
   private MainApp mApp;
   private MacroDictionary macroDictionary;
-  private HeaderFileDictionary headerDictionary;
+  private IncludeDictionary includeDnry;
   private BoolLevelArray boolLevArray;
   private CodeBlockDictionary codeBlockDictionary;
 
@@ -75,14 +75,14 @@ _Pragma
   public PreProcessLines( MainApp useApp, 
                           MacroDictionary
                                macroDictionaryToUse,
-                          HeaderFileDictionary
-                               headerDictionaryToUse,
+                          IncludeDictionary
+                               includeDictionaryToUse,
                           CodeBlockDictionary
                                codeBlockDToUse )
     {
     mApp = useApp;
     macroDictionary = macroDictionaryToUse;
-    headerDictionary = headerDictionaryToUse;
+    includeDnry = includeDictionaryToUse;
     boolLevArray = new BoolLevelArray( mApp );
     codeBlockDictionary = codeBlockDToUse;
 
@@ -318,7 +318,7 @@ _Pragma
 
       directiveBody = directiveBody.trim();
 
-      mApp.showStatusAsync( directive + " " + directiveBody );
+      // mApp.showStatusAsync( directive + " " + directiveBody );
 
       StrA result = processDirective( directive,
                                        directiveBody );
@@ -633,7 +633,7 @@ _Pragma
       }
 
     // mApp.showStatusAsync( "Looking for: " + inclFileName );
-    StrA fileName = headerDictionary.
+    StrA fileName = includeDnry.
                             getValue( inclFileName );
     
     if( fileName.length() == 0 )
@@ -650,7 +650,7 @@ _Pragma
                                     mApp,
                                     fileName,
                                     macroDictionary,
-                                    headerDictionary,
+                                    includeDnry,
                                     codeBlockDictionary );
 
     if( inclFileStr.length() == 0 )
