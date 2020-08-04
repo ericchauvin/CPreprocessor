@@ -1,0 +1,9 @@
+stdarg.h;\EricMain\include\stdarg.h
+msvcrtver.h;\EricMain\include\msvcrtver.h
+sdkddkver.h;\EricMain\include\sdkddkver.h
+stddef.h;\EricMain\include\stddef.h
+stdio.h;\EricMain\include\stdio.h
+w32api.h;\EricMain\include\w32api.h
+windows.h;\EricMain\include\windows.h
+winnt.h;\EricMain\include\winnt.h
+_mingw.h;\EricMain\include\_mingw.h
