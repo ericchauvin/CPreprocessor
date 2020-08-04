@@ -40,7 +40,7 @@ public class PreprocessProject
   public void doProject()
     {
     testFiles();
-    // listHeaderFiles();
+    // listIncludeFiles();
     }
 
 
@@ -60,14 +60,14 @@ public class PreprocessProject
     projectFileName = projectFileName.concat(  
                    new StrA( "\\ProjectFiles.txt" ));
 
-    StrA headerFileName = mApp.getProgramDirectory();
-    headerFileName = headerFileName.concat( 
-                     new StrA( "\\HeaderFiles.txt" ));
+    StrA includeFileName = mApp.getProgramDirectory();
+    includeFileName = includeFileName.concat( 
+                     new StrA( "\\IncludeFiles.txt" ));
 
-    HeaderFileDictionary headerDictionary = new
-                        HeaderFileDictionary( mApp );
+    IncludeDictionary includeDnry = new
+                        IncludeDictionary( mApp );
 
-    headerDictionary.readFile( headerFileName );
+    includeDnry.readFile( includeFileName );
 
     StrA fileS = FileUtility.readFileToStrA(
                                       mApp,
@@ -128,7 +128,7 @@ public class PreprocessProject
                                  mApp,
                                  fileName,
                                  macroDictionary,
-                                 headerDictionary,
+                                 includeDnry,
                                  codeBlockDictionary );
 
       if( result.length() == 0 )
@@ -136,7 +136,7 @@ public class PreprocessProject
         mApp.showStatusAsync( " " );
         mApp.showStatusAsync( "The file had an error." );
         mApp.showStatusAsync( fileName.toString() );
-        headerDictionary.writeFile( headerFileName );
+        includeDnry.writeFile( includeFileName );
         return;
         }
 
@@ -148,7 +148,7 @@ public class PreprocessProject
 
       }
 
-    headerDictionary.writeFile( headerFileName );
+    includeDnry.writeFile( includeFileName );
 
     mApp.showStatusAsync( " " );
     mApp.showStatusAsync( "Finished processing files." );
@@ -315,7 +315,7 @@ Are these Cygwin predefined macros?
 
 
 
-  private void listHeaderFiles()
+  private void listIncludeFiles()
     {
     // String dir = "\\jdk7hotspotmaster\\src";
     
