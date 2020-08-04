@@ -97,8 +97,8 @@ public class IfExpression
 */
 
 
-    mApp.showStatusAsync( "\n\nIfExpression isn't done:\n" + markedUp );
-    mApp.showStatusAsync( "originalExpr: " + originalExpr );
+    // mApp.showStatusAsync( "\n\nIfExpression isn't done:\n" + markedUp );
+    // mApp.showStatusAsync( "originalExpr: " + originalExpr );
 
 
 // float a = Float.parseFloat( SomeString );
