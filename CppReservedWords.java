@@ -5,6 +5,16 @@
 public class CppReservedWords
   {
   private final static String[] reservedWords = {
+      "_Alignas",
+      "_Alignof",
+      "_Atomic",
+      "_Bool",
+      "_Complex",
+      "_Generic",
+      "_Imaginary",
+      "_Noreturn",
+      "_Static_assert",
+      "_Thread_local",
       "alignas",
       "alignof",
       "and",
@@ -50,12 +60,13 @@ public class CppReservedWords
       "false",
       "float",
       "for",
+      "fortran", // Like asm apparently.
       "friend",
       "goto",
       "if",
       "inline",
       "int",
-      "long",
+      "long",  // Also, long long is like one key word.
       "mutable",
       "namespace",
       "new",
@@ -73,7 +84,9 @@ public class CppReservedWords
       "register",
       "reinterpret_cast",
       "requires",
+      "restrict",
       "return",
+      "s",
       "short",
       "signed",
       "sizeof",
@@ -123,5 +136,24 @@ public class CppReservedWords
     }
 
 
+
+
+/*
+
+Java key words.
+
+abstract continue for new switch
+assert default goto* package synchronized
+boolean do if private this
+break double implements protected throw
+byte else import public throws
+case enum instanceof return transient
+catch extends int short try
+char final interface static void
+class finally long strictfp volatile
+const* float native super while
+* Not used.
+
+*/
 
   }
